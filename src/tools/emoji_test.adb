@@ -1,4 +1,4 @@
--- utils.gpr --- Project Manager File
+-- emoji_test.adb --- 
 
 -- Copyright 2019 cnngimenez
 --
@@ -19,31 +19,16 @@
 
 -------------------------------------------------------------------------
 
--- Use this command to build: gnatmake -P utils.gpr
+with Ada.Text_Io;
+use Ada.Text_Io;
+with Emojis;
+use Emojis;
 
--- Add other projects for compiling using with:
---
--- with "matreshka_league.gpr";
--- with "gtkada.gpr"; 
-
-library project utils is
-  
-  for Library_Name use "utils";
-  for Library_Dir use "lib";
-  
-  for Source_Dirs use (
-                       "src/libraries/console", 
-                       "src/libraries/unicode"
-                      );
-  -- for Source_Files use ("this-file.adb", "this-other.adb");
-  for Object_Dir use "objs";
-  
-  package Compiler is
-      for Default_Switches ("Ada") use 
-        (
-         "-g",     -- Debugging symbols
-         "-gnatW8" -- Unicode support for source code
-        );
-  end Compiler;
-  
-end utils;
+procedure Emoji_Test is
+begin
+    Put_Line ("Character A:" & Character'Val (65));
+    
+    Put_Person;
+    Put_Skin (Dark);
+    Put_Hair (Red_Hair);
+end Emoji_Test;
