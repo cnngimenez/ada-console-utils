@@ -104,22 +104,36 @@ package Console is
                        Parameter : String := "");
     
     procedure Cursor_Up (Steps : Natural := 1);
-    procedure Cursor_Up (Steps : Natural := 1);
-    procedure Cursor_Up (Steps : Natural := 1);
-    procedure Cursor_Up (Steps : Natural := 1);
+    procedure Cursor_Down (Steps : Natural := 1);
+    procedure Cursor_Forward (Steps : Natural := 1);
+    procedure Cursor_Back (Steps : Natural := 1);
     
-    procedure Cursor_Up (Steps : Natural := 1);
-    procedure Cursor_Up (Steps : Natural := 1);
+    procedure Cursor_Next_Line (Steps : Natural := 1);
+    procedure Cursor_Previous_Line (Steps : Natural := 1);
     
-    procedure Cursor_Up (Steps : Natural := 1);
+    procedure Cursor_Horizontal (Steps : Natural := 1);
     
     procedure Cursor_Position (Row, Column : Natural := 1);
     
-    type Erase_Type is (From_Cursor_To_End,
-                        From_Cursor_To_Beginning,
-                        All_Screen,
-                        All_Screen_And_Scrollback);
-    procedure Erase_Display (What : Erase_Type);
-        
+    type Erase_Display_Type is (From_Cursor_To_End,
+                                From_Cursor_To_Beginning,
+                                Entire_Screen,
+                                Entire_Screen_And_Scrollback);
+    procedure Erase_Display (What : Erase_Display_Type);
+    
+    type Erase_Line_Type is (From_Cursor_To_End,
+                             From_Cursor_To_Beginning,
+                             Entire_Line);
+    procedure Erase_Line (What : Erase_Line_Type);
+    
+    procedure Scroll_Up (Steps : Natural := 1);
+    procedure Scroll_Down (Steps : Natural := 1);
+    
+    procedure Aux_Port_On;
+    procedure Aux_Port_Off;
+    
+    procedure Device_Status_Report;
+    procedure Save_Cursor_Position;
+    procedure Restore_Cursor_Position;
     
 end Console;
