@@ -97,11 +97,29 @@ package Console is
     procedure Background_Off renames Default_Background;
     procedure Not_Encircled renames Not_Framed;
 
-
     
     type Code_Type is range 0 .. 255;
     
     procedure Put_SGR (Code : Code_Type;
                        Parameter : String := "");
-
+    
+    procedure Cursor_Up (Steps : Natural := 1);
+    procedure Cursor_Up (Steps : Natural := 1);
+    procedure Cursor_Up (Steps : Natural := 1);
+    procedure Cursor_Up (Steps : Natural := 1);
+    
+    procedure Cursor_Up (Steps : Natural := 1);
+    procedure Cursor_Up (Steps : Natural := 1);
+    
+    procedure Cursor_Up (Steps : Natural := 1);
+    
+    procedure Cursor_Position (Row, Column : Natural := 1);
+    
+    type Erase_Type is (From_Cursor_To_End,
+                        From_Cursor_To_Beginning,
+                        All_Screen,
+                        All_Screen_And_Scrollback);
+    procedure Erase_Display (What : Erase_Type);
+        
+    
 end Console;
