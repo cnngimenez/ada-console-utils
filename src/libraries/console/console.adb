@@ -307,6 +307,75 @@ package body Console is
         Put (ESC & "[49m");
     end Default_Background;                   
     
+    procedure Framed is 
+    begin
+        Put (ESC & "[51m");
+    end Framed;
+    
+    procedure Encircled is
+    begin
+        Put (ESC & "[52m");
+    end Encircled;
+    
+    procedure Overlined is
+    begin
+        Put (ESC & "[53m");
+    end Overlined;
+    
+    procedure Not_Framed is
+    begin
+        Put (ESC & "[54m");
+    end Not_Framed;
+    
+    procedure Not_Overlined is
+    begin
+        Put (ESC & "[55m");
+    end Not_Overlined;
+    
+    --  --------------------
+    --  Code 60
+    --  --------------------
+    
+    procedure Ideogram_Underline is
+    begin
+        Put (ESC & "[60m");
+    end Ideogram_Underline;
+    
+    procedure Ideogram_Double_Underline is
+    begin
+        Put (ESC & "[61m");
+    end Ideogram_Double_Underline;
+    
+    procedure Ideogram_Overline Is
+    begin
+        Put (ESC & "[62m");
+    end Ideogram_Overline;
+    
+    procedure Ideogram_Double_Overline is
+    begin
+        Put (ESC & "[63m");
+    end Ideogram_Double_Overline;
+    
+    procedure Ideogram_Stress is
+    begin
+        Put (ESC & "[64m");
+    end Ideogram_Stress;
+    
+    procedure Ideogram_Off is
+    begin
+        Put (ESC & "[65m");
+    end Ideogram_Off;
+    
+    procedure Set_Bright_Colour (Colour : Colour_Type) is
+    begin
+        Set_Colour (Colour, True);
+    end Set_Bright_Colour;
+    
+    procedure Set_Bright_Background (Colour : Colour_Type) is
+    begin
+        Set_Background (Colour, True);
+    end Set_Bright_Background;
+    
     procedure Put_SGR (Code : Code_Type; Parameter : String := "") is
     begin
         Put (ESC & "[" & 

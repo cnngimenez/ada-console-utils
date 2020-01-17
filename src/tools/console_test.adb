@@ -149,8 +149,8 @@ procedure Console_Test is
     
 begin
     
-    Put_Line ("----> Testing codes from 0 to 9. ");
-    
+    --  Code 0
+    Put_Line ("----> Testing codes from 0 to 9. ");   
     
     Bold;
     Put_Line ("Bold");
@@ -174,7 +174,7 @@ begin
     Write ("Blink");
     
     Rapid_Blink;
-    Write ("Rapid");
+    Write ("Rapid_Blink");
     
     Reverse_Video;
     Write ("Reverse");
@@ -188,7 +188,6 @@ begin
     --  Code 10
     Put_Line ("----> Testing codes from 10 to 19. ");
     
-    
     Primary_Font;
     Write ("Primary");
     
@@ -196,8 +195,7 @@ begin
     
     --  Code 20
     Put_Line ("----> Testing codes from 20 to 29. ");
-    
-        
+            
     Fraktur;
     Write ("Fraktur");
     
@@ -257,15 +255,58 @@ begin
     Default_Background;
     Write ("Default_Background");
     
+    --  Code 50
+    Put_Line ("----> Testing codes from 50 to 59. ");   
+    
+    Framed;
+    Write ("Framed");
+    
+    Encircled;
+    Write ("Encircled");
+    
+    Overlined;
+    Write ("Overlined");
+    
+    Not_Framed;
+    Write ("Not_Framed");
+    
+    Not_Overlined;
+    Write ("Not_Overlined");
+    
+
+    --  Code 60
+    Put_Line ("----> Testing codes from 60 to 69. ");   
+    
+    Ideogram_Underline;
+    Write ("Ideogram_Underline");
+    
+    Ideogram_Double_Underline;
+    Write ("Ideogram_Double_Underline");
+    
+    Ideogram_Overline;
+    Write ("Ideogram_Overline");
+    
+    Ideogram_Double_Overline;
+    Write ("Ideogram_Double_Overline");
+    
+    Ideogram_Stress;
+    Write ("Ideogram_Stress");
+    
+    Ideogram_Off;
+    Write ("Ideogram_Off");
+
     --  Code 90 - 97
     
+    Put_Line ("----> Bright colour test (90-97 codes):");
     Bright_Colour_Test;
-    
+              
     --  Code 100 - 107
-    
+    Put_Line ("----> Bright colour test (100-107 codes):");
     Bright_Background_Test;
     
-    Put_Line ("The following is not an ANSI standard.");
+    -- --------------------
+    
+    Put_Line ("The following elements are not part of the ANSI standard.");
     Put_Line ("Test ligatures:");
     Put_Line ("-> /= != >= <= <> == === ;; <- -< >- || && //");
     Put_Line ("Testing emojis:");

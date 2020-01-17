@@ -68,23 +68,23 @@ package Console is
     procedure Default_Background; --  Also Background_Off
     
     --  Code 50
-    --  procedure Framed;
-    --  procedure Encircled;
-    --  procedure Overlined;
-    --  procedure Not_Framed; -- And not encircled.
-    --  procedure Not_Overlined;
+    procedure Framed;
+    procedure Encircled;
+    procedure Overlined;
+    procedure Not_Framed; -- Also Not_Encircled.
+    procedure Not_Overlined;
     
     --  Code 60
-    --  procedure Ideogram_Underline;
-    --  procedure Ideogram_Double_Underline;
-    --  procedure Ideogram_Overline;
-    --  procedure Ideogram_Double_Overline;
-    --  procedure Ideogram_Stress;
-    --  procedure Ideogram_Off;
+    procedure Ideogram_Underline;
+    procedure Ideogram_Double_Underline;
+    procedure Ideogram_Overline;
+    procedure Ideogram_Double_Overline;
+    procedure Ideogram_Stress;
+    procedure Ideogram_Off;
     
     --  Code 90
-    --  procedure Set_Bright_Colour (Colour : Bright_Colour_Type);
-    --  procedure Set_Bright_Background (Colour : Bright_Colour_Type);
+    procedure Set_Bright_Colour (Colour : Colour_Type);
+    procedure Set_Bright_Background (Colour : Colour_Type);
     
     --  Aliases
     
@@ -95,7 +95,7 @@ package Console is
     procedure Not_Crossed_Out renames Crossed_Out_Off;
     procedure Colour_Off renames Default_Colour;
     procedure Background_Off renames Default_Background;
-    
+    procedure Not_Encircled renames Not_Framed;
 
 
     
@@ -103,5 +103,5 @@ package Console is
     
     procedure Put_SGR (Code : Code_Type;
                        Parameter : String := "");
-    
+
 end Console;
