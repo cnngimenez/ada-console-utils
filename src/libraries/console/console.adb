@@ -144,7 +144,7 @@ package body Console is
     --  Codes 30
     --  --------------------
     
-    function Colour_To_Ansi (C : Colour) return String is
+    function Colour_To_Ansi (C : Colour_Type) return String is
     begin
         case C is
            when Black =>
@@ -168,7 +168,7 @@ package body Console is
         end case;
     end Colour_To_Ansi;
     
-    function Colour_To_Ansi_Bright (C : Colour) return String is
+    function Colour_To_Ansi_Bright (C : Colour_Type) return String is
     begin
         case C is
            when Black =>
@@ -192,7 +192,7 @@ package body Console is
         end case;
     end Colour_To_Ansi_Bright;
     
-    procedure Set_Colour (C : Colour; Bright : Boolean := False) is
+    procedure Set_Colour (C : Colour_Type; Bright : Boolean := False) is
     begin
         if Bright then
             Put (Colour_To_Ansi_Bright (C));
@@ -215,7 +215,7 @@ package body Console is
     --  Codes 40
     --  --------------------
     
-    function Bg_Colour_To_Ansi (C : Colour) return String is
+    function Bg_Colour_To_Ansi (C : Colour_Type) return String is
     begin
         case C is
            when Black =>
@@ -239,7 +239,7 @@ package body Console is
         end case;
     end Bg_Colour_To_Ansi;
     
-        function Bg_Colour_To_Ansi_Bright (C : Colour) return String is
+        function Bg_Colour_To_Ansi_Bright (C : Colour_Type) return String is
     begin
         case C is
            when Black =>
@@ -263,7 +263,7 @@ package body Console is
         end case;
     end Bg_Colour_To_Ansi_Bright;
     
-    procedure Set_Background (C : Colour; Bright : Boolean := False) is
+    procedure Set_Background (C : Colour_Type; Bright : Boolean := False) is
     begin
         if Bright then
             Put (Bg_Colour_To_Ansi_Bright (C));

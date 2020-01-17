@@ -20,7 +20,7 @@
 -------------------------------------------------------------------------
 
 package Console is
-    type Colour is (Black, Red, Green, Yellow, Blue, 
+    type Colour_Type is (Black, Red, Green, Yellow, Blue, 
                     Magenta, Cyan, White, Normal);
     
     type Alt_Font_Type is range 1 .. 9;
@@ -55,12 +55,12 @@ package Console is
     procedure Crossed_Out_Off; --  Not crossed out
     
     --  Code 30
-    procedure Set_Colour (C : Colour; Bright : Boolean := False);
+    procedure Set_Colour (C : Colour_Type; Bright : Boolean := False);
     procedure Set_RGB_Colour (R, G, B : RGB_Type);
     procedure Default_Colour;  --  Also Colour_Off;
     
     --  Code 40
-    procedure Set_Background (C : Colour; Bright : Boolean := False);
+    procedure Set_Background (C : Colour_Type; Bright : Boolean := False);
     procedure Set_RGB_Background (R, G, B : RGB_Type);
     procedure Default_Background; --  Also Background_Off
     
