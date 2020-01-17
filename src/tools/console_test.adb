@@ -19,9 +19,13 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Characters.Latin_1;
+use Ada.Characters.Latin_1;
 with Ada.Text_Io;
 use Ada.Text_Io;
 
+with Emojis;
+use Emojis;
 with Console;
 use Console;
 
@@ -78,8 +82,10 @@ procedure Console_Test is
         for R in RGB_Type'First .. RGB_Type'Last/20 loop
             for G in RGB_Type'First .. RGB_Type'Last/20 loop
                 for B in RGB_Type'First .. RGB_Type'Last/20 loop
-                    Set_RGB_Colour (R, G, B);
-                    Put ("A");
+                    
+                    Set_RGB_Colour (R * 20, G * 20, B * 20);
+                    Put("A");
+                    
                 end loop;
                 Put_Line ("");
             end loop;
@@ -92,7 +98,7 @@ procedure Console_Test is
         for R in RGB_Type'First .. RGB_Type'Last/20 loop
             for G in RGB_Type'First .. RGB_Type'Last/20 loop
                 for B in RGB_Type'First .. RGB_Type'Last/20 loop
-                    Set_RGB_Background (R, G, B);
+                    Set_RGB_Background (R * 20, G * 20, B * 20);
                     Put ("A");
                 end loop;
                 Put_Line ("");
@@ -100,7 +106,46 @@ procedure Console_Test is
             Put_Line ("");
         end loop;
     end Set_Rgb_Background_Test;
-   
+    
+    procedure Set_Colour_8bit_Test is
+    begin
+        for Num in Colour_8bit_Type'First .. Colour_8bit_Type'Last loop
+            if Num = 15 then
+                Put_Line ("");
+            end if;
+            if (Num - 15) mod 36 = 0 then
+                Put_Line ("");
+            end if;
+            
+            Set_8bit_Colour (Num);
+            Put ("A");
+        end loop;
+        Put_Line ("");
+    end Set_Colour_8bit_Test;
+    
+    procedure Set_Background_8bit_Test is
+    begin
+        for Num in Colour_8bit_Type'First .. Colour_8bit_Type'Last loop
+            if Num = 15 then
+                Put_Line ("");
+            end if;
+            if (Num - 15) mod 36 = 0 then
+                Put_Line ("");
+            end if;
+            
+            Set_8bit_Background (Num);
+            Put ("A");
+        end loop;
+        Put_Line ("");
+    end Set_Background_8bit_Test;
+    
+    procedure Test_Emoji is
+    begin
+        Put_Person;
+        Put_Skin (Dark);
+        Put_Hair (Red_Hair);
+        Put_Line ("");
+    end Test_Emoji;
     
 begin
     
@@ -183,10 +228,15 @@ begin
     --  Code 30
     Put_Line ("----> Testing codes from 30 to 39. ");
     
-    
     Set_Colour_Test;
     
+    Put_Line ("--> 8 bit colour test:");    
+    Set_Colour_8bit_Test;
+    Reset_All;
+    
+    Put_Line ("--> 24 bit colour test: (RGB)");
     Set_RGB_Test;
+    
     
     Default_Colour;
     Write ("Default_Colour");
@@ -194,9 +244,14 @@ begin
     --  Code 40
     Put_Line ("----> Testing codes from 40 to 49.");
     
-        
+    Put_Line ("--> 3/4 bit colour test:");
     Set_Background_Test;
     
+    Put_Line ("--> 8 bit colour test:");
+    Set_Background_8bit_Test;
+    Reset_All;
+    
+    Put_Line ("--> 24 bit colour test: (RGB)");
     Set_RGB_Background_Test;
     
     Default_Background;
@@ -210,4 +265,9 @@ begin
     
     Bright_Background_Test;
     
+    Put_Line ("The following is not an ANSI standard.");
+    Put_Line ("Test ligatures:");
+    Put_Line ("-> /= != >= <= <> == === ;; <- -< >- || && //");
+    Put_Line ("Testing emojis:");
+    Test_Emoji;
 end Console_Test;

@@ -19,6 +19,9 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings.Fixed;
+use Ada.Strings.Fixed;
+use Ada.Strings;
 with Ada.Characters.Latin_1;
 use Ada.Characters.Latin_1;
 with Ada.Text_Io;
@@ -88,7 +91,9 @@ package body Console is
         Param_Number : Positive := 10;
     begin
         Param_Number := Param_Number + Alt_Font_Type'Pos (Font_Number);
-        Put (ESC & "[" & Param_Number'Image & "m");
+        Put (ESC & "[" & 
+               Trim(Param_Number'Image, Both)
+               & "m");
     end Alternative_Font;
     
     --  --------------------
@@ -203,8 +208,18 @@ package body Console is
     
     procedure Set_RGB_Colour (R, G, B : RGB_Type) is
     begin
-        Put (ESC & "[38;2;" & R'Image & ";" & G'Image & ";" & B'Image & "m");
+        Put (ESC & "[38;2;" 
+               & Trim(R'Image, Both) & ";" 
+               & Trim(G'Image, Both) & ";" 
+               & Trim(B'Image, Both) & "m");
     end Set_RGB_Colour;
+    
+    procedure Set_8bit_Colour (Num : Colour_8bit_Type) is
+    begin
+        Put (ESC & "[38;5;" 
+               & Trim (Num'Image, Both)
+               & "m");
+    end Set_8bit_Colour;
     
     procedure Default_Colour is
     begin
@@ -274,8 +289,18 @@ package body Console is
     
     procedure Set_RGB_Background (R, G, B : RGB_Type) is
     begin
-        Put (ESC & "[38;2;" & R'Image & ";" & G'Image & ";" & B'Image & "m");
+        Put (ESC & "[48;2;" 
+               & Trim(R'Image, Both) & ";" 
+               & Trim(G'Image, Both) & ";" 
+               & Trim(B'Image, Both) & "m");
     end Set_RGB_Background;
+    
+    procedure Set_8bit_Background (Num : Colour_8bit_Type) is
+    begin
+        Put (ESC & "[48;5;" 
+               & Trim (Num'Image, Both)
+               & "m");
+    end Set_8bit_Background;
     
     procedure Default_Background is
     begin
@@ -284,6 +309,8 @@ package body Console is
     
     procedure Put_SGR (Code : Code_Type; Parameter : String := "") is
     begin
-        Put (ESC & "[" & Code'Image & Parameter & "m");
+        Put (ESC & "[" & 
+               Trim(Code'Image, Both)
+               & Parameter & "m");
     end Put_SGR;
 end Console;

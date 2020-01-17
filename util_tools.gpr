@@ -40,5 +40,13 @@ project util_tools is
                 "emoji_test.adb",
                 "emoji_test_read.adb"
                );
-    
+  
+  package Compiler is
+      for Default_Switches ("Ada") use 
+        (
+         "-g",     -- Debugging symbols
+         "-gnatW8" -- Unicode support for source code
+        );
+  end Compiler;
+
 end util_tools;

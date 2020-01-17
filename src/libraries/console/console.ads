@@ -26,6 +26,7 @@ package Console is
     type Alt_Font_Type is range 1 .. 9;
     
     type RGB_Type is range 0 .. 255;
+    type Colour_8bit_Type is range 0 .. 255;
     
     --  Code 0
     procedure Reset_All;
@@ -57,11 +58,13 @@ package Console is
     --  Code 30
     procedure Set_Colour (C : Colour_Type; Bright : Boolean := False);
     procedure Set_RGB_Colour (R, G, B : RGB_Type);
+    procedure Set_8bit_Colour (Num : Colour_8bit_Type);
     procedure Default_Colour;  --  Also Colour_Off;
     
     --  Code 40
     procedure Set_Background (C : Colour_Type; Bright : Boolean := False);
     procedure Set_RGB_Background (R, G, B : RGB_Type);
+    procedure Set_8bit_Background (Num : Colour_8bit_Type);
     procedure Default_Background; --  Also Background_Off
     
     --  Code 50
