@@ -40,15 +40,109 @@ package body Console is
         Put (ESC & "[2m");
     end Faint;
     
+    procedure Italic is 
+    begin 
+        Put (ESC & "[3m");
+    end Italic;
+    
+    procedure Underline is
+    begin
+        Put (ESC & "[4m");
+    end Underline;
+    
+    procedure Blink is
+    begin
+        Put (ESC & "[5m");
+    end Blink;
+    
+    procedure Rapid_Blink is
+    begin
+        Put (ESC & "[6m");
+    end Rapid_Blink;
+    
+    procedure Reverse_Video is 
+    begin
+        Put (ESC & "[7m");
+    end Reverse_Video;
+    
+    procedure Conceal is
+    begin
+        Put (ESC & "[8m");
+    end Conceal;
+    
     procedure Crossed_Out is
     begin
         Put (ESC & "[9m");
     end Crossed_Out;
     
-    procedure Alternative_Font is
+    --  --------------------
+    --  Codes 10
+    --  --------------------
+    
+    procedure Primary_Font is
     begin
-        Put (ESC & "[11m");
+        Put (ESC & "[10m");
+    end Primary_Font;
+
+    procedure Alternative_Font (Font_Number : Alt_Font_Type) is
+        Param_Number : Positive := 10;
+    begin
+        Param_Number := Param_Number + Alt_Font_Type'Pos (Font_Number);
+        Put (ESC & "[" & Param_Number'Image & "m");
     end Alternative_Font;
+    
+    --  --------------------
+    --  Codes 20
+    --  --------------------
+    
+    procedure Fraktur is 
+    begin
+        Put (ESC & "[20m");
+    end Fraktur;
+    
+    procedure Doubly_Underline is 
+    begin
+        Put (ESC & "[21m");
+    end Doubly_Underline;
+    
+    procedure Normal_Colour is 
+    begin
+        Put (ESC & "[22m");
+    end Normal_Colour;
+        
+    procedure Not_Italic is 
+    begin
+        Put (ESC & "[23m");
+    end Not_Italic;
+    
+    procedure Underline_Off is
+    begin
+        Put (ESC & "[24m");
+    end Underline_Off;
+    
+    procedure Blink_Off is
+    begin
+        Put (ESC & "[25m");
+    end Blink_Off;
+    
+    procedure Reverse_Video_Off is
+    begin
+        Put (ESC & "[27m");
+    end Reverse_Video_Off;
+    
+    procedure Reveal is 
+    begin
+        Put (ESC & "[28m");
+    end Reveal;
+    
+    procedure Crossed_Out_Off is
+    begin
+        Put (ESC & "[29m");
+    end Crossed_Out_Off;
+    
+    --  --------------------
+    --  Codes 30
+    --  --------------------
     
     function Colour_To_Ansi (C : Colour) return String is
     begin
@@ -98,6 +192,29 @@ package body Console is
         end case;
     end Colour_To_Ansi_Bright;
     
+    procedure Set_Colour (C : Colour; Bright : Boolean := False) is
+    begin
+        if Bright then
+            Put (Colour_To_Ansi_Bright (C));
+        else
+            Put (Colour_To_Ansi (C));
+        end if;
+    end Set_Colour;
+    
+    procedure Set_RGB_Colour (R, G, B : RGB_Type) is
+    begin
+        Put (ESC & "[38;2;" & R'Image & ";" & G'Image & ";" & B'Image & "m");
+    end Set_RGB_Colour;
+    
+    procedure Default_Colour is
+    begin
+        Put (ESC & "[39m");
+    end Default_Colour;
+    
+    --  --------------------
+    --  Codes 40
+    --  --------------------
+    
     function Bg_Colour_To_Ansi (C : Colour) return String is
     begin
         case C is
@@ -122,7 +239,7 @@ package body Console is
         end case;
     end Bg_Colour_To_Ansi;
     
-    function Bg_Colour_To_Ansi_Bright (C : Colour) return String is
+        function Bg_Colour_To_Ansi_Bright (C : Colour) return String is
     begin
         case C is
            when Black =>
@@ -146,16 +263,6 @@ package body Console is
         end case;
     end Bg_Colour_To_Ansi_Bright;
     
-    
-    procedure Set_Colour (C : Colour; Bright : Boolean := False) is
-    begin
-        if Bright then
-            Put (Colour_To_Ansi_Bright (C));
-        else
-            Put (Colour_To_Ansi (C));
-        end if;
-    end Set_Colour;
-    
     procedure Set_Background (C : Colour; Bright : Boolean := False) is
     begin
         if Bright then
@@ -165,53 +272,18 @@ package body Console is
         end if;
     end Set_Background;
     
-    procedure Underline is
+    procedure Set_RGB_Background (R, G, B : RGB_Type) is
     begin
-        Put (ESC & "[4m");
-    end Underline;
+        Put (ESC & "[38;2;" & R'Image & ";" & G'Image & ";" & B'Image & "m");
+    end Set_RGB_Background;
     
-    procedure Blink is
-    begin
-        Put (ESC & "[5m");
-    end Blink;
-    
-    procedure Reverse_Video is 
-    begin
-        Put (ESC & "[7m");
-    end Reverse_Video;
-       
-    procedure Crossed_Out_Off is
-    begin
-        Put (ESC & "[29m");
-    end Crossed_Out_Off;
-    
-    procedure Primary_Font is
-    begin
-        Put (ESC & "[10m");
-    end Primary_Font;
-    
-    procedure Colour_Off is
-    begin
-        Put (ESC & "[39m");
-    end Colour_Off;
-    
-    procedure Background_Off is
+    procedure Default_Background is
     begin
         Put (ESC & "[49m");
-    end Background_Off;
+    end Default_Background;                   
     
-    procedure Underline_Off is
+    procedure Put_SGR (Code : Code_Type; Parameter : String := "") is
     begin
-        Put (ESC & "[24m");
-    end Underline_Off;
-    
-    procedure Blink_Off is
-    begin
-        Put (ESC & "[25m");
-    end Blink_Off;
-    
-    procedure Reverse_Video_Off is
-    begin
-        Put (ESC & "[27m");
-    end Reverse_Video_Off;
+        Put (ESC & "[" & Code'Image & Parameter & "m");
+    end Put_SGR;
 end Console;
