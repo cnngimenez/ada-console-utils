@@ -120,7 +120,7 @@ package body Emojis.List is
             --  Wwio.Put_Line ("Result 3 ww:" & Emoji_Wws);
             
             Emoji_Description.Emoji := 
-              Emoji_String.To_Bounded_Wide_Wide_String (Emoji_Wws);
+              Emoji_String.To_Bounded_Wide_Wide_String (Emoji_Wws, Right);
             
         end Parse_Emoji;            
         
@@ -148,7 +148,7 @@ package body Emojis.List is
         begin
             --  Put_Line ("Result 6:" & Matched_Str);
             Emoji_Description.Name := 
-              Name_String.To_Bounded_String (Matched_Str);
+              Name_String.To_Bounded_String (Matched_Str, Right);
         end Parse_Description;
                    
     begin
@@ -203,7 +203,7 @@ package body Emojis.List is
             if Is_Comment (Line) or Line = "" then
                 Emoji_Description := Invalid_Emoji_Description;
                 Emoji_Description.Name := 
-                  Name_String.To_Bounded_String (Line, Left);
+                  Name_String.To_Bounded_String (Line, Right);
             else
                 Parse_Test (Line, Emoji_Description);
             end if;
