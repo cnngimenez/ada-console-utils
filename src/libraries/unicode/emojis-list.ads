@@ -49,7 +49,7 @@ package Emojis.List is
         Version: Version_Type;
         Name : Name_String.Bounded_String;
     end record;
-    
+       
     procedure Parse_Test (Str : String; 
                           Emoji_Description : out Emoji_Description_Type);
     
@@ -58,5 +58,14 @@ package Emojis.List is
                          Emoji_Description : out Emoji_Description_Type);
     procedure Close_Test_File (File : in out File_Type);
     
+    Invalid_Emoji_Description : constant Emoji_Description_Type := 
+      ( Code => Code_String.To_Bounded_Wide_Wide_String (""),
+        Emoji => Emoji_String.To_Bounded_Wide_Wide_String (""),
+        Status => Unknown,
+        Version => (Major => 0,
+                   Minnor => 0),
+        Name => Name_String.To_Bounded_String ("")
+      );
+
     
 end Emojis.List;
