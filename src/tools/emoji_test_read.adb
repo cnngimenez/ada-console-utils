@@ -19,6 +19,11 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings.Fixed;
+use Ada.Strings.Fixed;
+with Ada.Strings;
+use Ada.Strings;
+
 with Ada.Command_Line;
 use Ada.Command_Line;
 with Ada.Wide_Wide_Text_Io;
@@ -45,40 +50,49 @@ procedure Emoji_Test_Read is
         Put_Line ("");
     end Print_Help;
     
+    --
+    --  Print the description of the Emoji_Description_Type variable.
+    --
     procedure Print_Description (Emoji_Description : Emoji_Description_Type) is
-        package Wwio renames Ada.Wide_Wide_Text_Io;    
+        package Wwio renames Ada.Wide_Wide_Text_Io;
         
-        Pos : Integer;
-    begin
-        Put ("Emoji:");
-        declare 
+        --
+        --  Print the characters bytes that the emoji is composed.
+        --
+        procedure Print_Characters is
             Wwstr : Wide_Wide_String := Emoji_String.To_Wide_Wide_String
               (Emoji_Description.Emoji);
-            Max : Natural := Emoji_String.Length (Emoji_Description.Emoji);
+            Pos : Natural;    
         begin
-            for I in 1 .. Max loop
+            for I in Wwstr'Range loop
                 Pos := Wide_Wide_Character'Pos (Wwstr (i));
-                Tio.Put (Pos'Image);
+                Put (Trim(Pos'Image, Left));
+                Put (" ");                
             end loop;
-                        
-            Wwio.Put_Line (Wwstr);
-        end;
+        end Print_Characters;
+
+    begin
+        Put ("Emoji:       ");
+        Wwio.Put (Emoji_String.To_Wide_Wide_String
+                    (Emoji_Description.Emoji));
+        Put_Line ("");
         
-        -- Wwio.Put (Emoji_String.To_Wide_Wide_String
-        --             (Emoji_Description.Emoji));
-        -- Wwio.Put_Line (" ");
+        Put ("Characters:  ");
+        Print_Characters;
+        Put_Line ("");
         
-        Put (" | Code: ");
+        Put ("Code:        ");
         Wwio.Put_Line (Code_String.To_Wide_Wide_String
                          (Emoji_Description.Code));
         
-        Put ("Status: ");
+        Put ("Status:      ");
         Tio.Put_Line (Emoji_Description.Status'Image);
         
-        Put ("Version: ");
-        Tio.Put_Line (Emoji_Description.Version.Major'Image
-                        & "." 
-                        & Emoji_Description.Version.Minnor'Image);
+        Put ("Version:     ");
+        Tio.Put_Line (Trim (Emoji_Description.Version.Major'Image, Left) & 
+                        "." &
+                        Trim (Emoji_Description.Version.Minnor'Image, Left));
+        
         Put ("Description: ");
         Tio.Put_Line 
           (Name_String.To_String
