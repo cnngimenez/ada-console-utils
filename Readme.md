@@ -3,6 +3,17 @@ Miscelaneous Ada libraries and tools.
 # Requirements
 Only Ada and GNAT libraries. gprbuild to build the sources easily.
 
+In Fedora:
+
+    dnf install gcc-gnat gprbuild
+
+In Mangaro:
+
+    pacman -S gcc-ada
+    yaourt -S gprbuild
+
+gprbuild is on Arch repositories (AUR). Thus, use yaourt or your preferred AUR package manager.
+
 # Compiling
 Simply call `make` to compile the library and all binaries.
 
