@@ -27,7 +27,8 @@ use Ada.Text_Io;
 
 package Emojis.List is
     type Status_Type is (Component, Fully_Qualified, 
-                         Minimally_Qualified, Unqualified);
+                         Minimally_Qualified, Unqualified,
+                         Unknown);
     
     package Code_String is new 
       Wide_Wide_Bounded.Generic_Bounded_Length (Max => 43);

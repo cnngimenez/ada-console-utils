@@ -43,6 +43,7 @@ package body Emojis.List is
       Code_Pattern & 
       Status_Pattern & 
       Emoji_Pattern & 
+      Version_Pattern & 
       Description_Pattern;
     
     
@@ -63,49 +64,91 @@ package body Emojis.List is
     
     procedure Parse_Test (Str : String; 
                           Emoji_Description : out Emoji_Description_Type) is
-        
+                
         use Gnat.Regpat;
         use Ada.Strings.Fixed;
         use Ada.Strings;
-        
+                
         Compiled_Expression : Pattern_Matcher := 
           Compile(Emoji_Description_Pattern);
         Result : Match_Array (0..6);
         
+        procedure Parse_Code is
+            Code_Str : String :=
+              Trim (Str (Result (1).First .. Result (1).Last), Both);
+            Code_Wws : Wide_Wide_String := To_Wide_Wide_String (Code_Str);
+        begin
+            -- Put_Line ("Result 1:" & Code_Str);
+            Emoji_Description.Code := 
+              Code_String.To_Bounded_Wide_Wide_String (Code_Wws, Right);
+        end Parse_Code;
+        
+        procedure Parse_Status is
+            Status_Str : String := Str (Result(2).First .. Result(2).Last);
+        begin
+            --  Put_Line ("Result 2:" & Status_Str);
+            Emoji_Description.Status := To_Status (Status_Str);
+        end Parse_Status;
+        
+        procedure Parse_Emoji is
+            Emoji_Str : String := Str (Result(3).First .. Result(3).Last);
+            Emoji_Wws : Wide_Wide_String := To_Wide_Wide_String (Emoji_Str);
+        begin
+            --  Put_Line ("Result 3:" & Emoji_Str);
+            Emoji_Description.Emoji :=
+              Emoji_String.To_Bounded_Wide_Wide_String (Emoji_Wws, Right);
+        end Parse_Emoji;            
+        
+        procedure Parse_Major_Version is
+            Data_Str : String := Str (Result(4).First .. Result(4).Last);
+        begin
+            --  Put_Line ("Result 4:" & Data_Str);
+            Emoji_Description.Version.Major :=  Natural'Value (Data_Str);
+        end Parse_Major_Version;
+        
+        procedure Parse_Minnor_Version is
+            Data_Str : String := Str (Result (5).First .. Result (5).Last);
+        begin
+            --  Put_Line ("Result 5:" & Data_Str);
+            Emoji_Description.Version.Minnor := Natural'Value (Data_Str);
+        end Parse_Minnor_Version;
+        
+        procedure Parse_Description is
+            Matched_Str : String := Str(Result(6).First .. Result(6).Last);
+        begin
+            --  Put_Line ("Result 6:" & Matched_Str);
+            Emoji_Description.Name := 
+              Name_String.To_Bounded_String (Matched_Str);
+        end Parse_Description;
+                   
         use Ada.Text_Io;
     begin
         Match (Compiled_Expression, Str, Result);
         
-        if Result(1) /= No_Match then 
-            Put_Line (Trim 
-                        (Str (Result(1).First .. Result(1).Last), Both)
-                     & "|");
-            -- Emoji_Description.Code := Emoji_String.To_Bounded_Wide_Wide_String 
-            --   (To_Wide_Wide_String
-            --     (Trim (Str (Result(1).First .. Result(1).Last), Both))
-            --  );
+        if Result (1) /= No_Match then 
+            Parse_Code;
         end if;
-        if Result(2) /= No_Match then
-            Put_Line ("Hello");
-            -- Emoji_Description.Emoji := To_Wide_Wide_String 
-            --   (Str (Result(2).First .. Result(1).Last));
+        
+        if Result (2) /= No_Match then
+            Parse_Status;
+        else
+            Emoji_Description.Status := Unknown;
         end if;
+        
         if Result(3) /= No_Match then
-            Emoji_Description.Status := To_Status 
-              (Str (Result(3).First .. Result(3).Last));
+            Parse_Emoji;
         end if;
+        
         if Result(4) /= No_Match then
-            Emoji_Description.Version.Major :=  Natural'Value 
-              (Str (Result(4).First .. Result(4).Last));
+            Parse_Major_Version;
         end if;
+        
         if Result(5) /= No_Match then
-            Emoji_Description.Version.Minnor := Natural'Value
-              (Str (Result(5).First .. Result(5).Last));
+            Parse_Minnor_Version;
         end if;
+        
         if Result(6) /= No_Match then
-            Emoji_Description.Name := 
-              Name_String.To_Bounded_String
-              (Str(Result(6).First .. Result(6).Last));
+            Parse_Description;
         end if;
     end Parse_Test;
     
