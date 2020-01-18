@@ -21,6 +21,7 @@
 
 with Ada.Strings.Fixed;
 with Ada.Characters.Conversions;
+with Ada.Wide_Wide_Text_Io;
 with Ada.Text_Io;
 with Gnat.Regpat;
 
@@ -62,6 +63,22 @@ package body Emojis.List is
         return Ret;
     end To_Status;
     
+    function Is_Comment (Str : String) return Boolean is
+        use Gnat.Regpat;
+        
+        Compiled_Expression : Pattern_Matcher := 
+          Compile (Comment_Pattern);
+        Result : Match_Array (0 .. 1);
+    begin
+        Match (Compiled_Expression, Str, Result);
+        
+        if Result (0) /= No_Match then
+            return True;
+        else
+            return False;
+        end if;
+    end Is_Comment;
+     
     procedure Parse_Test (Str : String; 
                           Emoji_Description : out Emoji_Description_Type) is
                 
@@ -74,9 +91,10 @@ package body Emojis.List is
         Result : Match_Array (0..6);
         
         procedure Parse_Code is
-            Code_Str : String :=
+            Code_Str : String :=               
               Trim (Str (Result (1).First .. Result (1).Last), Both);
-            Code_Wws : Wide_Wide_String := To_Wide_Wide_String (Code_Str);
+            Code_Wws : Wide_Wide_String :=
+              To_Wide_Wide_String(Code_Str);
         begin
             -- Put_Line ("Result 1:" & Code_Str);
             Emoji_Description.Code := 
@@ -84,44 +102,55 @@ package body Emojis.List is
         end Parse_Code;
         
         procedure Parse_Status is
-            Status_Str : String := Str (Result(2).First .. Result(2).Last);
+            Status_Str : String := 
+              Str (Result(2).First .. Result(2).Last);
         begin
             --  Put_Line ("Result 2:" & Status_Str);
             Emoji_Description.Status := To_Status (Status_Str);
         end Parse_Status;
         
         procedure Parse_Emoji is
-            Emoji_Str : String := Str (Result(3).First .. Result(3).Last);
-            Emoji_Wws : Wide_Wide_String := To_Wide_Wide_String (Emoji_Str);
+            Emoji_Str : String := 
+              Str (Result (3).First .. Result (3).Last);
+            Emoji_Wws : Wide_Wide_String := 
+              To_Wide_Wide_String (Emoji_Str);
+           
         begin
             --  Put_Line ("Result 3:" & Emoji_Str);
-            Emoji_Description.Emoji :=
-              Emoji_String.To_Bounded_Wide_Wide_String (Emoji_Wws, Right);
+            --  Wwio.Put_Line ("Result 3 ww:" & Emoji_Wws);
+            
+            Emoji_Description.Emoji := 
+              Emoji_String.To_Bounded_Wide_Wide_String (Emoji_Wws);
+            
         end Parse_Emoji;            
         
         procedure Parse_Major_Version is
-            Data_Str : String := Str (Result(4).First .. Result(4).Last);
+            Data_Str : String := 
+              Str (Result (4).First .. Result (4).Last);
         begin
             --  Put_Line ("Result 4:" & Data_Str);
-            Emoji_Description.Version.Major :=  Natural'Value (Data_Str);
+            Emoji_Description.Version.Major :=  
+              Natural'Value (Data_Str);
         end Parse_Major_Version;
         
         procedure Parse_Minnor_Version is
-            Data_Str : String := Str (Result (5).First .. Result (5).Last);
+            Data_Str : String := 
+              Str (Result (5).First .. Result (5).Last);
         begin
             --  Put_Line ("Result 5:" & Data_Str);
-            Emoji_Description.Version.Minnor := Natural'Value (Data_Str);
+            Emoji_Description.Version.Minnor := 
+              Natural'Value (Data_Str);
         end Parse_Minnor_Version;
         
         procedure Parse_Description is
-            Matched_Str : String := Str(Result(6).First .. Result(6).Last);
+            Matched_Str : String := 
+              Str(Result(6).First .. Result(6).Last);
         begin
             --  Put_Line ("Result 6:" & Matched_Str);
             Emoji_Description.Name := 
               Name_String.To_Bounded_String (Matched_Str);
         end Parse_Description;
                    
-        use Ada.Text_Io;
     begin
         Match (Compiled_Expression, Str, Result);
         
@@ -152,23 +181,37 @@ package body Emojis.List is
         end if;
     end Parse_Test;
     
-    procedure Open_Test_File (Path : String; File : out File_Type) Is
+    procedure Open_Test_File (Path : String; File : out File_Type) is
+        use Ada.Text_Io;
     begin
-        Open(File, In_File, Path);
+        Open (File, In_File, Path);
     end Open_Test_File;
     
     procedure Next_Test (File : in out File_Type;
                          Emoji_Description : out Emoji_Description_Type) is
+        use Ada.Text_Io;
     begin
+        if End_Of_File (File) then
+            Emoji_Description := Invalid_Emoji_Description;
+            return;
+        end if;
+        
         declare
-            Line : String := Get_Line(File);
-        begin
-            Put_Line("nn");
+            use Ada.Strings.Fixed;
+            Line : String := Trim (Get_Line (File), Both);
+        begin           
+            if Is_Comment (Line) or Line = "" then
+                Emoji_Description := Invalid_Emoji_Description;
+                Emoji_Description.Name := 
+                  Name_String.To_Bounded_String (Line, Left);
+            else
+                Parse_Test (Line, Emoji_Description);
+            end if;
         end;
     end Next_Test;
     
     procedure Close_Test_File (File : in out File_Type) is 
     begin
-        Close(File);
+        Close (File);
     end Close_Test_File;
 end Emojis.List;

@@ -44,8 +44,8 @@ project util_tools is
   package Compiler is
       for Default_Switches ("Ada") use 
         (
-         "-g",     -- Debugging symbols
-         "-gnatW8" -- Unicode support for source code
+         "-g"     -- Debugging symbols
+           -- , "-gnatW8" -- Unicode support for source code
         );
   end Compiler;
 

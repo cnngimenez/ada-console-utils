@@ -21,8 +21,8 @@
 
 with Ada.Strings.Wide_Wide_Bounded;
 with Ada.Strings.Bounded;
-with Ada.Text_Io;
 use Ada.Strings;
+with Ada.Text_Io;
 use Ada.Text_Io;
 
 package Emojis.List is
