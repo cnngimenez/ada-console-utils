@@ -14,6 +14,13 @@ In Mangaro:
 
 gprbuild is on Arch repositories (AUR). Thus, use yaourt or your preferred AUR package manager.
 
+## Data
+A text file is used by the emoji test executable (`emoji_test_read` binary) and library (`emoji-list`). These were downloaded from unicode.org, specifiacally, the following URL:
+
+https://unicode.org/Public/emoji/12.1/
+
+The emoji-test.txt file is the required one. Once the executables are compiled, you can search for all emojis with "face" in their description by typing `bin/emoji_test_read emoji-test.txt face` on the terminal.
+
 # Compiling
 Simply call `make` to compile the library and all binaries.
 
