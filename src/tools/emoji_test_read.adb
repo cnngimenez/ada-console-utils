@@ -99,17 +99,28 @@ procedure Emoji_Test_Read is
              (Emoji_Description.Name));
     end Print_Description;
     
-    procedure Parse_File (Filename : String) is
+    procedure Parse_File (Filename : String ; Name_Filter : String := "") is
         File : File_Type;
         Emoji_Description : Emoji_Description_Type;                
     begin
         Open_Test_File (Filename, File);
         
-        while not End_Of_File (File) loop
-            Put_Line ("Reading line");
-            Next_Test (File, Emoji_Description);
-            Print_Description (Emoji_Description);
-        end loop;
+        if Name_Filter /= "" then
+            while not End_Of_File (File) loop
+                Next_Test (File, Emoji_Description);
+                if Name_String.Index 
+                  (Emoji_Description.Name, Name_Filter) > 0 then
+                    Put_Line ("----------------------------------------");                    
+                    Print_Description (Emoji_Description);
+                end if;
+            end loop;
+        else
+            while not End_Of_File (File) loop
+                Put_Line ("----------------------------------------");
+                Next_Test (File, Emoji_Description);
+                Print_Description (Emoji_Description);
+            end loop;
+        end if;
         
         Close_Test_File (File);
     end Parse_File;
@@ -134,7 +145,13 @@ begin
             Print_Help;
         else
             Put_Line ("Parsing file mode");
-            Parse_File (Argument (1));
+            
+            if Argument_Count > 1 then                
+                Parse_File (Argument (1), Argument (2));
+            else
+                Parse_File (Argument (1));
+            end if;
+            
             Put_Line ("Done");
         end if;
         
