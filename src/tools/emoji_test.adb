@@ -19,16 +19,49 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Wide_Wide_Text_Io;
 with Ada.Text_Io;
 use Ada.Text_Io;
 with Emojis;
 use Emojis;
 
+with Ada.Strings.Wide_Wide_Unbounded;
+use Ada.Strings.Wide_Wide_Unbounded;
+
 procedure Emoji_Test is
+    
+    package Wwio renames Ada.Wide_Wide_Text_Io;
+    
+    Unbounded_Str : Unbounded_Wide_Wide_String;
+    
+    Face : Wide_Wide_Character := Wide_Wide_Character'Val (16#1f600#);
+    Person : Wide_Wide_Character := Wide_Wide_Character'Val (16#1f468#);
+    Hat : Wide_Wide_Character := Wide_Wide_Character'Val (16#1f393#);
+    
 begin
     Put_Line ("Character A:" & Character'Val (65));
     
     Put_Person;
     Put_Skin (Dark);
     Put_Hair (Red_Hair);
+    
+    Put_Skin (Face, Dark);
+    
+    Append (Unbounded_Str, Person );
+    Append (Unbounded_Str, Hat );
+    
+    Put_Line ("");
+    declare 
+        Joined : Unbounded_Wide_Wide_String :=
+          Join_With_Zwj (To_Wide_Wide_String (Unbounded_Str));
+        Str : Wide_Wide_String :=
+          (To_Wide_Wide_String           
+             (Joined));
+    begin
+        Put_Line (Natural'Image (Length (Joined)));
+        Wwio.Put_Line (Str);
+    end;
+
+    
+
 end Emoji_Test;
