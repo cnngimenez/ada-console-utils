@@ -1,4 +1,4 @@
--- utils.gpr --- Project Manager File
+-- console_utils.gpr --- Project Manager File
 
 -- Copyright 2019 cnngimenez
 --
@@ -26,9 +26,9 @@
 -- with "matreshka_league.gpr";
 -- with "gtkada.gpr"; 
 
-library project utils is
+library project Console_Utils is
   
-  for Library_Name use "utils";
+  for Library_Name use "console_utils";
   for Library_Dir use "lib";
   
   for Source_Dirs use (
@@ -46,4 +46,4 @@ library project utils is
         );
   end Compiler;
   
-end utils;
+end Console_Utils;

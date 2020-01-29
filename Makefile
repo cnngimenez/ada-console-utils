@@ -25,16 +25,29 @@
 PREFIX=$(HOME)/Ada/installs
 
 ## Rules
+all: compile install
 
-compile:
-	@echo Compiling...
-	gprbuild utils.gpr
-	gprbuild util_tools.gpr
+compile: lib tools
+
+lib:
+	gprbuild console_utils.gpr
+
+tools:
+	gprbuild console_util_tools.gpr
 
 install:
 	@echo Installing into $(PREFIX)
-	gprinstall -p --prefix=$(PREFIX) utils.gpr
-	gprinstall -p --prefix=$(PREFIX) util_tools.gpr
+	gprinstall -p --prefix=$(PREFIX) console_utils.gpr
+	gprinstall -p --prefix=$(PREFIX) console_util_tools.gpr
+
+uninstall:
+	@echo Uninstalling from $(PREFIX)
+	gprinstall --prefix=$(PREFIX) --uninstall console_utils.gpr
+	gprinstall --prefix=$(PREFIX) --uninstall console_util_tools.gpr
+
+clean:
+	gprclean console_utils.gpr
+	gprclean console_util_tools.gpr
 
 params:
 	@echo Install into: $(PREFIX)

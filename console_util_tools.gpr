@@ -1,4 +1,4 @@
--- util_tools.gpr --- Project Manager File
+-- console_util_tools.gpr --- Project Manager File
 
 -- Copyright 2020 poo
 --
@@ -25,9 +25,9 @@
 --
 -- with "matreshka/league.gpr";
 -- with "gtkada.gpr"; 
-with "utils.gpr";
+with "console_utils.gpr";
 
-project util_tools is
+project Console_Util_Tools is
     
   for Source_Dirs use (
                       "src/tools"
@@ -49,4 +49,4 @@ project util_tools is
         );
   end Compiler;
 
-end util_tools;
+end Console_Util_Tools;
