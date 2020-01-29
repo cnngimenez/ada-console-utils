@@ -116,4 +116,25 @@ package body Emojis is
     begin
         Put (Wide_Wide_Character'Val (16#1F9D1#));
     end Put_Person;
+    
+    procedure Put_Emoji (Number : Positive) is
+    begin
+        Put (Wide_Wide_Character'Val (Number));
+    end Put_Emoji;
+    
+    procedure Put_Zwj is 
+    begin
+        Put (Zero_Width_Joiner);
+    end Put_Zwj;
+    
+    procedure Put_Variation is 
+    begin
+        Put (Variation_Selector);
+    end Put_Variation;
+
+    procedure Put_Keycap is
+    begin
+        Put (Combining_Enclosing_Keycap);
+    end Put_Keycap;
+
 end Emojis;

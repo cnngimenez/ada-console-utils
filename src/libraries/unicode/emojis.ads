@@ -76,7 +76,21 @@ package Emojis is
     procedure Put_Hair (Hair : Hair_Type);
     procedure Put_Hair (Emoji : Wide_Wide_Character; Hair : Hair_Type);
     
+    --  Put the given emoji character.
+    procedure Put_Emoji (Number : Positive);
+    
+    --  Put the Zero Width Joiner to standard IO
+    procedure Put_Zwj;
+    
+    --  Put the Variation Selector to standard IO
+    procedure Put_Variation;
+
+    --  Put to standard IO the Combining Enclosing Keycap
+    procedure Put_Keycap;
+    
     
     procedure Put_Person;
+    
+    
     
 end Emojis;
