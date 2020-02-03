@@ -31,6 +31,10 @@ library project Console_Utils is
   for Library_Name use "console_utils";
   for Library_Dir use "lib";
   
+  --  for Library_Kind use "static";
+  --  for Library_Kind use "dynamic"; --  a.k.a. "relocatable"
+  for Library_Kind use External ("LIBRARY_KIND", "dynamic");
+  
   for Source_Dirs use (
                        "src/libraries/console", 
                        "src/libraries/unicode"

@@ -24,12 +24,16 @@ The emoji-test.txt file is the required one. Once the executables are compiled, 
 # Compiling
 Simply call `make` to compile the library and all binaries.
 
-`make install` will install the library and binaries into the prefix.
-
-`make params` will show the parameters used by the Makefile.
+- `make install` will install the library and binaries into the prefix.
+- `make params` will show the parameters used by the Makefile.
 
 To change the prefix use `make install PREFIX=your_path_here` were `your_path_here` is the path you want to install. For example: `make install PREFIX=/home/me/all_Ada_codes` will install:
 libs on `/home/me/all_Ada_codes/lib`, binaries on `/home/me/all_Ada_codes/bin`, etc.
+
+Variables: 
+
+- PREFIX : The path where to install.
+- LIBRARY_KIND : "dynamic" or "static". The type of library to create.
 
 ## gprbuild alternative
 Use gprbuild as follows.

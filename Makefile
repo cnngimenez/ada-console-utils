@@ -22,17 +22,19 @@
 
 ### Makefile ends here
 
+LIBRARY_KIND=dynamic
 PREFIX=$(HOME)/Ada/installs
 
 ## Rules
-all: compile install
+compile: libs tools
 
-compile: lib tools
-
-lib:
+libs:
+	@echo "Compiling libraries"
+	@echo "Making $(LIBRARY_KIND) libraries"
 	gprbuild console_utils.gpr
 
 tools:
+	@echo "Compiling tools"
 	gprbuild console_util_tools.gpr
 
 install:
@@ -51,5 +53,6 @@ clean:
 
 params:
 	@echo Install into: $(PREFIX)
+	@echo Kind of library (dynamic/static): $(LIBRARY_KIND)
 
 all: compile install
