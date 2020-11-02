@@ -30,6 +30,8 @@ package Widgets.Selectors is
     package Data_Vectors is new Ada.Containers.Vectors
       (Element_Type => Unbounded_String,
        Index_Type => Positive);
+    package Data_Vectors_Sorting is new Data_Vectors.Generic_Sorting
+      ("<" => "<");
 
     subtype Data_Vector is Data_Vectors.Vector;
 

@@ -27,8 +27,10 @@ use Console;
 package body Widgets.Selectors is
 
     procedure Add (Selector : in out Selector_Type; Data : String) is
+        use Data_Vectors_Sorting;
     begin
         Selector.Data.Append (To_Unbounded_String (Data));
+        Sort (Selector.Data);
     end Add;
 
     procedure Execute (Selector : in out Selector_Type) is
@@ -44,7 +46,8 @@ package body Widgets.Selectors is
 
             Get_Immediate (Key);
             if Key = Character'Val (13) or else
-              Key = Character'Val (10) then
+              Key = Character'Val (10)
+            then
                 Accepted := True;
             else
                 Append (Selector.Current_String, Key);
@@ -64,6 +67,8 @@ package body Widgets.Selectors is
                           Substring : String)
                          return Data_Vector is
         use Data_Vectors;
+        procedure Append_If_Has_Substring (Position : Cursor);
+
         Results : Data_Vector;
 
         procedure Append_If_Has_Substring (Position : Cursor) is
@@ -128,8 +133,10 @@ package body Widgets.Selectors is
 
     procedure Set_Data (Selector : in out Selector_Type;
                         Data : Data_Vector) is
+        use Data_Vectors_Sorting;
     begin
         Selector.Data := Data;
+        Sort (Selector.Data);
     end Set_Data;
 
 end Widgets.Selectors;
