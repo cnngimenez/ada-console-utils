@@ -63,18 +63,23 @@ package body Widgets.Selectors is
     function Filter_Data (Selector : Selector_Type;
                           Substring : String)
                          return Data_Vector is
+        use Data_Vectors;
         Results : Data_Vector;
+
+        procedure Append_If_Has_Substring (Position : Cursor) is
+        begin
+            if Index (Element (Position), Substring) > 0 then
+                Results.Append (Element (Position));
+            end if;
+        end Append_If_Has_Substring;
+
     begin
         if Substring = "" then
             Results := Selector.Data;
             return Results;
         end if;
 
-        for A_String of Selector.Data loop
-            if Index (A_String, Substring) > 0 then
-                Results.Append (A_String);
-            end if;
-        end loop;
+        Selector.Data.Iterate (Append_If_Has_Substring'Access);
 
         return Results;
     end Filter_Data;
@@ -107,7 +112,7 @@ package body Widgets.Selectors is
 
         for I in 1 .. 10 loop
             A_String := To_Unbounded_String ("");
-            if I < Integer (Filtered_Data.Length) then
+            if I <= Integer (Filtered_Data.Length) then
                 A_String := Filtered_Data (I);
             end if;
 
