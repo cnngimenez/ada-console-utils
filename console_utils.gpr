@@ -46,8 +46,17 @@ library project Console_Utils is
   package Compiler is
       for Default_Switches ("Ada") use
         (
-         "-g"     --  Debugging symbols
-           --  , "-gnatW8" --  Unicode support for source code
+         "-g", --  with Debugging symbols
+         --  "-gnatc", --  Semantic checkeng
+
+         --  All warnings and style checkings!
+         "-Wall", "-gnatwa", "-gnatVa", "-gnatVoi", "-gnatyy", "-gnatyB",
+         "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
+         "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu",
+         --  Requested by the linker to generate dynamic libraries.
+         --  "-fPIC"
+         --  Print full path
+         "-gnatef"
         );
   end Compiler;
 
