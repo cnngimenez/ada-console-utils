@@ -58,13 +58,18 @@ package Widgets.Selectors is
     procedure Add (Selector : in out Selector_Type;
                    Data : String);
 
+    procedure Next_Selection (Selector : in out Selector_Type);
+    procedure Previous_Selection (Selector : in out Selector_Type);
+
 private
 
     type Selector_Type is tagged record
         Data : Data_Vector;
         Current_String : Unbounded_String;
+        Current_Selection : Natural;
     end record;
 
+    procedure Ask_If_New (Selector : in out Selector_Type);
     procedure Put_Data (Selector : Selector_Type);
 
 end Widgets.Selectors;

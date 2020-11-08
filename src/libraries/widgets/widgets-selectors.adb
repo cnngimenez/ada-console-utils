@@ -33,26 +33,105 @@ package body Widgets.Selectors is
         Sort (Selector.Data);
     end Add;
 
+    procedure Ask_If_New (Selector : in out Selector_Type) is
+        use Data_Vectors;
+        Possible_Selection : Unbounded_String := To_Unbounded_String ("");
+        Key : Character;
+
+    begin
+        if Selector.Current_String = "" then
+            --  No text written.
+            Selector.Current_String := Element (Selector.Data,
+                                                Selector.Current_Selection);
+            return;
+        end if;
+
+        --  Check if the current string is a substring of the current selection
+        --  Use the filtered selections which is the one showed to the user.
+        Possible_Selection := Element (Filter_Data (Selector,
+                                                    Selector.Current_String),
+                                       Selector.Current_Selection);
+
+        if Index (Possible_Selection,
+                  To_String (Selector.Current_String)) = 0
+        then
+            --  It is not, the delete the current selection.
+            Possible_Selection := To_Unbounded_String ("");
+        end if;
+
+        if Possible_Selection = Selector.Current_String then
+            --  Written text is the same as the selection
+            return;
+        end if;
+
+        if Possible_Selection /= "" then
+            Put_Line ("Current selection: " & To_String (Possible_Selection));
+            Put_Line ("Is the text '" & To_String (Selector.Current_String)
+                        & "' a new selected data?(Y/n)");
+            Put_Line ("If answer is (n), " &
+                        "then the current selection is returned.");
+        else
+            Put_Line ("Is the text '" & To_String (Selector.Current_String)
+                        & "' a new selected data?(Y/n)");
+            Put_Line ("If answer is (n), then the empty string is returned.");
+        end if;
+
+        loop
+            Get_Immediate (Key);
+            if Key = 'y' or else Key = 'Y' then
+                Put_Line (Key'Image);
+                exit;
+            elsif Key = 'n' or else Key = 'N' then
+                Selector.Current_String := Possible_Selection;
+                Put_Line (Key'Image);
+                exit;
+            end if;
+        end loop;
+        return;
+    end Ask_If_New;
+
     procedure Execute (Selector : in out Selector_Type) is
         Accepted : Boolean := False;
         Key : Character;
+
+        procedure Get_Escape_Sequence;
+
+        procedure Get_Escape_Sequence is
+            Key1, Key2 : Character;
+        begin
+            Get_Immediate (Key1);
+            Get_Immediate (Key2);
+
+            if Key2 = Character'Val (66) then
+                Selector.Next_Selection;
+            elsif Key2 = Character'Val (65) then
+                Selector.Previous_Selection;
+            end if;
+        end Get_Escape_Sequence;
+
     begin
+        Selector.Current_Selection := 1;
         Selector.Current_String := To_Unbounded_String ("");
 
         while not Accepted loop
+            Erase_Display (Entire_Screen);
             Selector.Put_Data;
 
             Put_Line (To_String (Selector.Current_String));
 
+            --  Put_Line (Positive'Image (Character'Pos (Key)));
             Get_Immediate (Key);
+
             if Key = Character'Val (13) or else
               Key = Character'Val (10)
             then
+                Ask_If_New (Selector);
                 Accepted := True;
+            elsif Key = Character'Val (27) then
+                Get_Escape_Sequence;
             else
                 Append (Selector.Current_String, Key);
             end if;
-
         end loop;
     end Execute;
 
@@ -107,18 +186,44 @@ package body Widgets.Selectors is
         return Selector.Data;
     end Get_Data;
 
+    procedure Next_Selection (Selector : in out Selector_Type) is
+    begin
+        if Selector.Current_Selection < 10 then
+            Selector.Current_Selection := Selector.Current_Selection + 1;
+        else
+            Selector.Current_Selection := 0;
+        end if;
+    end Next_Selection;
+
+    procedure Previous_Selection (Selector : in out Selector_Type) is
+    begin
+        if Selector.Current_Selection > 0 then
+            Selector.Current_Selection := Selector.Current_Selection - 1;
+        else
+            Selector.Current_Selection := 10;
+        end if;
+    end Previous_Selection;
+
     procedure Put_Data (Selector : Selector_Type) is
         Filtered_Data : Data_Vector;
         A_String : Unbounded_String;
     begin
-        Erase_Display (Entire_Screen);
-
         Filtered_Data := Selector.Filter_Data (Selector.Current_String);
 
         for I in 1 .. 10 loop
             A_String := To_Unbounded_String ("");
             if I <= Integer (Filtered_Data.Length) then
                 A_String := Filtered_Data (I);
+            end if;
+
+            if I = Selector.Current_Selection then
+                Set_Background (White);
+                Set_Colour (Black);
+                Blink;
+            else
+                Default_Background;
+                Default_Colour;
+                Blink_Off;
             end if;
 
             Put_Line (To_String (A_String));
