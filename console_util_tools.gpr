@@ -39,7 +39,8 @@ project Console_Util_Tools is
                 "console_test.adb",
                 "emoji_test.adb",
                 "emoji_test_read.adb",
-                "selector.adb"
+                "selector.adb",
+                "keys.adb"
                );
 
   package Compiler is
