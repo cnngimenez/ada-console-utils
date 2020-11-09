@@ -39,6 +39,7 @@ package body Widgets.Selectors is
         Possible_Selection : Unbounded_Wide_Wide_String :=
           To_Unbounded_Wide_Wide_String ("");
         Key : Wide_Wide_Character;
+        Filtered_Data : Data_Vector;
 
     begin
         if Selector.Current_String = "" then
@@ -50,9 +51,13 @@ package body Widgets.Selectors is
 
         --  Check if the current string is a substring of the current selection
         --  Use the filtered selections which is the one showed to the user.
-        Possible_Selection := Element (Filter_Data (Selector,
-                                                    Selector.Current_String),
-                                       Selector.Current_Selection);
+        Filtered_Data := Filter_Data (Selector, Selector.Current_String);
+        if Is_Empty (Filtered_Data) then
+            Possible_Selection := To_Unbounded_Wide_Wide_String ("");
+        else
+            Possible_Selection := Element (Filtered_Data,
+                                           Selector.Current_Selection);
+        end if;
 
         if Index (Possible_Selection,
                   To_Wide_Wide_String (Selector.Current_String)) = 0
