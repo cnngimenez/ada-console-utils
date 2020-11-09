@@ -19,8 +19,8 @@
 
 -------------------------------------------------------------------------
 
-with Ada.Strings.Unbounded;
-use Ada.Strings.Unbounded;
+with Ada.Strings.Wide_Wide_Unbounded;
+use Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Containers.Vectors;
 
 package Widgets.Selectors is
@@ -28,7 +28,7 @@ package Widgets.Selectors is
     type Selector_Type is tagged private;
 
     package Data_Vectors is new Ada.Containers.Vectors
-      (Element_Type => Unbounded_String,
+      (Element_Type => Unbounded_Wide_Wide_String,
        Index_Type => Positive);
     package Data_Vectors_Sorting is new Data_Vectors.Generic_Sorting
       ("<" => "<");
@@ -38,11 +38,11 @@ package Widgets.Selectors is
     procedure Execute (Selector : in out Selector_Type);
 
     procedure Set_Current_String (Selector : in out Selector_Type;
-                                  Current_String : Unbounded_String);
+                                  Current_String : Unbounded_Wide_Wide_String);
     function Get_Current_String (Selector : Selector_Type)
-                                return Unbounded_String;
+                                return Unbounded_Wide_Wide_String;
     function Get_Current_String (Selector : Selector_Type)
-                                return String;
+                                return Wide_Wide_String;
 
     procedure Set_Data (Selector : in out Selector_Type;
                         Data : Data_Vector);
@@ -50,13 +50,14 @@ package Widgets.Selectors is
                       return Data_Vector;
 
     function Filter_Data (Selector : Selector_Type;
-                          Substring : Unbounded_String)
+                          Substring : Unbounded_Wide_Wide_String)
                          return Data_Vector;
-    function Filter_Data (Selector : Selector_Type; Substring : String)
+    function Filter_Data (Selector : Selector_Type;
+                          Substring : Wide_Wide_String)
                          return Data_Vector;
 
     procedure Add (Selector : in out Selector_Type;
-                   Data : String);
+                   Data : Wide_Wide_String);
 
     procedure Next_Selection (Selector : in out Selector_Type);
     procedure Previous_Selection (Selector : in out Selector_Type);
@@ -65,7 +66,7 @@ private
 
     type Selector_Type is tagged record
         Data : Data_Vector;
-        Current_String : Unbounded_String;
+        Current_String : Unbounded_Wide_Wide_String;
         Current_Selection : Natural;
     end record;
 
