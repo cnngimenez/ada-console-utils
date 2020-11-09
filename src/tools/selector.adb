@@ -21,8 +21,11 @@
 
 with Ada.Command_Line;
 use Ada.Command_Line;
-with Ada.Text_IO;
-use Ada.Text_IO;
+with Ada.Characters.Conversions;
+use Ada.Characters.Conversions;
+
+with Ada.Wide_Wide_Text_IO;
+use Ada.Wide_Wide_Text_IO;
 
 with Widgets.Selectors;
 use Widgets.Selectors;
@@ -36,7 +39,7 @@ begin
     end if;
 
     for I in 1 .. Argument_Count loop
-        Selector.Add (Argument (I));
+        Selector.Add (To_Wide_Wide_String (Argument (I)));
     end loop;
 
     Selector.Execute;
