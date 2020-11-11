@@ -33,14 +33,17 @@ use Widgets.Selectors;
 
 procedure Selector is
     Selector : Selector_Type;
+    File : File_Type;
 begin
     if Argument_Count = 0 then
         return;
     end if;
 
-    for I in 1 .. Argument_Count loop
-        Selector.Add (To_Wide_Wide_String (Argument (I)));
+    Open (File, In_File, Argument (1));
+    while not End_Of_File(File) loop
+        Selector.Add (Get_Line (File));
     end loop;
+    Close (File);
 
     Selector.Execute;
 

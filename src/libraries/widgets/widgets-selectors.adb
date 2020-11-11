@@ -100,6 +100,10 @@ package body Widgets.Selectors is
         return;
     end Ask_If_New;
 
+    function Current_Filter_Data (Selector : Selector_Type)
+                                 return Data_Vector is
+      (Filter_Data (Selector, Selector.Current_String));
+
     procedure Delete_Character (Selector : in out Selector_Type) is
         Amount : constant Natural := Length (Selector.Current_String);
     begin
@@ -210,20 +214,25 @@ package body Widgets.Selectors is
     end Get_Data;
 
     procedure Next_Selection (Selector : in out Selector_Type) is
+        use Data_Vectors;
     begin
-        if Selector.Current_Selection < 10 then
+        if Selector.Current_Selection < Natural
+          (Length (Selector.Current_Filter_Data))
+        then
             Selector.Current_Selection := Selector.Current_Selection + 1;
         else
-            Selector.Current_Selection := 0;
+            Selector.Current_Selection := 1;
         end if;
     end Next_Selection;
 
     procedure Previous_Selection (Selector : in out Selector_Type) is
+        use Data_Vectors;
     begin
-        if Selector.Current_Selection > 0 then
+        if Selector.Current_Selection > 1 then
             Selector.Current_Selection := Selector.Current_Selection - 1;
         else
-            Selector.Current_Selection := 10;
+            Selector.Current_Selection := Natural
+              (Length (Selector.Current_Filter_Data));
         end if;
     end Previous_Selection;
 
@@ -233,7 +242,8 @@ package body Widgets.Selectors is
     begin
         Filtered_Data := Selector.Filter_Data (Selector.Current_String);
 
-        for I in 1 .. 10 loop
+        for I in Selector.Current_Selection .. Selector.Current_Selection + 10
+        loop
             A_String := To_Unbounded_Wide_Wide_String ("");
             if I <= Integer (Filtered_Data.Length) then
                 A_String := Filtered_Data (I);
