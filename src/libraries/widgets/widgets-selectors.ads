@@ -71,6 +71,9 @@ private
     end record;
 
     procedure Ask_If_New (Selector : in out Selector_Type);
+    --  Delete one character at the end of the current written string
+    --  (if possible).
+    procedure Delete_Character (Selector : in out Selector_Type);
     procedure Put_Data (Selector : Selector_Type);
 
 end Widgets.Selectors;

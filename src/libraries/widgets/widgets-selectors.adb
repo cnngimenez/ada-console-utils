@@ -100,6 +100,16 @@ package body Widgets.Selectors is
         return;
     end Ask_If_New;
 
+    procedure Delete_Character (Selector : in out Selector_Type) is
+        Amount : constant Natural := Length (Selector.Current_String);
+    begin
+        if Amount > 0 then
+            Delete (Selector.Current_String,
+                    Length (Selector.Current_String),
+                    Length (Selector.Current_String));
+        end if;
+    end Delete_Character;
+
     procedure Execute (Selector : in out Selector_Type) is
         Accepted : Boolean := False;
         Key : Wide_Wide_Character;
@@ -135,8 +145,11 @@ package body Widgets.Selectors is
             if Key = Wide_Wide_Character'Val (13) or else
               Key = Wide_Wide_Character'Val (10)
             then
+                --  Enter pressed
                 Ask_If_New (Selector);
                 Accepted := True;
+            elsif Key = Wide_Wide_Character'Val (127) then
+                Delete_Character (Selector);
             elsif Key = Wide_Wide_Character'Val (27) then
                 Get_Escape_Sequence;
             else
