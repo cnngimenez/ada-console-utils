@@ -60,6 +60,8 @@ package Widgets.Selectors is
     function Filter_Data (Selector : Selector_Type;
                           Substring : Wide_Wide_String)
                          return Data_Vector;
+    function Current_Filter_Data (Selector : Selector_Type)
+                                 return Data_Vector;
 
     procedure Add (Selector : in out Selector_Type;
                    Data : Wide_Wide_String);
@@ -74,12 +76,15 @@ private
     type Selector_Type is tagged record
         Data : Data_Vector;
         Current_String : Unbounded_Wide_Wide_String;
-        Current_Selection : Natural;
+        Current_Selection : Positive;
 
         Last_Key_Event : Character;
     end record;
 
     procedure Ask_If_New (Selector : in out Selector_Type);
+    --  Delete one character at the end of the current written string
+    --  (if possible).
+    procedure Delete_Character (Selector : in out Selector_Type);
     procedure Put_Data (Selector : Selector_Type);
 
 end Widgets.Selectors;

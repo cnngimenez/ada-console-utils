@@ -18,9 +18,12 @@
 --  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -------------------------------------------------------------------------
-
+with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
+with Ada.Characters.Conversions;
+use Ada.Characters.Conversions;
+
 with Console;
 use Console;
 
@@ -100,6 +103,20 @@ package body Widgets.Selectors is
         return;
     end Ask_If_New;
 
+    function Current_Filter_Data (Selector : Selector_Type)
+                                 return Data_Vector is
+      (Filter_Data (Selector, Selector.Current_String));
+
+    procedure Delete_Character (Selector : in out Selector_Type) is
+        Amount : constant Natural := Length (Selector.Current_String);
+    begin
+        if Amount > 0 then
+            Delete (Selector.Current_String,
+                    Length (Selector.Current_String),
+                    Length (Selector.Current_String));
+        end if;
+    end Delete_Character;
+
     procedure Draw (Selector : in out Selector_Type) is
     begin
         Selector.Put_Data;
@@ -109,19 +126,19 @@ package body Widgets.Selectors is
 
     procedure Execute (Selector : in out Selector_Type) is
         Accepted : Boolean := False;
-        Key : Wide_Wide_Character;
+        Key : Character;
 
         procedure Get_Escape_Sequence;
 
         procedure Get_Escape_Sequence is
-            Key1, Key2 : Wide_Wide_Character;
+            Key1, Key2 : Character;
         begin
-            Get_Immediate (Key1);
-            Get_Immediate (Key2);
+            Ada.Text_IO.Get_Immediate (Key1);
+            Ada.Text_IO.Get_Immediate (Key2);
 
-            if Key2 = Wide_Wide_Character'Val (66) then
+            if Key2 = Character'Val (66) then
                 Selector.Next_Selection;
-            elsif Key2 = Wide_Wide_Character'Val (65) then
+            elsif Key2 = Character'Val (65) then
                 Selector.Previous_Selection;
             end if;
         end Get_Escape_Sequence;
@@ -137,17 +154,21 @@ package body Widgets.Selectors is
             Put_Line (To_Wide_Wide_String (Selector.Current_String));
 
             --  Put_Line (Positive'Image (Wide_Wide_Character'Pos (Key)));
-            Get_Immediate (Key);
+            Ada.Text_IO.Get_Immediate (Key);
 
-            if Key = Wide_Wide_Character'Val (13) or else
-              Key = Wide_Wide_Character'Val (10)
+            if Key = Character'Val (13) or else
+              Key = Character'Val (10)
             then
+                --  Enter pressed
                 Ask_If_New (Selector);
                 Accepted := True;
-            elsif Key = Wide_Wide_Character'Val (27) then
+            elsif Key = Character'Val (127) then
+                Delete_Character (Selector);
+            elsif Key = Character'Val (27) then
                 Get_Escape_Sequence;
             else
-                Append (Selector.Current_String, Key);
+                Append (Selector.Current_String, To_Wide_Wide_Character (Key));
+                Selector.Current_Selection := 1;
             end if;
         end loop;
     end Execute;
@@ -186,7 +207,7 @@ package body Widgets.Selectors is
     end Filter_Data;
 
     function Get_Current_String (Selector : Selector_Type)
-                      return Unbounded_Wide_Wide_String is
+                                return Unbounded_Wide_Wide_String is
     begin
         return Selector.Current_String;
     end Get_Current_String;
@@ -232,20 +253,25 @@ package body Widgets.Selectors is
     end Key_Event;
 
     procedure Next_Selection (Selector : in out Selector_Type) is
+        use Data_Vectors;
     begin
-        if Selector.Current_Selection < 10 then
+        if Selector.Current_Selection < Natural
+          (Length (Selector.Current_Filter_Data))
+        then
             Selector.Current_Selection := Selector.Current_Selection + 1;
         else
-            Selector.Current_Selection := 0;
+            Selector.Current_Selection := 1;
         end if;
     end Next_Selection;
 
     procedure Previous_Selection (Selector : in out Selector_Type) is
+        use Data_Vectors;
     begin
-        if Selector.Current_Selection > 0 then
+        if Selector.Current_Selection > 1 then
             Selector.Current_Selection := Selector.Current_Selection - 1;
         else
-            Selector.Current_Selection := 10;
+            Selector.Current_Selection := Natural
+              (Length (Selector.Current_Filter_Data));
         end if;
     end Previous_Selection;
 
@@ -255,7 +281,8 @@ package body Widgets.Selectors is
     begin
         Filtered_Data := Selector.Filter_Data (Selector.Current_String);
 
-        for I in 1 .. 10 loop
+        for I in Selector.Current_Selection .. Selector.Current_Selection + 10
+        loop
             A_String := To_Unbounded_Wide_Wide_String ("");
             if I <= Integer (Filtered_Data.Length) then
                 A_String := Filtered_Data (I);
