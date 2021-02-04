@@ -240,7 +240,7 @@ package body Widgets.Selectors is
         Escape_Key : constant Character := Character'Val (27);
         Enter_Key : constant Character := Character'Val (13);
         Ret_Key : constant Character := Character'Val (10);
-
+        Backspace_Key : constant Character := Character'Val (127);
     begin
         if Key = Escape_Key or else
           Selector.Last_Key_Event (1) = Escape_Key or else
@@ -259,6 +259,8 @@ package body Widgets.Selectors is
             when Enter_Key | Ret_Key =>
                 On_Selected_Callback
                   (To_Wide_Wide_String (Selector.Current_String));
+            when Backspace_Key =>
+                Selector.Delete_Character;
             when others =>
                 Append (Selector.Current_String,
                         To_Wide_Wide_Character (Key));
