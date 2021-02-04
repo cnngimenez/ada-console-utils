@@ -24,15 +24,22 @@ use Ada.Command_Line;
 with Ada.Characters.Conversions;
 use Ada.Characters.Conversions;
 
+with Ada.Text_IO;
+
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
+
+with Console;
+use Console;
 
 with Widgets.Selectors;
 
 procedure Selector is
+    End_Program : Boolean := False;
+
     procedure Selected_Callback (Current_String : Wide_Wide_String) is
     begin
-        null;
+        End_Program := True;
     end Selected_Callback;
 
     package Myselector is new Widgets.Selectors
@@ -42,10 +49,13 @@ procedure Selector is
 
     Selector : Selector_Type;
     File : File_Type;
+    Key : Character;
 begin
     if Argument_Count = 0 then
         return;
     end if;
+
+    Selector.Initialize;
 
     Open (File, In_File, Argument (1));
     while not End_Of_File(File) loop
@@ -53,8 +63,14 @@ begin
     end loop;
     Close (File);
 
-    Selector.Execute;
+    while not End_Program loop
+        Erase_Display (Entire_Screen);
+        Selector.Draw;
+        Ada.Text_IO.Get_Immediate (Key);
+        Selector.Key_Event (Key);
+    end loop;
 
+    Put_Line ("Result:");
     Put_Line (Selector.Get_Current_String);
 
 end Selector;
