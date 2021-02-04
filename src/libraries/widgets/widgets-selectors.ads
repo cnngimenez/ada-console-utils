@@ -23,6 +23,9 @@ with Ada.Strings.Wide_Wide_Unbounded;
 use Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Containers.Vectors;
 
+generic
+    --  Procedure executed when the user press enter on a selection.
+    with procedure On_Selected_Callback (Current_String : Wide_Wide_String);
 package Widgets.Selectors is
 
     type Selector_Type is tagged private;
@@ -34,6 +37,8 @@ package Widgets.Selectors is
       ("<" => "<");
 
     subtype Data_Vector is Data_Vectors.Vector;
+
+    procedure Draw (Selector : in out Selector_Type);
 
     procedure Execute (Selector : in out Selector_Type);
 
@@ -62,12 +67,16 @@ package Widgets.Selectors is
     procedure Next_Selection (Selector : in out Selector_Type);
     procedure Previous_Selection (Selector : in out Selector_Type);
 
+    procedure Key_Event (Selector : in out Selector_Type);
+
 private
 
     type Selector_Type is tagged record
         Data : Data_Vector;
         Current_String : Unbounded_Wide_Wide_String;
         Current_Selection : Natural;
+
+        Last_Key_Event : Character;
     end record;
 
     procedure Ask_If_New (Selector : in out Selector_Type);

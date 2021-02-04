@@ -100,6 +100,13 @@ package body Widgets.Selectors is
         return;
     end Ask_If_New;
 
+    procedure Draw (Selector : in out Selector_Type) is
+    begin
+        Selector.Put_Data;
+
+        Put_Line (To_Wide_Wide_String (Selector.Current_String));
+    end Draw;
+
     procedure Execute (Selector : in out Selector_Type) is
         Accepted : Boolean := False;
         Key : Wide_Wide_Character;
@@ -195,6 +202,34 @@ package body Widgets.Selectors is
     begin
         return Selector.Data;
     end Get_Data;
+
+    procedure Key_Event (Selector : in out Selector_Type; Key_Code : Character) is
+        Down_Key : constant Character := Character'Val (66);
+        Up_Key : constant Character := Character'Val (65);
+        Escape_Key : constant Character := Character'Val (27);
+        Enter_Key : constant Character := Character'Val (13);
+        Ret_Key : constant Character := Character'Val (10);
+
+    begin
+        if Selector.Last_Key_Event = Escape_Key then
+            case Key is
+               when Down_Key =>
+                   Selector.Next_Selection;
+               when Up_Key =>
+                   Selector.Previous_Selection;
+               when others =>
+                   null;
+            end case;
+        else
+            case Key is
+               when Enter_Key or Ret_Key =>
+                   On_Selected_Callback (To_Wide_Wide_String (Selector.Current_string));
+               when others =>
+                   Append (Selector.Current_String, Key);
+            end case;
+        end if;
+        Selector.Last_Key_Event := Key;
+    end Key_Event;
 
     procedure Next_Selection (Selector : in out Selector_Type) is
     begin
