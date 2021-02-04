@@ -234,6 +234,23 @@ package body Widgets.Selectors is
         return Selector.Data;
     end Get_Data;
 
+    function Get_Selected_String (Selector : Selector_Type)
+                                 return Wide_Wide_String is
+      (To_Wide_Wide_String (Get_Selected_String (Selector)));
+
+    function Get_Selected_String (Selector : Selector_Type)
+                                 return Unbounded_Wide_Wide_String is
+        use Data_Vectors;
+
+        Current_Data : constant Data_Vector := Selector.Current_Filter_Data;
+    begin
+        if Selector.Current_Selection > Natural (Length (Current_Data)) then
+            return To_Unbounded_Wide_Wide_String ("");
+        else
+            return Current_Data (Selector.Current_Selection);
+        end if;
+    end Get_Selected_String;
+
     procedure Initialize (Selector : in out Selector_Type;
                           Row, Column : Natural) is
     begin
@@ -349,5 +366,13 @@ package body Widgets.Selectors is
         Selector.Data := Data;
         Sort (Selector.Data);
     end Set_Data;
+
+    function User_Selected (Selector : in out Selector_Type) return Boolean is
+        Enter_Key : constant Character := Character'Val (13);
+        Ret_Key : constant Character := Character'Val (10);
+    begin
+        return Selector.Last_Key_Event (1) = Enter_Key or else
+          Selector.Last_Key_Event (1) = Ret_Key;
+    end User_Selected;
 
 end Widgets.Selectors;

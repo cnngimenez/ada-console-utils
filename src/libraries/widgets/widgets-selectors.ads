@@ -52,6 +52,11 @@ package Widgets.Selectors is
     function Get_Current_String (Selector : Selector_Type)
                                 return Wide_Wide_String;
 
+    function Get_Selected_String (Selector : Selector_Type)
+                                 return Wide_Wide_String;
+    function Get_Selected_String (Selector : Selector_Type)
+                                 return Unbounded_Wide_Wide_String;
+
     procedure Set_Data (Selector : in out Selector_Type;
                         Data : Data_Vector);
     function Get_Data (Selector : Selector_Type)
@@ -74,7 +79,12 @@ package Widgets.Selectors is
 
     procedure Key_Event (Selector : in out Selector_Type; Key : Character);
 
+    --  Has the user selected something already?
+    function User_Selected (Selector : in out Selector_Type) return Boolean;
+
 private
+    --  1 : The last key pressed.
+    --  2 : The 2nd previous key pressed.
     type Last_Event_Array_Type is array (1 .. 2) of Character;
 
     type Selector_Type is tagged record
