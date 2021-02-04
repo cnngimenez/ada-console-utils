@@ -224,7 +224,8 @@ package body Widgets.Selectors is
         return Selector.Data;
     end Get_Data;
 
-    procedure Key_Event (Selector : in out Selector_Type; Key_Code : Character) is
+    procedure Key_Event (Selector : in out Selector_Type; Key : Character)
+    is
         Down_Key : constant Character := Character'Val (66);
         Up_Key : constant Character := Character'Val (65);
         Escape_Key : constant Character := Character'Val (27);
@@ -234,19 +235,21 @@ package body Widgets.Selectors is
     begin
         if Selector.Last_Key_Event = Escape_Key then
             case Key is
-               when Down_Key =>
-                   Selector.Next_Selection;
-               when Up_Key =>
-                   Selector.Previous_Selection;
-               when others =>
-                   null;
+            when Down_Key =>
+                Selector.Next_Selection;
+            when Up_Key =>
+                Selector.Previous_Selection;
+            when others =>
+                null;
             end case;
         else
             case Key is
-               when Enter_Key or Ret_Key =>
-                   On_Selected_Callback (To_Wide_Wide_String (Selector.Current_string));
-               when others =>
-                   Append (Selector.Current_String, Key);
+            when Enter_Key | Ret_Key =>
+                On_Selected_Callback
+                  (To_Wide_Wide_String (Selector.Current_String));
+            when others =>
+                Append (Selector.Current_String,
+                        To_Wide_Wide_Character (Key));
             end case;
         end if;
         Selector.Last_Key_Event := Key;

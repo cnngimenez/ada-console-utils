@@ -69,7 +69,7 @@ package Widgets.Selectors is
     procedure Next_Selection (Selector : in out Selector_Type);
     procedure Previous_Selection (Selector : in out Selector_Type);
 
-    procedure Key_Event (Selector : in out Selector_Type);
+    procedure Key_Event (Selector : in out Selector_Type; Key : Character);
 
 private
 
