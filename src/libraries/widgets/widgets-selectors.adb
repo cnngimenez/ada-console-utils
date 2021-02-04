@@ -23,6 +23,10 @@ with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 with Ada.Characters.Conversions;
 use Ada.Characters.Conversions;
+with Ada.Wide_Wide_Characters.Handling;
+use Ada.Wide_Wide_Characters.Handling;
+with Ada.Strings.Wide_Wide_Fixed;
+use Ada.Strings.Wide_Wide_Fixed;
 
 with Console;
 use Console;
@@ -122,7 +126,10 @@ package body Widgets.Selectors is
         Cursor_Position (Selector.Row, Selector.Column);
         Selector.Put_Data;
 
-        Put_Line (To_Wide_Wide_String (Selector.Current_String));
+        Set_RGB_Background (100, 200, 100);
+        Set_Colour (Black);
+        Put_Line ("⌨ " & To_Wide_Wide_String (Selector.Current_String));
+        Reset_All;
     end Draw;
 
     procedure Execute (Selector : in out Selector_Type) is
@@ -191,7 +198,9 @@ package body Widgets.Selectors is
 
         procedure Append_If_Has_Substring (Position : Cursor) is
         begin
-            if Index (Element (Position), Substring) > 0 then
+            if Index (To_Lower (To_Wide_Wide_String (Element (Position))),
+                      To_Lower (Substring)) > 0
+            then
                 Results.Append (Element (Position));
             end if;
         end Append_If_Has_Substring;
