@@ -28,10 +28,18 @@ with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
 with Widgets.Selectors;
-use Widgets.Selectors;
-
 
 procedure Selector is
+    procedure Selected_Callback (Current_String : Wide_Wide_String) is
+    begin
+        null;
+    end Selected_Callback;
+
+    package Myselector is new Widgets.Selectors
+      (On_Selected_Callback => Selected_Callback);
+
+    use Myselector;
+
     Selector : Selector_Type;
     File : File_Type;
 begin
