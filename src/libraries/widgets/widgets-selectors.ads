@@ -38,7 +38,8 @@ package Widgets.Selectors is
 
     subtype Data_Vector is Data_Vectors.Vector;
 
-    procedure Initialize (Selector : in out Selector_Type);
+    procedure Initialize (Selector : in out Selector_Type;
+                          Row, Column : Natural);
 
     procedure Draw (Selector : in out Selector_Type);
 
@@ -82,6 +83,8 @@ private
         Current_Selection : Positive;
 
         Last_Key_Event : Last_Event_Array_Type;
+
+        Row, Column : Natural;
     end record;
 
     procedure Ask_If_New (Selector : in out Selector_Type);

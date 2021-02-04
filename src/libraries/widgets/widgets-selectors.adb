@@ -119,6 +119,7 @@ package body Widgets.Selectors is
 
     procedure Draw (Selector : in out Selector_Type) is
     begin
+        Cursor_Position (Selector.Row, Selector.Column);
         Selector.Put_Data;
 
         Put_Line (To_Wide_Wide_String (Selector.Current_String));
@@ -224,8 +225,11 @@ package body Widgets.Selectors is
         return Selector.Data;
     end Get_Data;
 
-    procedure Initialize (Selector : in out Selector_Type) is
+    procedure Initialize (Selector : in out Selector_Type;
+                          Row, Column : Natural) is
     begin
+        Selector.Row := Row;
+        Selector.Column := Column;
         Selector.Current_Selection := 1;
         Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
         for I in Selector.Last_Key_Event'Range loop

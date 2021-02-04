@@ -55,7 +55,7 @@ begin
         return;
     end if;
 
-    Selector.Initialize;
+    Selector.Initialize (0, 0);
 
     Open (File, In_File, Argument (1));
     while not End_Of_File(File) loop
