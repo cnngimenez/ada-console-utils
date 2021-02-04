@@ -38,6 +38,8 @@ package Widgets.Selectors is
 
     subtype Data_Vector is Data_Vectors.Vector;
 
+    procedure Initialize (Selector : in out Selector_Type);
+
     procedure Draw (Selector : in out Selector_Type);
 
     procedure Execute (Selector : in out Selector_Type);
@@ -72,13 +74,14 @@ package Widgets.Selectors is
     procedure Key_Event (Selector : in out Selector_Type; Key : Character);
 
 private
+    type Last_Event_Array_Type is array (1 .. 2) of Character;
 
     type Selector_Type is tagged record
         Data : Data_Vector;
         Current_String : Unbounded_Wide_Wide_String;
         Current_Selection : Positive;
 
-        Last_Key_Event : Character;
+        Last_Key_Event : Last_Event_Array_Type;
     end record;
 
     procedure Ask_If_New (Selector : in out Selector_Type);

@@ -224,16 +224,28 @@ package body Widgets.Selectors is
         return Selector.Data;
     end Get_Data;
 
+    procedure Initialize (Selector : in out Selector_Type) is
+    begin
+        Selector.Current_Selection := 1;
+        Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
+        for I in Selector.Last_Key_Event'Range loop
+            Selector.Last_Key_Event (I) := Character'Val (0);
+        end loop;
+    end Initialize;
+
     procedure Key_Event (Selector : in out Selector_Type; Key : Character)
     is
-        Down_Key : constant Character := Character'Val (66);
-        Up_Key : constant Character := Character'Val (65);
+        Up_Key : constant Character := 'A';
+        Down_Key : constant Character := 'B';
         Escape_Key : constant Character := Character'Val (27);
         Enter_Key : constant Character := Character'Val (13);
         Ret_Key : constant Character := Character'Val (10);
 
     begin
-        if Selector.Last_Key_Event = Escape_Key then
+        if Key = Escape_Key or else
+          Selector.Last_Key_Event (1) = Escape_Key or else
+          Selector.Last_Key_Event (2) = Escape_Key
+        then
             case Key is
             when Down_Key =>
                 Selector.Next_Selection;
@@ -250,9 +262,12 @@ package body Widgets.Selectors is
             when others =>
                 Append (Selector.Current_String,
                         To_Wide_Wide_Character (Key));
+                Selector.Current_Selection := 1;
             end case;
         end if;
-        Selector.Last_Key_Event := Key;
+
+        Selector.Last_Key_Event (2) := Selector.Last_Key_Event (1);
+        Selector.Last_Key_Event (1) := Key;
     end Key_Event;
 
     procedure Next_Selection (Selector : in out Selector_Type) is
