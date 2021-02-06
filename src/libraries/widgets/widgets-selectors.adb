@@ -121,7 +121,7 @@ package body Widgets.Selectors is
         end if;
     end Delete_Character;
 
-    procedure Draw (Selector : in out Selector_Type) is
+    overriding procedure Draw (Selector : in out Selector_Type) is
     begin
         Cursor_Position (Selector.Row, Selector.Column);
         Selector.Put_Data;
@@ -254,16 +254,13 @@ package body Widgets.Selectors is
     procedure Initialize (Selector : in out Selector_Type;
                           Row, Column : Natural) is
     begin
-        Selector.Row := Row;
-        Selector.Column := Column;
+        Widgets.Initialize (Widget_Type (Selector), Row, Column, 20, 10);
         Selector.Current_Selection := 1;
         Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
-        for I in Selector.Last_Key_Event'Range loop
-            Selector.Last_Key_Event (I) := Character'Val (0);
-        end loop;
     end Initialize;
 
-    procedure Key_Event (Selector : in out Selector_Type; Key : Character)
+    overriding procedure Key_Event (Selector : in out Selector_Type;
+                                    Key : Character)
     is
         Up_Key : constant Character := 'A';
         Down_Key : constant Character := 'B';
@@ -298,8 +295,7 @@ package body Widgets.Selectors is
             end case;
         end if;
 
-        Selector.Last_Key_Event (2) := Selector.Last_Key_Event (1);
-        Selector.Last_Key_Event (1) := Key;
+        Widgets.Key_Event (Widget_Type (Selector), Key);
     end Key_Event;
 
     procedure Next_Selection (Selector : in out Selector_Type) is

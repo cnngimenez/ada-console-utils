@@ -28,7 +28,7 @@ generic
     with procedure On_Selected_Callback (Current_String : Wide_Wide_String);
 package Widgets.Selectors is
 
-    type Selector_Type is tagged private;
+    type Selector_Type is new Widget_Type with private;
 
     package Data_Vectors is new Ada.Containers.Vectors
       (Element_Type => Unbounded_Wide_Wide_String,
@@ -41,7 +41,7 @@ package Widgets.Selectors is
     procedure Initialize (Selector : in out Selector_Type;
                           Row, Column : Natural);
 
-    procedure Draw (Selector : in out Selector_Type);
+    overriding procedure Draw (Selector : in out Selector_Type);
 
     procedure Execute (Selector : in out Selector_Type);
 
@@ -77,25 +77,19 @@ package Widgets.Selectors is
     procedure Next_Selection (Selector : in out Selector_Type);
     procedure Previous_Selection (Selector : in out Selector_Type);
 
-    procedure Key_Event (Selector : in out Selector_Type; Key : Character);
+    overriding procedure Key_Event (Selector : in out Selector_Type;
+                                    Key : Character);
 
     --  Has the user selected something already?
     function User_Selected (Selector : in out Selector_Type) return Boolean;
 
 private
-    --  1 : The last key pressed.
-    --  2 : The 2nd previous key pressed.
-    type Last_Event_Array_Type is array (1 .. 2) of Character;
-
-    type Selector_Type is tagged record
-        Data : Data_Vector;
-        Current_String : Unbounded_Wide_Wide_String;
-        Current_Selection : Positive;
-
-        Last_Key_Event : Last_Event_Array_Type;
-
-        Row, Column : Natural;
-    end record;
+    type Selector_Type is new Widget_Type with
+       record
+           Data : Data_Vector;
+           Current_String : Unbounded_Wide_Wide_String;
+           Current_Selection : Positive;
+       end record;
 
     procedure Ask_If_New (Selector : in out Selector_Type);
     --  Delete one character at the end of the current written string

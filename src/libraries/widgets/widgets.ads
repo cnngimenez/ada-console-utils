@@ -1,4 +1,4 @@
---  widets.ads ---
+--  widgets.ads ---
 
 --  Copyright 2020 cnngimenez
 --
@@ -20,4 +20,35 @@
 -------------------------------------------------------------------------
 
 package Widgets is
+
+    type Widget_Type is tagged private;
+
+    procedure Initialize (Widget : in out Widget_Type;
+                          Row, Column, Width, Height : Natural);
+
+    function Get_Width (Widget : Widget_Type) return Natural;
+    function Get_Height (Widget : Widget_Type) return Natural;
+    function Get_Row (Widget : Widget_Type) return Natural;
+    function Get_Column (Widget : Widget_Type) return Natural;
+
+    procedure Resize (Widget : in out Widget_Type; Width, Height : Natural);
+    procedure Move (Widget : in out Widget_Type; Row, Column : Natural);
+
+    procedure Draw (Widget : in out Widget_Type);
+
+    --  ----------
+    --  Events
+    --  ----------
+
+    procedure Key_Event (Widget : in out Widget_Type; Key : Character);
+
+private
+    --  1 : The last key pressed.
+    --  2 : The 2nd previous key pressed.
+    type Last_Event_Array_Type is array (1 .. 2) of Character;
+
+    type Widget_Type is tagged record
+        Row, Column, Width, Height : Natural;
+        Last_Key_Event : Last_Event_Array_Type;
+    end record;
 end Widgets;
