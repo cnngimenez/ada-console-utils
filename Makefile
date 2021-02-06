@@ -47,15 +47,15 @@ tools:
 	@echo "Compiling tools"
 	gprbuild $(gprbuild_params) console_util_tools.gpr
 
-install:
+install: uninstall
 	@echo Installing into $(prefix)
 	gprinstall -p --prefix=$(prefix) console_utils.gpr
 	gprinstall -p --prefix=$(prefix) console_util_tools.gpr
 
 uninstall:
 	@echo Uninstalling from $(prefix)
-	gprinstall --prefix=$(prefix) --uninstall console_utils.gpr
-	gprinstall --prefix=$(prefix) --uninstall console_util_tools.gpr
+	-gprinstall --prefix=$(prefix) --uninstall console_utils.gpr
+	-gprinstall --prefix=$(prefix) --uninstall console_util_tools.gpr
 
 clean:
 	gprclean console_utils.gpr
