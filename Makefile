@@ -32,10 +32,16 @@ gprbuild_params=-p
 ## Rules
 compile: libs tools
 
-libs:
-	@echo "Compiling libraries in static and dynamic types"
-	gprbuild $(gprbuild_params) -XLIBRARY_KIND=static -P console_utils.gpr	
-	gprbuild $(gprbuild_params) -XLIBRARY_KIND=dynamic -P console_utils.gpr
+libs: libs-relocatable libs-static
+
+libs-static:
+	@echo "Compiling libraries in static type"	
+	gprbuild $(gprbuild_params) -XLIBRARY_KIND=static -P console_utils.gpr
+
+libs-relocatable:
+	@echo "Compiling libraries in relocatable types"
+	gprbuild $(gprbuild_params) -XLIBRARY_KIND=relocatable -P console_utils.gpr
+
 tools:
 	@echo "Compiling tools"
 	gprbuild $(gprbuild_params) console_util_tools.gpr
