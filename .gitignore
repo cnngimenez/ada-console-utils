@@ -1,6 +1,6 @@
 *~
 *#
-objs/**
+.objs/**
 bin/**
 *.ali
 lib/**
