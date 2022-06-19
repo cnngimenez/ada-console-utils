@@ -28,27 +28,40 @@
 with "console_utils.gpr";
 
 project Console_Util_Tools is
+   type Linking_Type is ("shared", "static");
+   Linking : Linking_Type := external ("LINKING_TYPE", "shared");
+      
+   for Source_Dirs use (
+                        "src/tools"
+                       );
+   --  for Source_Files use ("this-file.adb", "this-other.adb");
+   for Object_Dir use ".objs";
+   for Exec_Dir use "bin";
+   for Main use (
+                 "console_test.adb",
+                 "emoji_test.adb",
+                 "emoji_test_read.adb",
+                 "selector.adb",
+                 "keys.adb"
+                );
 
-  for Source_Dirs use (
-                      "src/tools"
-                     );
-  --  for Source_Files use ("this-file.adb", "this-other.adb");
-  for Object_Dir use "objs";
-  for Exec_Dir use "bin";
-  for Main use (
-                "console_test.adb",
-                "emoji_test.adb",
-                "emoji_test_read.adb",
-                "selector.adb",
-                "keys.adb"
-               );
-
-  package Compiler is
+   package Compiler is
       for Default_Switches ("Ada") use
         (
          "-g"     --  Debugging symbols
-           , "-gnatW8" --  Unicode support for source code
+         , "-gnatW8" --  Unicode support for source code
         );
-  end Compiler;
+   end Compiler;
+   
+   package Binder is
+      case Linking is
+         when "shared" =>
+            for Default_Switches ("Ada") use Binder'Default_Switches ("Ada") 
+              & ("-shared");
+         when "static" =>
+            for Default_Switches ("Ada") use Binder'Default_Switches ("Ada") 
+              & ("-static");
+      end case;
+   end Binder;
 
 end Console_Util_Tools;

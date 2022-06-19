@@ -27,23 +27,32 @@
 --  with "gtkada.gpr";
 
 library project Console_Utils is
+   type Compilation_Type is ("relocatable", "dynamic", "static-pic", "static");
+   Compilation : Compilation_Type := external ("LIBRARY_KIND", "dynamic");
+   
+   for Library_Name use "console_utils";
+   for Library_Dir use "lib";
 
-  for Library_Name use "console_utils";
-  for Library_Dir use "lib";
+   --  for Library_Kind use "static";
+   --  for Library_Kind use "dynamic"; --  a.k.a. "relocatable"
+   for Library_Kind use Compilation;
 
-  --  for Library_Kind use "static";
-  --  for Library_Kind use "dynamic"; --  a.k.a. "relocatable"
-  for Library_Kind use External ("LIBRARY_KIND", "dynamic");
+   for Source_Dirs use (
+                        "src/libraries/console",
+                        "src/libraries/unicode",
+                        "src/libraries/widgets"
+                       );
+   --  for Source_Files use ("this-file.adb", "this-other.adb");
+   case Compilation is
+      when "dynamic" | "relocatable" =>
+         for Object_Dir use ".objs/library/relocatable";
+      when "static" =>
+         for Object_Dir use ".objs/library/static";
+      when "static-pic" =>
+         for Object_Dir use ".objs/library/static-pic";
+   end case;
 
-  for Source_Dirs use (
-                       "src/libraries/console",
-                       "src/libraries/unicode",
-                       "src/libraries/widgets"
-                      );
-  --  for Source_Files use ("this-file.adb", "this-other.adb");
-  for Object_Dir use "objs";
-
-  package Compiler is
+   package Compiler is
       for Default_Switches ("Ada") use
         (
          "-g", --  with Debugging symbols
@@ -58,6 +67,6 @@ library project Console_Utils is
          --  Print full path
          "-gnatef"
         );
-  end Compiler;
+   end Compiler;
 
 end Console_Utils;

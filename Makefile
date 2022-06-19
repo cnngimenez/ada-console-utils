@@ -23,26 +23,19 @@
 
 -include makefile.setup
 
-
-ifndef LIBRARY_KIND
-    LIBRARY_KIND=dynamic
-endif
 ifndef prefix
     prefix=$(HOME)/Ada/installs
 endif
 
-gprbuild_params=-p -XLIBRARY_KIND=$(LIBRARY_KIND) -XOBJECT_DIR=".objs/library/$(LIBRARY_KIND)/" -P
-
-
+gprbuild_params=-p
 
 ## Rules
 compile: libs tools
 
 libs:
-	@echo "Compiling libraries"
-	@echo "Making $(LIBRARY_KIND) libraries"
-	gprbuild $(gprbuild_params) console_utils.gpr
-
+	@echo "Compiling libraries in static and dynamic types"
+	gprbuild $(gprbuild_params) -XLIBRARY_KIND=static -P console_utils.gpr	
+	gprbuild $(gprbuild_params) -XLIBRARY_KIND=dynamic -P console_utils.gpr
 tools:
 	@echo "Compiling tools"
 	gprbuild $(gprbuild_params) console_util_tools.gpr
@@ -74,10 +67,6 @@ setup:
 	echo "## ## Makefile personal setup ##" > makefile.setup
 	echo "## Edit this file with your own settings" >> makefile.setup
 
-	echo "## Type of library to create." >> makefile.setup
-	echo "## Value \"all\" = relocatable and static" >> makefile.setup
-	echo "## Values: relocatable, static, static-pic or all" >> makefile.setup
-	echo "LIBRARY_KIND=$(LIBRARY_KIND)" >> makefile.setup
 	echo "## Where are the .ads files?" >> makefile.setup
 	echo "ADA_INCLUDE_PATH=$(ADA_INCLUDE_PATH)" >> makefile.setup
 	echo "GPR_PROJECT_PATH=$(GPR_PROJECT_PATH)" >> makefile.setup
