@@ -1,0 +1,3 @@
+
+The file:test/emoji-test.txt file is used by the emoji test executable =emoji_test_read= and the =emoji-list.ads= library. This file was downloaded from the following URL: https://unicode.org/Public/emoji/12.1/
+
