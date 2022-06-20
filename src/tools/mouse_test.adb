@@ -30,26 +30,29 @@ procedure Mouse_Test is
         if Code.Invalid then
             Put_Line ("Invalid code.");
         else
-            Put_Line ("| B: " & Code.B'Image
-                        & "| X: " & Code.X'Image
-                        & "| Y: " & Code.Y'Image
-                        & "| M: " & Code.M);
+            Put_Line ("( B: " & Code.B'Image
+                        & ", X: " & Code.X'Image
+                        & ", Y: " & Code.Y'Image
+                        & ", M: " & Code.M
+                        & ")");
         end if;
     end Put_Code;
-    Codes : String (1 .. 5);
-    I : Positive := 1;
+    Codes : String (1 .. 12);
+    I : Positive := Codes'First;
     C : Character;
 begin
     Enable_Mouse;
 
     loop
         Get_Immediate (C);
+        --  Put (C & " ");
 
         Codes (I) := C;
         I := I + 1;
-        if C = 'm' or else C = 'M' or else I = 12 then
+
+        if C = 'm' or else C = 'M' or else I > Codes'Last then
             Put_Code (String_To_Code (Codes));
-            I := 1;
+            I := Codes'First;
         end if;
 
         exit when C = 'q';

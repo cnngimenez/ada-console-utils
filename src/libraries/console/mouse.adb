@@ -69,8 +69,7 @@ package body Mouse is
         Result_Index := Result_Index + 1;
 
         Read_Num (Index, Substring);
-        Results (Result_Index) := Substring & Codes (Index);
-        Result_Index := Result_Index + 1;
+        Results (Result_Index) := Substring & Codes (Index - 1);
 
         return Results;
     end Split;
@@ -95,7 +94,7 @@ package body Mouse is
         end if;
 
         --  Tail: Remove the ESC & "[<" characters.
-        Splitted := Split (Tail (Str, Str'First + 3));
+        Splitted := Split (Tail (Str, Str'Length - 3));
 
         Result.B := Positive'Value (Splitted (1));
 

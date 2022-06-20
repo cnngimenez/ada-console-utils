@@ -34,9 +34,9 @@ package Mouse is
     end record;
 
     type Code_Type is record
-        B : Positive;
-        X : Positive;
-        Y : Positive;
+        B : Natural;
+        X : Natural;
+        Y : Natural;
         M : Character;
         Invalid : Boolean;
     end record;
