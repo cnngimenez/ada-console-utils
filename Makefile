@@ -62,7 +62,7 @@ clean:
 
 params:
 	@echo Install into: $(prefix)
-	@echo Kind of library (dynamic/static): $(LIBRARY_KIND)
+	@echo Kind of library (dynamic/static): Both
 
 all: compile install
 
