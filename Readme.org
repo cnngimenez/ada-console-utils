@@ -1,0 +1,146 @@
+Miscelaneous Ada libraries and tools.
+
+* Requirements
+Only Ada and GNAT libraries. gprbuild to build the sources easily.
+
+In Fedora:
+
+: dnf install gcc-gnat gprbuild
+
+In Manjaro:
+
+: pacman -S gcc-ada
+: yaourt -S gprbuild
+
+The gprbuild program is provided by Arch repositories (AUR). Thus, use yaourt or your preferred AUR package manager.
+
+** Data
+The file:test/emoji-test.txt file is used by the emoji test executable =emoji_test_read= and the =emoji-list.ads= library. This file was downloaded from the following URL: https://unicode.org/Public/emoji/12.1/
+
+Once the executables are compiled, you can search for all emojis with "face" in their description by typing the following on the terminal:
+
+: bin/emoji_test_read test/emoji-test.txt face
+
+* Compiling
+Simply call =make= to compile the library and all binaries.
+
+- =make install= will install the library and binaries into the prefix.
+- =make params= will show the poarameters used by the Makefile.
+
+To change the prefix use ~make install PREFIX=your_path_here~ were =your_path_here= is the path you want to install. For example: ~make install PREFIX=/home/me/all_Ada_codes~ will install:
+libs on =/home/me/all_Ada_codes/lib=, binaries on =/home/me/all_Ada_codes/bin=, etc.
+
+Variables: 
+
+- PREFIX : The path where to install.
+- LIBRARY_KIND : "dynamic" or "static". The type of library to create.
+
+** gprbuild alternative
+Use gprbuild as follows.
+
+#+BEGIN_SRC shell
+gprbuild utils.gpr
+gprbuild util_tools.gpr
+#+END_SRC
+
+gprbuild is usefull to compile libraries only by using the first line.
+
+gprinstall can install the project. 
+
+=gprinstall -p utils.gpr= will install all the libraries at the default PREFIX. use =--prefix=PREFIX_PATH_HERE= parameter to change where the library should be installed.
+
+* License
+This project is under the GNU General Public License version 3 (GPLv3) license except were stated.
+
+Christian Gimenez, 2019.
+
+
+The test/emoji-test.txt file has been downloaded from unicode.org, which it has its own copyright notices and state as follow:
+
+: © 2019 Unicode®, Inc.
+: Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+: For terms of use, see http://www.unicode.org/terms_of_use.html
+
+* Meta     :noexport:
+
+# ----------------------------------------------------------------------
+#+TITLE:  Ada Console Utilities
+#+SUBTITLE:
+#+AUTHOR: Christian Gimenez
+#+EMAIL:
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+COLUMNS: %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM
+
+#+STARTUP: inlineimages hidestars content hideblocks entitiespretty
+#+STARTUP: indent fninline latexpreview
+
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS: tex:imagemagick
+
+#+TODO: TODO(t!) CURRENT(c!) PAUSED(p!) | DONE(d!) CANCELED(C!@)
+
+# -- Export
+#+LANGUAGE: en
+#+LINK_UP:   
+#+LINK_HOME: 
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+# #+export_file_name: index
+
+# -- HTML Export
+#+INFOJS_OPT: view:info toc:t ftoc:t ltoc:t mouse:underline buttons:t path:libs/org-info.js
+#+HTML_LINK_UP: index.html
+#+HTML_LINK_HOME: index.html
+#+XSLT:
+
+# -- For ox-twbs or HTML Export
+# #+HTML_HEAD: <link href="libs/bootstrap.min.css" rel="stylesheet">
+# -- -- LaTeX-CSS
+# #+HTML_HEAD: <link href="css/style-org.css" rel="stylesheet">
+
+# #+HTML_HEAD: <script src="libs/jquery.min.js"></script> 
+# #+HTML_HEAD: <script src="libs/bootstrap.min.js"></script>
+
+
+# -- LaTeX Export
+# #+LATEX_CLASS: article
+#+latex_compiler: xelatex
+# #+latex_class_options: [12pt, twoside]
+
+#+latex_header: \usepackage{csquotes}
+# #+latex_header: \usepackage[spanish]{babel}
+# #+latex_header: \usepackage[margin=2cm]{geometry}
+# #+latex_header: \usepackage{fontspec}
+# -- biblatex
+#+latex_header: \usepackage[backend=biber, style=alphabetic, backref=true]{biblatex}
+#+latex_header: \addbibresource{tangled/biblio.bib}
+# -- -- Tikz
+# #+LATEX_HEADER: \usepackage{tikz}
+# #+LATEX_HEADER: \usetikzlibrary{arrows.meta}
+# #+LATEX_HEADER: \usetikzlibrary{decorations}
+# #+LATEX_HEADER: \usetikzlibrary{decorations.pathmorphing}
+# #+LATEX_HEADER: \usetikzlibrary{shapes.geometric}
+# #+LATEX_HEADER: \usetikzlibrary{shapes.symbols}
+# #+LATEX_HEADER: \usetikzlibrary{positioning}
+# #+LATEX_HEADER: \usetikzlibrary{trees}
+
+# #+LATEX_HEADER_EXTRA:
+
+# --  Info Export
+#+TEXINFO_DIR_CATEGORY: A category
+#+TEXINFO_DIR_TITLE: Ada Console Utilities: (Readme)
+#+TEXINFO_DIR_DESC: One line description.
+#+TEXINFO_PRINTED_TITLE: Ada Console Utilities
+#+TEXINFO_FILENAME: Readme.info
+
+
+# Local Variables:
+# org-hide-emphasis-markers: t
+# org-use-sub-superscripts: "{}"
+# fill-column: 80
+# visual-line-fringe-indicators: t
+# ispell-local-dictionary: "british"
+# org-latex-default-figure-position: "tbp"
+# End:
