@@ -63,7 +63,7 @@ library project Console_Utils is
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
          "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu",
          --  Requested by the linker to generate dynamic libraries.
-         --  "-fPIC"
+         --  "-fPIC",
          --  Print full path
          "-gnatef"
         );
