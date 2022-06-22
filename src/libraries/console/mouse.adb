@@ -23,6 +23,8 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 with Ada.Strings.Fixed;
 use Ada.Strings.Fixed;
+with Ada.Characters.Handling;
+use Ada.Characters.Handling;
 with Ada.Characters.Latin_1;
 use Ada.Characters.Latin_1;
 
@@ -40,33 +42,46 @@ package body Mouse is
 
     function Split (Codes : String) return String_Array is
         procedure Read_Num (Index : in out Positive; Result : out String);
+        procedure Initialise (Result : out String);
 
         --  Codes: 2;75;27m or 35;75;27M
+        --  Numbers can be from 0 to 100 or more.
         Index : Positive := Codes'First;
-        Substring : String (1 .. 2);
+        Substring : String (1 .. 5);
         Results : String_Array;
         Result_Index : String_Array_Index := String_Array_Index'First;
 
-        procedure Read_Num (Index : in out Positive; Result : out String) is
+        procedure Initialise (Result : out String) is
         begin
-            if Codes (Index + 1) = ';' then
-                Result (Result'First) := '0';
-                Result (Result'First + 1) := Codes (Index);
-                Index := Index + 2;
-            else
-                Result (Result'First) := Codes (Index);
-                Result (Result'First + 1) := Codes (Index + 1);
-                Index := Index + 3;
-            end if;
+            for I in Result'Range loop
+                Result (I) := ' ';
+            end loop;
+        end Initialise;
+
+        procedure Read_Num (Index : in out Positive; Result : out String) is
+            Result_I : Positive := Result'First;
+        begin
+            Initialise (Result);
+            while Index <= Codes'Last and then Result_I <= Result'Last
+              and then Is_Digit (Codes (Index))
+            loop
+                Result (Result_I) := Codes (Index);
+                Index := Index + 1;
+                Result_I := Result_I + 1;
+            end loop;
+            --  Put_Line (Index'Image & ": """ & Result & """");
         end Read_Num;
     begin
+        --  Put_Line ("Split (""" &  Codes & """)");
         Read_Num (Index, Substring);
         Results (Result_Index) := '0' & Substring;
         Result_Index := Result_Index + 1;
+        Index := Index + 1; --  ignore ';'
 
         Read_Num (Index, Substring);
         Results (Result_Index) := '0' & Substring;
         Result_Index := Result_Index + 1;
+        Index := Index + 1; --  ignore ';'
 
         Read_Num (Index, Substring);
         Results (Result_Index) := Substring & Codes (Index - 1);
@@ -75,14 +90,14 @@ package body Mouse is
     end Split;
 
     --  ^[ is ESC
-    --  ^[[ is CSI (Control squence introducer
+    --  ^[[ is CSI (Control squence introducer)
     --
     --  ^[[<2;75;27m^[[<0;75;27M^[[<0;75;27m^[[<1;75;27M^[[<1;75;27m
     --  ^[[<35;69;39M
 
     function String_To_Code (Str : String) return Code_Type is
         Result : Code_Type;
-        Third_Str : String (1 .. 3);
+        Third_Str : String (1 .. 6);
         Splitted : String_Array;
     begin
         Result.Invalid := True;

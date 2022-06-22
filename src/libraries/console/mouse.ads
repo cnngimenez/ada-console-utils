@@ -51,7 +51,7 @@ package Mouse is
 private
 
     type String_Array_Index is range 1 .. 3;
-    type String_Array is array (String_Array_Index) of String (1 .. 3);
+    type String_Array is array (String_Array_Index) of String (1 .. 6);
 
     function Split (Codes : String) return String_Array;
     --  Split the string "^[[<bb;xx;yym into strings ("bb", "xx", "yym").
