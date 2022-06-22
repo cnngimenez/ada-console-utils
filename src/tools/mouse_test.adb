@@ -25,6 +25,8 @@ with Mouse;
 use Mouse;
 
 procedure Mouse_Test is
+    procedure Put_Code (Code : Code_Type);
+
     procedure Put_Code (Code : Code_Type) is
     begin
         if Code.Invalid then
@@ -37,6 +39,7 @@ procedure Mouse_Test is
                         & ")");
         end if;
     end Put_Code;
+
     Codes : String (1 .. 12);
     I : Positive := Codes'First;
     C : Character;

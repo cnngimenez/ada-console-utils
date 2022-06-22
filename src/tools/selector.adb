@@ -21,8 +21,8 @@
 
 with Ada.Command_Line;
 use Ada.Command_Line;
-with Ada.Characters.Conversions;
-use Ada.Characters.Conversions;
+--  with Ada.Characters.Conversions;
+--  use Ada.Characters.Conversions;
 
 with Ada.Text_IO;
 
@@ -35,9 +35,12 @@ use Console;
 with Widgets.Selectors;
 
 procedure Selector is
+    procedure Selected_Callback (Current_String : Wide_Wide_String);
+
     End_Program : Boolean := False;
 
     procedure Selected_Callback (Current_String : Wide_Wide_String) is
+        pragma Unreferenced (Current_String);
     begin
         End_Program := True;
     end Selected_Callback;
@@ -58,7 +61,7 @@ begin
     Selector.Initialize (0, 0);
 
     Open (File, In_File, Argument (1));
-    while not End_Of_File(File) loop
+    while not End_Of_File (File) loop
         Selector.Add (Get_Line (File));
     end loop;
     Close (File);
