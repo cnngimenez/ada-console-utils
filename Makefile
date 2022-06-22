@@ -56,8 +56,15 @@ uninstall:
 	-gprinstall --prefix=$(prefix) --uninstall console_utils.gpr
 	-gprinstall --prefix=$(prefix) --uninstall console_util_tools.gpr
 
-clean:
-	gprclean console_utils.gpr
+clean: clean-relocatable clean-static clean-tools
+
+clean-relocatable:
+	gprclean -XLIBRARY_KIND=relocatable console_utils.gpr
+
+clean-static:
+	gprclean -XLIBRARY_KIND=static console_utils.gpr
+
+clean-tools:
 	gprclean console_util_tools.gpr
 
 params:
