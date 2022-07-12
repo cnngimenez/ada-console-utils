@@ -45,7 +45,7 @@ begin
     end if;
 
     Totime := Value (Argument (1));
-    Widget.Initialize (Totime, 10, 10);
+    Widget.Initialize ("Duration: ", Totime, 10, 10);
 
     Totime_Widget.Initialize ("To: ", 6, 10);
     Totime_Widget.Set_Time (Totime);

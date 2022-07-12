@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings.Wide_Wide_Unbounded;
+use Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Calendar;
 use Ada.Calendar;
 with Widgets.Labels;
@@ -30,8 +32,24 @@ package Widgets.Countdowns is
     procedure Initialize (Widget : in out Countdown_Type;
                           To_Time : Time;
                           Row, Column : Natural);
+    procedure Initialize (Widget : in out Countdown_Type;
+                          Label : Wide_Wide_String;
+                          To_Time : Time;
+                          Row, Column : Natural);
+    procedure Initialize (Widget : in out Countdown_Type;
+                          Label : Unbounded_Wide_Wide_String;
+                          To_Time : Time;
+                          Row, Column : Natural);
 
+    function Get_Label (Widget : Countdown_Type) return Wide_Wide_String;
+    function Get_Label (Widget : Countdown_Type)
+                       return Unbounded_Wide_Wide_String;
     function Get_To_Time (Widget : Countdown_Type) return Time;
+
+    procedure Set_Label (Widget : in out Countdown_Type;
+                         Label : Wide_Wide_String);
+    procedure Set_Label (Widget : in out Countdown_Type;
+                         Label : Unbounded_Wide_Wide_String);
     procedure Set_To_Time (Widget : in out Countdown_Type; To_Time : Time);
 
     overriding procedure Draw (Widget : in out Countdown_Type);
@@ -41,6 +59,7 @@ private
     type Countdown_Type is new Label_Type with
     record
         To_Time : Time;
+        Label : Unbounded_Wide_Wide_String;
     end record;
 
     procedure Update_Difference (Widget : in out Countdown_Type);

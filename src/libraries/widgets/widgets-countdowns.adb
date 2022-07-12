@@ -34,6 +34,18 @@ package body Widgets.Countdowns is
         Widgets.Labels.Draw (Label_Type (Widget));
     end Draw;
 
+    function Get_Label (Widget : Countdown_Type)
+             return Unbounded_Wide_Wide_String
+    is
+    begin
+        return Widget.Label;
+    end Get_Label;
+
+    function Get_Label (Widget : Countdown_Type) return Wide_Wide_String is
+    begin
+        return To_Wide_Wide_String (Widget.Label);
+    end Get_Label;
+
     function Get_To_Time (Widget : Countdown_Type) return Time is
     begin
         return Widget.To_Time;
@@ -48,6 +60,36 @@ package body Widgets.Countdowns is
                                    Row, Column, 1, 14);
         Widget.To_Time := To_Time;
     end Initialize;
+
+    procedure Initialize (Widget : in out Countdown_Type;
+                          Label : Unbounded_Wide_Wide_String;
+                          To_Time : Time;
+                          Row, Column : Natural) is
+    begin
+        Widget.Initialize (To_Time, Row, Column);
+        Widget.Label := Label;
+    end Initialize;
+
+    procedure Initialize (Widget : in out Countdown_Type;
+                          Label : Wide_Wide_String;
+                          To_Time : Time;
+                          Row, Column : Natural) is
+    begin
+        Widget.Initialize (To_Time, Row, Column);
+        Widget.Label := To_Unbounded_Wide_Wide_String (Label);
+    end Initialize;
+
+    procedure Set_Label (Widget : in out Countdown_Type;
+                         Label : Unbounded_Wide_Wide_String) is
+    begin
+        Widget.Label := Label;
+    end Set_Label;
+
+    procedure Set_Label (Widget : in out Countdown_Type;
+                         Label : Wide_Wide_String) is
+    begin
+        Widget.Label := To_Unbounded_Wide_Wide_String (Label);
+    end Set_Label;
 
     procedure Set_To_Time (Widget : in out Countdown_Type; To_Time : Time) is
     begin
@@ -82,7 +124,8 @@ package body Widgets.Countdowns is
         end if;
 
         Widgets.Labels.Set_Text (Label_Type (Widget),
-                                 Negative_Str
+                                 To_Wide_Wide_String (Widget.Label) & " "
+                                 & Negative_Str
                                  & Days'Wide_Wide_Image & " "
                                  & Hours'Wide_Wide_Image & ":"
                                  & Minutes'Wide_Wide_Image & ":"
