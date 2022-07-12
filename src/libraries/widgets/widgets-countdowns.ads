@@ -19,10 +19,29 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Calendar;
+use Ada.Calendar;
+with Widgets.Labels;
+use Widgets.Labels;
+
 package Widgets.Countdowns is
-    type Countdown_Type is new Time_Type;
+    type Countdown_Type is new Label_Type with private;
+
+    procedure Initialize (Widget : in out Countdown_Type;
+                          To_Time : Time;
+                          Row, Column : Natural);
+
+    function Get_To_Time (Widget : Countdown_Type) return Time;
+    procedure Set_To_Time (Widget : in out Countdown_Type; To_Time : Time);
+
+    overriding procedure Draw (Widget : in out Countdown_Type);
 
 private
+
+    type Countdown_Type is new Label_Type with
+    record
+        To_Time : Time;
+    end record;
 
     procedure Update_Difference (Widget : in out Countdown_Type);
 

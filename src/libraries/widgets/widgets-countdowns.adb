@@ -19,36 +19,74 @@
 
 -------------------------------------------------------------------------
 
-with Ada.Calendar;
-use Ada.Calendar;
+--  with Ada.Text_IO;
+--  use Ada.Text_IO;
 with Ada.Calendar.Arithmetic;
 use Ada.Calendar.Arithmetic;
-with Ada.Calendar.Formatting;
-use Ada.Calendar.Formatting;
-with Ada.Calendar.Delays;
-use Ada.Calendar.Delays;
-
+--  with Ada.Calendar.Delays;
+--  use Ada.Calendar.Delays;
 
 package body Widgets.Countdowns is
 
-    procedure Update_Difference (Widget : in out Countdown_Type); is
-        Now : constant Ada.Calendar.Time := Clock;
-        Days : Day_Count;
-        seconds : Duration;
-        Leap_Seconds : Leap_Seconds_Count;
-        Hours, Minutes, Toseconds : Natural;
+    overriding procedure Draw (Widget : in out Countdown_Type) is
     begin
-        Difference (Totime, Now, Days, Seconds, Leap_Seconds);
+        Widget.Update_Difference;
+        Widgets.Labels.Draw (Label_Type (Widget));
+    end Draw;
 
-        --  Seconds has the remainding seconds within a day.
-        Hours := Natural (Seconds) / 60 / 60;
-        Minutes := Natural (Seconds) / 60 - Hours * 60;
-        Toseconds := Natural (Seconds) mod 60;
+    function Get_To_Time (Widget : Countdown_Type) return Time is
+    begin
+        return Widget.To_Time;
+    end Get_To_Time;
+
+    procedure Initialize (Widget : in out Countdown_Type;
+                          To_Time : Time;
+                          Row, Column : Natural) is
+    begin
+        --  Width := "+0000 00:00:00"'Length
+        Widgets.Labels.Initialize (Label_Type (Widget), "+0000 00:00:00",
+                                   Row, Column, 1, 14);
+        Widget.To_Time := To_Time;
+    end Initialize;
+
+    procedure Set_To_Time (Widget : in out Countdown_Type; To_Time : Time) is
+    begin
+        Widget.To_Time := To_Time;
+    end Set_To_Time;
+
+    procedure Update_Difference (Widget : in out Countdown_Type) is
+        Now : constant Ada.Calendar.Time := Clock;
+        Negative_Str : Wide_Wide_String := " ";
+        Days : Day_Count;
+        Seconds : Duration;
+        Leap_Seconds : Leap_Seconds_Count;
+        Temp, Hours, Minutes, Toseconds : Natural;
+    begin
+        Difference (Widget.To_Time, Now, Days, Seconds, Leap_Seconds);
+
+        --  Seconds has the remainding seconds within a Day.
+        --  Therefore, -86400 .. 86400 which is in the Integer range.
+        Temp := Natural (abs (Seconds));
+        Hours :=  Temp / 60 / 60;
+        Minutes := Temp / 60 - Hours * 60;
+        Toseconds := Temp mod 60;
 
         --  --  Debugging purposes only:
         --  Put_Line (Days'Image  & "d - "
         --      & Hours'Image & "h - "
         --      & Minutes'Image & "m - "
-        --      & Toseconds'Image & "s");
+        --      & Toseconds'Image & "S");
+
+        if Seconds < Duration (0) then
+            Negative_Str := "-";
+        end if;
+
+        Widgets.Labels.Set_Text (Label_Type (Widget),
+                                 Negative_Str
+                                 & Days'Wide_Wide_Image & " "
+                                 & Hours'Wide_Wide_Image & ":"
+                                 & Minutes'Wide_Wide_Image & ":"
+                                 & Toseconds'Wide_Wide_Image);
     end Update_Difference;
+
 end Widgets.Countdowns;

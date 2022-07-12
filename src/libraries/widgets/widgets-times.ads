@@ -28,24 +28,40 @@ package Widgets.Times is
     type Time_Type is new Label_Type with private;
 
     procedure Initialize (Widget : in out Time_Type;
-                          Text : Wide_Wide_String;
                           Row, Column : Natural);
 
-    procedure Set_Time (Widget : in out Time_Type;
-                        Datetime : Time);
-    procedure Set_Current (Widget : in out Time_Type;
-                           Current : Boolean);
+    procedure Set_Time (Widget : in out Time_Type; Datetime : Time);
+    --  Set the date and Time.
+    --
+    --  If Use_Current is False, use this time to display on the widget.
+
+    procedure Set_Use_Current (Widget : in out Time_Type; Current : Boolean);
+    --  Use the current time or the Datetime provided by the User.
+    --
+    --  If Current is true, the widgets will use the system time and updates
+    --  the time each time Draw is Called.
+
+    procedure Set_Show_Date (Widget : in out Time_Type; Show : Boolean);
+    procedure Set_Show_Time (Widget : in out Time_Type; Show : Boolean);
 
     function Get_Time (Widget : Time_Type) return Time;
-    function Get_Current (Widget : Time_Type) return boolean);
+    function Get_Use_Current (Widget : Time_Type) return Boolean;
 
-    overriding procedure Draw (Time : in out Time_Type);
+    overriding procedure Draw (Widget : in out Time_Type);
 
 private
     type Time_Type is new Label_Type with
     record
-        Current : Boolean;
+        Use_Current : Boolean;
+        Show_Date : Boolean;
+        Show_Time : Boolean;
         Datetime : Time;
     end record;
 
+    procedure Update_Time (Widget : in out Time_Type);
+    --  Update the time in the widgets with the current system Time.
+
+    procedure Update_Time_String (Widget : in out Time_Type);
+
+    procedure Update_Size (Widget : in out Time_Type);
 end Widgets.Times;

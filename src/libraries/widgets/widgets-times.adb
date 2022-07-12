@@ -19,18 +19,112 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Calendar.Formatting;
+with Ada.Strings.Wide_Wide_Unbounded;
+
 package body Widgets.Times is
+
+    overriding procedure Draw (Widget : in out Time_Type) is
+    begin
+        Widget.Update_Time;
+        Widget.Update_Time_String;
+        Widget.Update_Size;
+        Widgets.Labels.Draw (Label_Type (Widget));
+    end Draw;
+
+    function Get_Time (Widget : Time_Type) return Time is
+    begin
+        return Widget.Datetime;
+    end Get_Time;
+
+    function Get_Use_Current (Widget : Time_Type) return Boolean is
+    begin
+        return Widget.Use_Current;
+    end Get_Use_Current;
+
     procedure Initialize (Widget : in out Time_Type;
-                          Text : Wide_Wide_String;
                           Row, Column : Natural) is
-    begin 
-        --  Height is 8 because the length of "24:00:00".
-        Widgets.Labels.Initialize (Label_Type (Widget), Text,
-                                   Row, Column, 1, 8 + Text'Length);
+    begin
+        Widgets.Labels.Initialize (Label_Type (Widget), "",
+                                   Row, Column, 1, 18);
+
+        Widget.Use_Current := True;
+        Widget.Show_Date := True;
+        Widget.Show_Time := True;
+
+        --  Updates are done by Draw procedure.
     end Initialize;
 
-    overriding procedure Draw (Time : in out Time_Type); is 
+    procedure Set_Show_Date (Widget : in out Time_Type; Show : Boolean) is
     begin
-        
-    end Draw;
+        Widget.Show_Date := Show;
+    end Set_Show_Date;
+
+    procedure Set_Show_Time (Widget : in out Time_Type; Show : Boolean) is
+    begin
+        Widget.Show_Time := Show;
+    end Set_Show_Time;
+
+    procedure Set_Time (Widget : in out Time_Type; Datetime : Time) is
+    begin
+        Widget.Datetime := Datetime;
+        Widget.Use_Current := False;
+    end Set_Time;
+
+    procedure Set_Use_Current (Widget : in out Time_Type; Current : Boolean) is
+    begin
+        Widget.Use_Current := Current;
+    end Set_Use_Current;
+
+    procedure Update_Size (Widget : in out Time_Type) is
+        Size : Natural := 0;
+    begin
+        --  Height is 8 because the length of "24:00:00".
+        Size := Size + (if Widget.Show_Date then 8 else 0);
+        --  Height is 10 because the length of "1970/01/01".
+        Size := Size + (if Widget.Show_Time then 10 else 0);
+        Widgets.Set_Width (Widget_Type (Widget), Size);
+    end Update_Size;
+
+    procedure Update_Time (Widget : in out Time_Type) is
+    begin
+        if Widget.Use_Current then
+            Widget.Datetime := Clock;
+        end if;
+    end Update_Time;
+
+    procedure Update_Time_String (Widget : in out Time_Type) is
+        use Ada.Calendar.Formatting;
+        use Ada.Strings.Wide_Wide_Unbounded;
+
+        Time1 : constant Time := Widget.Datetime;
+        Hour1 : Hour_Number;
+        Minute1 : Minute_Number;
+        Second1 : Second_Number;
+        Day1 : Day_Number;
+        Month1 : Month_Number;
+        Year1 : Year_Number;
+
+        Time_Str : Unbounded_Wide_Wide_String;
+    begin
+        if Widget.Show_Date then
+            Day1 := Day (Time1, 0);
+            Month1 := Month (Time1, 0);
+            Year1 := Year (Time1, 0);
+            Append (Time_Str, Day1'Wide_Wide_Image & "/"
+                              & Month1'Wide_Wide_Image & "/"
+                              & Year1'Wide_Wide_Image);
+        end if;
+
+        if Widget.Show_Time then
+            Hour1 := Hour (Time1, 0);
+            Minute1 := Minute (Time1, 0);
+            Second1 := Second (Time1);
+            Append (Time_Str, Hour1'Wide_Wide_Image & ":"
+                              & Minute1'Wide_Wide_Image & ":"
+                              & Second1'Wide_Wide_Image);
+        end if;
+
+        Widgets.Labels.Set_Text (Label_Type (Widget), Time_Str);
+    end Update_Time_String;
 end Widgets.Times;

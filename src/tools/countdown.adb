@@ -27,14 +27,16 @@ with Ada.Calendar;
 use Ada.Calendar;
 with Ada.Calendar.Formatting;
 use Ada.Calendar.Formatting;
-with Ada.Calendar.Delays;
-use Ada.Calendar.Delays;
 with Widgets.Countdowns;
 use Widgets.Countdowns;
-
+with Widgets.Times;
+use Widgets.Times;
+with Console;
 
 procedure Countdown is
     Totime : Time;
+    Totime_Widget, Time_Widget : Time_Type;
+    Widget : Countdown_Type;
 begin
     if Argument_Count /= 1 then
         Put_Line ("Synopsis:");
@@ -43,11 +45,18 @@ begin
     end if;
 
     Totime := Value (Argument (1));
-    Widget.Initialize ("", 10, 10);
+    Widget.Initialize (Totime, 10, 10);
 
+    Totime_Widget.Initialize (6, 10);
+    Totime_Widget.Set_Time (Totime);
+    Time_Widget.Initialize (5, 10);
+
+    Console.Erase_Display (Console.Entire_Screen);
     loop
+        Totime_Widget.Draw;
+        Time_Widget.Draw;
         Widget.Draw;
-        Delay_For (Duration (1));
+        delay 1.0;
     end loop;
 
 end Countdown;
