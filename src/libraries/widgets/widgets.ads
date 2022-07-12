@@ -31,6 +31,11 @@ package Widgets is
     function Get_Row (Widget : Widget_Type) return Natural;
     function Get_Column (Widget : Widget_Type) return Natural;
 
+    procedure Set_Height (Widget : in out Widget_Type; Height : Natural);
+    procedure Set_Width (Widget : in out Widget_Type; Width : Natural);
+    procedure Set_Row (Widget : in out Widget_Type; Row : Natural);
+    procedure Set_Column (Widget : in out Widget_Type; Column : Natural);
+
     procedure Resize (Widget : in out Widget_Type; Width, Height : Natural);
     procedure Move (Widget : in out Widget_Type; Row, Column : Natural);
 

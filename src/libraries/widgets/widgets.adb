@@ -68,4 +68,24 @@ package body Widgets is
         Widget.Height := Height;
     end Resize;
 
+    procedure Set_Column (Widget : in out Widget_Type; Column : Natural) is
+    begin
+        Widget.Column := Column;
+    end Set_Column;
+
+    procedure Set_Height (Widget : in out Widget_Type; Height : Natural) is
+    begin
+        Widget.Height := Height;
+    end Set_Height;
+
+    procedure Set_Row (Widget : in out Widget_Type; Row : Natural) is
+    begin
+        Widget.Row := Row;
+    end Set_Row;
+
+    procedure Set_Width (Widget : in out Widget_Type; Width : Natural) is
+    begin
+        Widget.Width := Width;
+    end Set_Width;
+
 end Widgets;
