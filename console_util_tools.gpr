@@ -30,7 +30,7 @@ with "console_utils.gpr";
 project Console_Util_Tools is
    type Linking_Type is ("shared", "static");
    Linking : Linking_Type := external ("LINKING_TYPE", "shared");
-      
+
    for Source_Dirs use (
                         "src/tools"
                        );
@@ -38,13 +38,14 @@ project Console_Util_Tools is
    for Object_Dir use ".objs/bin";
    for Exec_Dir use "bin";
    for Main use (
-                 "console_test.adb",
-                 "emoji_test.adb",
-                 "emoji_test_read.adb",
-                 "selector.adb",
-                 "keys.adb",
-                 "mouse_test.adb"
-                );
+              "console_test.adb",
+              "emoji_test.adb",
+              "emoji_test_read.adb",
+              "selector.adb",
+              "keys.adb",
+              "mouse_test.adb",
+              "countdown.adb"
+             );
 
    package Compiler is
       for Default_Switches ("ada") use
@@ -57,20 +58,20 @@ project Console_Util_Tools is
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
          "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu",
          --  Requested by the linker to generate dynamic libraries.
-         --  "-fPIC",
+         "-fPIC",
          --  Print full path
          "-gnatef"
-         -- "-gnatw8" --  unicode support for source code        
+         --  "-gnatw8" --  unicode support for source code
         );
    end Compiler;
-   
+
    package Binder is
       case Linking is
          when "shared" =>
-            for Default_Switches ("Ada") use Binder'Default_Switches ("Ada") 
+            for Default_Switches ("Ada") use Binder'Default_Switches ("Ada")
               & ("-shared");
          when "static" =>
-            for Default_Switches ("Ada") use Binder'Default_Switches ("Ada") 
+            for Default_Switches ("Ada") use Binder'Default_Switches ("Ada")
               & ("-static");
       end case;
    end Binder;
