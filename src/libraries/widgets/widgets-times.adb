@@ -20,7 +20,6 @@
 -------------------------------------------------------------------------
 
 with Ada.Calendar.Formatting;
-with Ada.Strings.Wide_Wide_Unbounded;
 
 package body Widgets.Times is
 
@@ -31,6 +30,18 @@ package body Widgets.Times is
         Widget.Update_Size;
         Widgets.Labels.Draw (Label_Type (Widget));
     end Draw;
+
+    function Get_Label (Widget : Time_Type)
+             return Unbounded_Wide_Wide_String
+    is
+    begin
+        return Widget.Label;
+    end Get_Label;
+
+    function Get_Label (Widget : Time_Type) return Wide_Wide_String is
+    begin
+        return To_Wide_Wide_String (Widget.Label);
+    end Get_Label;
 
     function Get_Time (Widget : Time_Type) return Time is
     begin
@@ -54,6 +65,34 @@ package body Widgets.Times is
 
         --  Updates are done by Draw procedure.
     end Initialize;
+
+    procedure Initialize (Widget : in out Time_Type;
+                          Label : Unbounded_Wide_Wide_String;
+                          Row, Column : Natural) is
+    begin
+        Widget.Initialize (Row, Column);
+        Widget.Label := Label;
+    end Initialize;
+
+    procedure Initialize (Widget : in out Time_Type;
+                          Label : Wide_Wide_String;
+                          Row, Column : Natural) is
+    begin
+        Widget.Initialize (Row, Column);
+        Widget.Label := To_Unbounded_Wide_Wide_String (Label);
+    end Initialize;
+
+    procedure Set_Label (Widget : in out Time_Type;
+                         Label : Unbounded_Wide_Wide_String) is
+    begin
+        Widget.Label := Label;
+    end Set_Label;
+
+    procedure Set_Label (Widget : in out Time_Type;
+                         Label : Wide_Wide_String) is
+    begin
+        Widget.Label := To_Unbounded_Wide_Wide_String (Label);
+    end Set_Label;
 
     procedure Set_Show_Date (Widget : in out Time_Type; Show : Boolean) is
     begin
@@ -95,7 +134,6 @@ package body Widgets.Times is
 
     procedure Update_Time_String (Widget : in out Time_Type) is
         use Ada.Calendar.Formatting;
-        use Ada.Strings.Wide_Wide_Unbounded;
 
         Time1 : constant Time := Widget.Datetime;
         Hour1 : Hour_Number;
@@ -107,6 +145,8 @@ package body Widgets.Times is
 
         Time_Str : Unbounded_Wide_Wide_String;
     begin
+        Append (Time_Str, Widget.Label);
+
         if Widget.Show_Date then
             Day1 := Day (Time1, 0);
             Month1 := Month (Time1, 0);
@@ -127,4 +167,5 @@ package body Widgets.Times is
 
         Widgets.Labels.Set_Text (Label_Type (Widget), Time_Str);
     end Update_Time_String;
+
 end Widgets.Times;

@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings.Wide_Wide_Unbounded;
+use Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Calendar;
 use Ada.Calendar;
 with Widgets.Labels;
@@ -29,6 +31,16 @@ package Widgets.Times is
 
     procedure Initialize (Widget : in out Time_Type;
                           Row, Column : Natural);
+    procedure Initialize (Widget : in out Time_Type;
+                          Label : Wide_Wide_String;
+                          Row, Column : Natural);
+    procedure Initialize (Widget : in out Time_Type;
+                          Label : Unbounded_Wide_Wide_String;
+                          Row, Column : Natural);
+
+    procedure Set_Label (Widget : in out Time_Type; Label : Wide_Wide_String);
+    procedure Set_Label (Widget : in out Time_Type;
+                         Label : Unbounded_Wide_Wide_String);
 
     procedure Set_Time (Widget : in out Time_Type; Datetime : Time);
     --  Set the date and Time.
@@ -44,6 +56,8 @@ package Widgets.Times is
     procedure Set_Show_Date (Widget : in out Time_Type; Show : Boolean);
     procedure Set_Show_Time (Widget : in out Time_Type; Show : Boolean);
 
+    function Get_Label (Widget : Time_Type) return Wide_Wide_String;
+    function Get_Label (Widget : Time_Type) return Unbounded_Wide_Wide_String;
     function Get_Time (Widget : Time_Type) return Time;
     function Get_Use_Current (Widget : Time_Type) return Boolean;
 
@@ -56,6 +70,7 @@ private
         Show_Date : Boolean;
         Show_Time : Boolean;
         Datetime : Time;
+        Label : Unbounded_Wide_Wide_String;
     end record;
 
     procedure Update_Time (Widget : in out Time_Type);

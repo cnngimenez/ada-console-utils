@@ -47,9 +47,9 @@ begin
     Totime := Value (Argument (1));
     Widget.Initialize (Totime, 10, 10);
 
-    Totime_Widget.Initialize (6, 10);
+    Totime_Widget.Initialize ("To: ", 6, 10);
     Totime_Widget.Set_Time (Totime);
-    Time_Widget.Initialize (5, 10);
+    Time_Widget.Initialize ("Current: ", 5, 10);
 
     Console.Erase_Display (Console.Entire_Screen);
     loop
