@@ -125,6 +125,7 @@ package body Widgets.Selectors is
 
     begin
         Cursor_Position (Selector.Row, Selector.Column);
+        Selector.Update_Filtered_Data;
         Selector.Put_Data;
 
         Set_RGB_Background (100, 200, 100);
@@ -133,8 +134,11 @@ package body Widgets.Selectors is
         Put_Line ("Selection number "
             & To_Wide_Wide_String (Selector.Current_Selection'Image)
             & " of "
+            & To_Wide_Wide_String
+                (Data_Vectors.Length (Selector.Filtered_Data)'Image)
+            & " (total: "
             & To_Wide_Wide_String (Data_Vectors.Length (Selector.Data)'Image)
-            & ".");
+            & ").");
         Reset_All;
     end Draw;
 
@@ -328,16 +332,13 @@ package body Widgets.Selectors is
     end Previous_Selection;
 
     procedure Put_Data (Selector : Selector_Type) is
-        Filtered_Data : Data_Vector;
         A_String : Unbounded_Wide_Wide_String;
     begin
-        Filtered_Data := Selector.Filter_Data (Selector.Current_String);
-
         for I in Selector.Current_Selection .. Selector.Current_Selection + 10
         loop
             A_String := To_Unbounded_Wide_Wide_String ("");
-            if I <= Integer (Filtered_Data.Length) then
-                A_String := Filtered_Data (I);
+            if I <= Integer (Selector.Filtered_Data.Length) then
+                A_String := Selector.Filtered_Data (I);
             end if;
 
             if I = Selector.Current_Selection then
@@ -368,6 +369,29 @@ package body Widgets.Selectors is
         Selector.Data := Data;
         Sort (Selector.Data);
     end Set_Data;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Wide_Wide_String)
+    is
+    begin
+        Update_Filtered_Data (Selector,
+                              To_Unbounded_Wide_Wide_String (Substring));
+    end Update_Filtered_Data;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Unbounded_Wide_Wide_String)
+    is
+    begin
+        Selector.Current_String := Substring;
+        Selector.Filtered_Data := Selector.Filter_Data (Substring);
+    end Update_Filtered_Data;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type)
+    is
+    begin
+        Selector.Filtered_Data :=
+            Selector.Filter_Data (Selector.Current_String);
+    end Update_Filtered_Data;
 
     function User_Selected (Selector : in out Selector_Type) return Boolean is
         Enter_Key : constant Character := Character'Val (13);

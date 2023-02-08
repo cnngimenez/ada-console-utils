@@ -68,6 +68,13 @@ package Widgets.Selectors is
     function Filter_Data (Selector : Selector_Type;
                           Substring : Wide_Wide_String)
                          return Data_Vector;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Wide_Wide_String);
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Unbounded_Wide_Wide_String);
+    procedure Update_Filtered_Data (Selector : in out Selector_Type);
+
     function Current_Filter_Data (Selector : Selector_Type)
                                  return Data_Vector;
 
@@ -87,6 +94,7 @@ private
     type Selector_Type is new Widget_Type with
        record
            Data : Data_Vector;
+           Filtered_Data : Data_Vector;
            Current_String : Unbounded_Wide_Wide_String;
            Current_Selection : Positive;
        end record;
