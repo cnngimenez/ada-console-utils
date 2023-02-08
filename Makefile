@@ -27,7 +27,14 @@ ifndef prefix
     prefix=$(HOME)/Ada/installs
 endif
 
-gprbuild_params=-p
+gprbuild_params=-p -d
+
+# # Uncomment for verbose output: shows compilation commands.
+# gprbuild_params+=-vh
+
+ifndef optimisation
+	optimisation=debug
+endif
 
 ## Rules
 compile: libs tools
@@ -36,15 +43,15 @@ libs: libs-relocatable libs-static
 
 libs-static:
 	@echo "Compiling libraries in static type"	
-	gprbuild $(gprbuild_params) -XLIBRARY_KIND=static -P console_utils.gpr
+	gprbuild $(gprbuild_params) -XLIBRARY_KIND=static -XOPTIMISATION=$(optimisation) -P console_utils.gpr
 
 libs-relocatable:
 	@echo "Compiling libraries in relocatable types"
-	gprbuild $(gprbuild_params) -XLIBRARY_KIND=relocatable -P console_utils.gpr
+	gprbuild $(gprbuild_params) -XLIBRARY_KIND=relocatable -XOPTIMISATION=$(optimisation) -P console_utils.gpr
 
 tools:
 	@echo "Compiling tools"
-	gprbuild $(gprbuild_params) console_util_tools.gpr
+	gprbuild $(gprbuild_params) -XOPTIMISATION=$(optimisation) console_util_tools.gpr
 
 install: uninstall
 	@echo Installing into $(prefix)

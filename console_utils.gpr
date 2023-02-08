@@ -28,8 +28,11 @@
 
 library project Console_Utils is
    type Compilation_Type is ("relocatable", "dynamic", "static-pic", "static");
+   type Optimisation_Type is ("debug", "production");
+
    Compilation : Compilation_Type := external ("LIBRARY_KIND", "dynamic");
-   
+   Optimisation : Optimisation_Type := external ("OPTIMISATION", "production");
+
    for Library_Name use "console_utils";
    for Library_Dir use "lib";
 
@@ -55,9 +58,7 @@ library project Console_Utils is
    package Compiler is
       for Default_Switches ("Ada") use
         (
-         "-g", --  with Debugging symbols
-         --  "-gnatc", --  Semantic checkeng
-
+         --  "-gnatc", --  Semantic checking
          --  All warnings and style checkings!
          "-Wall", "-gnatwa", "-gnatVa", "-gnatVoi", "-gnatyy", "-gnatyB",
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
@@ -67,6 +68,15 @@ library project Console_Utils is
          --  Print full path
          "-gnatef"
         );
+
+        case Optimisation is
+        when "debug" =>
+            for Default_Switches ("Ada") use Compiler'Default_Switches ("Ada")
+                & ("-g");  --  with Debugging symbols
+        when "production" =>
+            for Default_Switches ("Ada") use Compiler'Default_Switches ("Ada")
+                & ("-O2");
+        end case;
    end Compiler;
 
 end Console_Utils;
