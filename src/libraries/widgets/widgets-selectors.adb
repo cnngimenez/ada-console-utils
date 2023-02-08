@@ -336,8 +336,15 @@ package body Widgets.Selectors is
     procedure Put_Data (Selector : Selector_Type) is
         use Console;
         A_String : Unbounded_Wide_Wide_String;
+        Entry_Amount : constant Natural :=
+            --  Add 2 lines for the top+bottom border if present.
+            (if Selector.Config.Draw_Border = Widgets.Border_None then
+                 Default_Height
+             else
+                 Default_Height - 2);
     begin
-        for I in Selector.Current_Selection .. Selector.Current_Selection + 10
+        for I in Selector.Current_Selection ..
+                 Selector.Current_Selection + Entry_Amount
         loop
             A_String := To_Unbounded_Wide_Wide_String ("");
             if I <= Integer (Selector.Filtered_Data.Length) then
