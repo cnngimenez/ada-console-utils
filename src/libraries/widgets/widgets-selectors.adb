@@ -122,6 +122,7 @@ package body Widgets.Selectors is
     end Delete_Character;
 
     overriding procedure Draw (Selector : in out Selector_Type) is
+
     begin
         Cursor_Position (Selector.Row, Selector.Column);
         Selector.Put_Data;
@@ -129,6 +130,11 @@ package body Widgets.Selectors is
         Set_RGB_Background (100, 200, 100);
         Set_Colour (Black);
         Put_Line ("⌨ " & To_Wide_Wide_String (Selector.Current_String));
+        Put_Line ("Selection number "
+            & To_Wide_Wide_String (Selector.Current_Selection'Image)
+            & " of "
+            & To_Wide_Wide_String (Data_Vectors.Length (Selector.Data)'Image)
+            & ".");
         Reset_All;
     end Draw;
 
