@@ -29,7 +29,6 @@ with Ada.Strings.Wide_Wide_Fixed;
 use Ada.Strings.Wide_Wide_Fixed;
 
 with Console;
-use Console;
 
 package body Widgets.Selectors is
 
@@ -124,12 +123,12 @@ package body Widgets.Selectors is
     overriding procedure Draw (Selector : in out Selector_Type) is
 
     begin
-        Cursor_Position (Selector.Row, Selector.Column);
+        Widgets.Draw (Widget_Type (Selector));
         Selector.Update_Filtered_Data;
         Selector.Put_Data;
 
-        Set_RGB_Background (100, 200, 100);
-        Set_Colour (Black);
+        Console.Set_RGB_Background (100, 200, 100);
+        Console.Set_Colour (Console.Black);
         Put_Line ("⌨ " & To_Wide_Wide_String (Selector.Current_String));
         Put_Line ("Selection number "
             & To_Wide_Wide_String (Selector.Current_Selection'Image)
@@ -139,7 +138,7 @@ package body Widgets.Selectors is
             & " (total: "
             & To_Wide_Wide_String (Data_Vectors.Length (Selector.Data)'Image)
             & ").");
-        Reset_All;
+        Console.Reset_All;
     end Draw;
 
     procedure Execute (Selector : in out Selector_Type) is
@@ -166,10 +165,11 @@ package body Widgets.Selectors is
         Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
 
         while not Accepted loop
-            Erase_Display (Entire_Screen);
-            Selector.Put_Data;
+            Console.Erase_Display (Console.Entire_Screen);
+            Selector.Draw;
+            --  Selector.Put_Data;
 
-            Put_Line (To_Wide_Wide_String (Selector.Current_String));
+            --  Put_Line (To_Wide_Wide_String (Selector.Current_String));
 
             --  Put_Line (Positive'Image (Wide_Wide_Character'Pos (Key)));
             Ada.Text_IO.Get_Immediate (Key);
@@ -264,7 +264,9 @@ package body Widgets.Selectors is
     procedure Initialize (Selector : in out Selector_Type;
                           Row, Column : Natural) is
     begin
-        Widgets.Initialize (Widget_Type (Selector), Row, Column, 20, 10);
+        Widgets.Initialize (Widget_Type (Selector),
+                            Row, Column,
+                            Default_Width, Default_Height);
         Selector.Current_Selection := 1;
         Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
     end Initialize;
@@ -332,6 +334,7 @@ package body Widgets.Selectors is
     end Previous_Selection;
 
     procedure Put_Data (Selector : Selector_Type) is
+        use Console;
         A_String : Unbounded_Wide_Wide_String;
     begin
         for I in Selector.Current_Selection .. Selector.Current_Selection + 10
@@ -351,7 +354,12 @@ package body Widgets.Selectors is
                 Blink_Off;
             end if;
 
-            Put_Line (To_Wide_Wide_String (A_String));
+            if Selector.Config.Draw_Border /= Widgets.Border_None then
+                Console.Cursor_Forward;
+            end if;
+            Put (To_Wide_Wide_String (A_String));
+            Console.Cursor_Down;
+            Console.Cursor_Horizontal (Selector.Row);
         end loop;
     end Put_Data;
 

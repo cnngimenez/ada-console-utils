@@ -28,6 +28,9 @@ generic
     with procedure On_Selected_Callback (Current_String : Wide_Wide_String);
 package Widgets.Selectors is
 
+    Default_Width : constant Natural := 20;
+    Default_Height : constant Natural := 10;
+
     type Selector_Type is new Widget_Type with private;
 
     package Data_Vectors is new Ada.Containers.Vectors

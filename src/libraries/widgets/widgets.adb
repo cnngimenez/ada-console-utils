@@ -15,21 +15,57 @@
 --  GNU General Public License for more details.
 
 --  You should have received a copy of the GNU General Public License
---  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--  along with this program.  If not, see <http://www.gnu.org/Licenses/>.
 
 -------------------------------------------------------------------------
+
+with Console;
+with Ada.Wide_Wide_Text_IO;
+use Ada.Wide_Wide_Text_IO;
 
 package body Widgets is
     procedure Draw (Widget : in out Widget_Type) is
     begin
-        null;
+        if Widget.Config.Draw_Border = Border_Simple then
+            Draw_Border (Widget);
+            Console.Cursor_Position (Widget.Row + 2, Widget.Column + 1);
+        else
+            Console.Cursor_Position (Widget.Row, Widget.Column);
+        end if;
     end Draw;
+
+    procedure Draw_Border (Widget : Widget_Type) is
+    begin
+        Console.Cursor_Position (Widget.Row, Widget.Column);
+
+        Put ("┌");
+        for I in (Widget.Column + 1) .. (Widget.Column + Widget.Width - 2) loop
+            Put ("─");
+        end loop;
+        Put_Line ("┐");
+
+        for I in (Widget.Row + 1) .. (Widget.Row + Widget.Height - 1)
+        loop
+            Put ("│");
+            Console.Cursor_Horizontal (Widget.Width);
+            Put_Line ("│");
+        end loop;
+
+        Put ("└");
+        for I in (Widget.Column + 1) .. (Widget.Column + Widget.Width - 2) loop
+            Put ("─");
+        end loop;
+        Put ("┘");
+    end Draw_Border;
 
     function Get_Height (Widget : Widget_Type) return Natural
     is (Widget.Height);
 
     function Get_Column (Widget : Widget_Type) return Natural
     is (Widget.Column);
+
+    function Get_Config (Widget : Widget_Type) return Widget_Config_Type
+    is (Widget.Config);
 
     function Get_Row (Widget : Widget_Type) return Natural
     is (Widget.Row);
@@ -38,7 +74,10 @@ package body Widgets is
     is (Widget.Width);
 
     procedure Initialize (Widget : in out Widget_Type;
-                          Row, Column, Width, Height : Natural) is
+                          Row, Column, Width, Height : Natural;
+                          Config : Widget_Config_Type :=
+                              Default_Widget_Config)
+    is
     begin
         Widget.Row := Row;
         Widget.Column := Column;
@@ -72,6 +111,13 @@ package body Widgets is
     begin
         Widget.Column := Column;
     end Set_Column;
+
+    procedure Set_Config (Widget : in out Widget_Type;
+                          Config : Widget_Config_Type)
+    is
+    begin
+        Widget.Config := Config;
+    end Set_Config;
 
     procedure Set_Height (Widget : in out Widget_Type; Height : Natural) is
     begin

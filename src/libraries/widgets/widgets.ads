@@ -21,20 +21,36 @@
 
 package Widgets is
 
+    --  Configuration
+    type Border_Type is (Border_None, Border_Simple);
+
+    type Widget_Config_Type is record
+        Draw_Border : Border_Type := Border_None;
+    end record;
+
+    Default_Widget_Config : constant Widget_Config_Type := (
+        Draw_Border => Border_None
+    );
+
     type Widget_Type is tagged private;
 
     procedure Initialize (Widget : in out Widget_Type;
-                          Row, Column, Width, Height : Natural);
+                          Row, Column, Width, Height : Natural;
+                          Config : Widget_Config_Type :=
+                              Default_Widget_Config);
 
     function Get_Width (Widget : Widget_Type) return Natural;
     function Get_Height (Widget : Widget_Type) return Natural;
     function Get_Row (Widget : Widget_Type) return Natural;
     function Get_Column (Widget : Widget_Type) return Natural;
+    function Get_Config (Widget : Widget_Type) return Widget_Config_Type;
 
     procedure Set_Height (Widget : in out Widget_Type; Height : Natural);
     procedure Set_Width (Widget : in out Widget_Type; Width : Natural);
     procedure Set_Row (Widget : in out Widget_Type; Row : Natural);
     procedure Set_Column (Widget : in out Widget_Type; Column : Natural);
+    procedure Set_Config (Widget : in out Widget_Type;
+                          Config : Widget_Config_Type);
 
     procedure Resize (Widget : in out Widget_Type; Width, Height : Natural);
     procedure Move (Widget : in out Widget_Type; Row, Column : Natural);
@@ -55,5 +71,8 @@ private
     type Widget_Type is tagged record
         Row, Column, Width, Height : Natural;
         Last_Key_Event : Last_Event_Array_Type;
+        Config : Widget_Config_Type;
     end record;
+
+    procedure Draw_Border (Widget : Widget_Type);
 end Widgets;
