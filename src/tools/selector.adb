@@ -85,6 +85,6 @@ begin
     end loop;
 
     Put_Line ("Result:");
-    Put_Line (Selector.Get_Current_String);
+    Put_Line (Selector.Get_Selected_String);
 
 end Selector;
