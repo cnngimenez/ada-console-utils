@@ -36,6 +36,7 @@ with Widgets.Selectors;
 
 procedure Selector is
     procedure Selected_Callback (Current_String : Wide_Wide_String);
+    procedure Show_Help;
 
     End_Program : Boolean := False;
 
@@ -44,6 +45,15 @@ procedure Selector is
     begin
         End_Program := True;
     end Selected_Callback;
+
+    procedure Show_Help is
+    begin
+        Put_Line ("selector: Show several options for the user to choose.");
+        New_Line;
+        Put_Line ("Synopsis:");
+        New_Line;
+        Put_Line ("    selector FILE_WITH_OPTIONS");
+    end Show_Help;
 
     package Myselector is new Widgets.Selectors
       (On_Selected_Callback => Selected_Callback);
@@ -55,6 +65,7 @@ procedure Selector is
     Key : Character;
 begin
     if Argument_Count = 0 then
+        Show_Help;
         return;
     end if;
 
