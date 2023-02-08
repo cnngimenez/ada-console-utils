@@ -15,10 +15,15 @@
 --  GNU General Public License for more details.
 
 --  You should have received a copy of the GNU General Public License
---  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--  along with this program.  If not, see <http://www.gnu.org/Licenses/>.
 
 -------------------------------------------------------------------------
 
+--  Ada implementation for VT102 and other terminal Controls.
+--
+--  See manpage console_codes (4) for more information.  Also Wikipedia
+--  article https://en.wikipedia.org/wiki/ANSI_escape_code has More
+--  explanation and references.
 package Console is
     type Colour_Type is (Black, Red, Green, Yellow, Blue,
                          Magenta, Cyan, White, Normal);
