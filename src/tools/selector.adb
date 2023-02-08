@@ -32,6 +32,7 @@ use Ada.Wide_Wide_Text_IO;
 with Console;
 use Console;
 
+with Widgets;
 with Widgets.Selectors;
 
 procedure Selector is
@@ -60,6 +61,9 @@ procedure Selector is
 
     use Myselector;
 
+    Widget_Config : constant Widgets.Widget_Config_Type := (
+        Draw_Border => Widgets.Border_Simple
+    );
     Selector : Selector_Type;
     File : File_Type;
     Key : Character;
@@ -70,6 +74,7 @@ begin
     end if;
 
     Selector.Initialize (0, 0);
+    Widgets.Widget_Type (Selector).Set_Config (Widget_Config);
 
     Open (File, In_File, Argument (1));
     while not End_Of_File (File) loop
