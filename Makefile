@@ -27,7 +27,8 @@ ifndef prefix
     prefix=$(HOME)/Ada/installs
 endif
 
-gprbuild_params=-p -d
+gprbuild_params=-p
+# gprbuild_params+=-d
 
 # # Uncomment for verbose output: shows compilation commands.
 # gprbuild_params+=-vh
@@ -35,6 +36,8 @@ gprbuild_params=-p -d
 ifndef optimisation
 	optimisation=debug
 endif
+
+.PHONY: compile libs libs-static lib-relocatable tools install uninstall install-libs install-tools uninstall-libs uninstall-tools clean clean-relocatable clean-static clean-tools parmas all setup
 
 ## Rules
 compile: libs tools
@@ -53,14 +56,24 @@ tools:
 	@echo "Compiling tools"
 	gprbuild $(gprbuild_params) -XOPTIMISATION=$(optimisation) console_util_tools.gpr
 
-install: uninstall
+install: install-libs install-tools
+
+install-libs: uninstall-libs
 	@echo Installing into $(prefix)
 	gprinstall -p --prefix=$(prefix) console_utils.gpr
+
+install-tools: uninstall-tools
+	@echo Installing into $(prefix)
 	gprinstall -p --prefix=$(prefix) console_util_tools.gpr
 
-uninstall:
+uninstall: uninstall-libs uninstall-tools
+
+uninstall-libs:
 	@echo Uninstalling from $(prefix)
 	-gprinstall --prefix=$(prefix) --uninstall console_utils.gpr
+
+uninstall-tools:
+	@echo Uninstalling from $(prefix)
 	-gprinstall --prefix=$(prefix) --uninstall console_util_tools.gpr
 
 clean: clean-relocatable clean-static clean-tools
