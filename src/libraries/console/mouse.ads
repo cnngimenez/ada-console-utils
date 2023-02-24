@@ -79,10 +79,13 @@ package Mouse is
 
 private
 
-    type String_Array_Index is range 1 .. 3;
-    type String_Array is array (String_Array_Index) of String (1 .. 6);
+    type String_Array_Index is range 1 .. 4;
+    type String_Array is array (String_Array_Index) of String (1 .. 5);
 
     function Split (Codes : String) return String_Array;
     --  Split the string "^[[<bb;xx;yym into strings ("bb", "xx", "yym").
+    --
+    --  bb, xx and yy is a string representing a number from 0 to 100.
+    --  m is the character 'm' or 'M'. ^[ is ESC.
 
 end Mouse;

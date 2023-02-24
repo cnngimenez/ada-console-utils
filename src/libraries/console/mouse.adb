@@ -81,8 +81,17 @@ package body Mouse is
     end Enable_Mouse;
 
     function Split (Codes : String) return String_Array is
-        procedure Read_Num (Index : in out Positive; Result : out String);
+        procedure Parse_Num (Index : in out Positive; Result : out String);
+        --  Parse a number string strating from the given Index.
+        --
+        --  For example, If Codes is "aa20bb", then Parse_Num (3, R)
+        --  returns R = "20" and Index = 5.
+
         procedure Initialise (Result : out String);
+        --  Fill Result with a Spaces.
+
+        procedure Parse_M (Index : in out Positive; Result : out String);
+        --  Parse the last character of the code.
 
         --  Codes: 2;75;27m or 35;75;27M
         --  Numbers can be from 0 to 100 or more.
@@ -98,7 +107,25 @@ package body Mouse is
             end loop;
         end Initialise;
 
-        procedure Read_Num (Index : in out Positive; Result : out String) is
+        procedure Parse_M (Index : in out Positive; Result : out String)
+        is
+        begin
+            Initialise (Result);
+
+            if Index > Codes'Last
+               --  or else Codes (Index) /= 'm'
+               --  or else Codes (Index) /= 'M'
+            then
+                --  Something is not right...
+                return;
+            end if;
+
+            Result (Result'First) := Codes (Index);
+            Index := Index + 1;
+        end Parse_M;
+
+        procedure Parse_Num (Index : in out Positive; Result : out String)
+        is
             Result_I : Positive := Result'First;
         begin
             Initialise (Result);
@@ -110,21 +137,33 @@ package body Mouse is
                 Result_I := Result_I + 1;
             end loop;
             --  Put_Line (Index'Image & ": """ & Result & """");
-        end Read_Num;
+        end Parse_Num;
+
     begin
+        --  Code syntax: ^[[<bbb;xxx;yyym
+
         --  Put_Line ("Split (""" &  Codes & """)");
-        Read_Num (Index, Substring);
-        Results (Result_Index) := '0' & Substring;
-        Result_Index := Result_Index + 1;
-        Index := Index + 1; --  ignore ';'
 
-        Read_Num (Index, Substring);
-        Results (Result_Index) := '0' & Substring;
+        --  Parse "bbb"
+        Parse_Num (Index, Substring);
+        Results (Result_Index) := Substring;
         Result_Index := Result_Index + 1;
-        Index := Index + 1; --  ignore ';'
+        Index := Index + 1; --  Ignore ';'
 
-        Read_Num (Index, Substring);
-        Results (Result_Index) := Substring & Codes (Index - 1);
+        --  Parse "xxx"
+        Parse_Num (Index, Substring);
+        Results (Result_Index) := Substring;
+        Result_Index := Result_Index + 1;
+        Index := Index + 1; --  Ignore ';'
+
+        --  Parse "yyy"
+        Parse_Num (Index, Substring);
+        Results (Result_Index) := Substring;
+        Result_Index := Result_Index + 1;
+
+        --  Parse "m"
+        Parse_M (Index, Substring);
+        Results (Result_Index) := Substring;
 
         return Results;
     end Split;
@@ -137,7 +176,7 @@ package body Mouse is
 
     function String_To_Code (Str : String) return Code_Type is
         Result : Code_Type;
-        Third_Str : String (1 .. 6);
+        Third_Str : String (1 .. 5);
         Splitted : String_Array;
     begin
         Result.Invalid := True;
@@ -158,7 +197,7 @@ package body Mouse is
         Third_Str := Splitted (3);
         Result.Y := Positive'Value (Third_Str (1) & Third_Str (2));
 
-        Result.M := Third_Str (3);
+        Result.M := Splitted (4)(1);
 
         Result.Invalid := False;
         return Result;

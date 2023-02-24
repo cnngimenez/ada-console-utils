@@ -21,30 +21,42 @@
 
 with Ada.Text_IO;
 use Ada.Text_IO;
+with Console;
 with Mouse;
 use Mouse;
 
 procedure Mouse_Test is
     procedure Put_Code (Code : Code_Type);
+    procedure Put_Characters (Codes : String);
+
+    procedure Put_Characters (Codes : String) is
+    begin
+        for C of Codes loop
+            Put (C & Character'Pos (C)'Image & " ");
+        end loop;
+    end Put_Characters;
 
     procedure Put_Code (Code : Code_Type) is
     begin
         if Code.Invalid then
-            Put_Line ("Invalid code.");
+            Put_Line ("Invalid code.                          ");
         else
             Put_Line ("( B: " & Code.B'Image
                         & ", X: " & Code.X'Image
                         & ", Y: " & Code.Y'Image
-                        & ", M: " & Code.M
-                        & ")");
+                        & ", M: " & Code.M & "("
+                        & Character'Pos (Code.M)'Image
+                        & "))                                  ");
         end if;
     end Put_Code;
 
     Codes : String (1 .. 12);
     I : Positive := Codes'First;
     C : Character;
+    Num : Natural := 0;
 begin
     Enable_Mouse;
+    Console.Cursor_Position (0, 0);
 
     loop
         Get_Immediate (C);
@@ -54,8 +66,15 @@ begin
         I := I + 1;
 
         if C = 'm' or else C = 'M' or else I > Codes'Last then
+            Put_Characters (Codes);
             Put_Code (String_To_Code (Codes));
             I := Codes'First;
+
+            Num := Num + 1;
+            if Num >= 10 then
+                Console.Cursor_Position (0, 0);
+                Num := 0;
+            end if;
         end if;
 
         exit when C = 'q';
