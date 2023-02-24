@@ -118,6 +118,9 @@ package body Ada_Tuis is
     function Last_Key_Pressed (Tui : Ada_Tui_Type) return String
         is (String (Tui.Last_Key_Pressed));
 
+    function Last_Key_Pressed (Tui : Ada_Tui_Type) return Character
+        is (Tui.Last_Key_Pressed (Tui.Last_Key_Pressed'Last));
+
     procedure Process_Mouse_Event (Tui : Ada_Tui_Type;
                                    Mouse_Event : Mouse_Event_Type)
     is

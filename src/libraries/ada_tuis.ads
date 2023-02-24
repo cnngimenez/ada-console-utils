@@ -60,7 +60,9 @@ package Ada_Tuis is
     --  Call any widget handlers.
 
     function Last_Key_Pressed (Tui : Ada_Tui_Type) return String;
-    --  Return the last key pressed.
+    --  Return the last key Pressed.
+
+    function Last_Key_Pressed (Tui : Ada_Tui_Type) return Character;
 
 private
 

@@ -62,7 +62,7 @@ begin
         Tui.Draw;
         Tui.Event_Loop;
 
-        exit when Tui.Last_Key_Pressed = "q";
+        exit when Tui.Last_Key_Pressed = 'q';
     end loop;
 
 end Button_Test;
