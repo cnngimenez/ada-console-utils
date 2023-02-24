@@ -41,6 +41,7 @@ library project Console_Utils is
    for Library_Kind use Compilation;
 
    for Source_Dirs use (
+                        "src/libraries",
                         "src/libraries/console",
                         "src/libraries/unicode",
                         "src/libraries/widgets"
