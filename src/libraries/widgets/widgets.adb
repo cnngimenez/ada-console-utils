@@ -24,6 +24,21 @@ with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
 package body Widgets is
+
+    procedure Call_Mouse_Click_Handler (Widget : Widget_Type;
+                                        Mouse_Event : Mouse_Event_Type)
+    is
+    begin
+        Widget.Mouse_Click_Handler (Mouse_Event);
+    end Call_Mouse_Click_Handler;
+
+    procedure Call_Mouse_Move_Handler (Widget : Widget_Type;
+                                       Mouse_Event : Mouse_Event_Type)
+    is
+    begin
+        Widget.Mouse_Move_Handler (Mouse_Event);
+    end Call_Mouse_Move_Handler;
+
     procedure Draw (Widget : in out Widget_Type) is
     begin
         if Widget.Config.Draw_Border = Border_Simple then
@@ -83,11 +98,20 @@ package body Widgets is
         Widget.Column := Column;
         Widget.Width := Width;
         Widget.Height := Height;
+        Widget.Mouse_Move_Handler := null;
+        Widget.Mouse_Click_Handler := null;
 
         for I in Widget.Last_Key_Event'Range loop
             Widget.Last_Key_Event (I) := Character'Val (0);
         end loop;
     end Initialize;
+
+    function Is_Coordinates_In_Widget (Widget : Widget_Type; X, Y : Natural)
+        return Boolean
+        is (X >= Widget.Column
+            and then X <= Widget.Column + Widget.Width
+            and then Y >= Widget.Row
+            and then Y <= Widget.Row + Widget.Height);
 
     procedure Key_Event (Widget : in out Widget_Type; Key : Character) is
     begin
@@ -95,11 +119,41 @@ package body Widgets is
         Widget.Last_Key_Event (1) := Key;
     end Key_Event;
 
+    procedure Mouse_Event (Widget : in out Widget_Type;
+                           Mouse_Event : Mouse_Event_Type)
+    is
+    begin
+        if not Widget.Is_Mouse_In_Widget (Mouse_Event.X, Mouse_Event.Y) then
+            return;
+        end if;
+
+        if Mouse_Event.Button_1_Pressed
+            or else Mouse_Event.Button_2_Pressed
+            or else Mouse_Event.Button_3_Pressed
+        then
+            Widget.Mouse_Click_Handler (Mouse_Event);
+        else
+            Widget.Mouse_Move_Handler (Mouse_Event);
+        end if;
+    end Mouse_Event;
+
     procedure Move (Widget : in out Widget_Type; Row, Column : Natural) is
     begin
         Widget.Row := Row;
         Widget.Column := Column;
     end Move;
+
+    procedure Remove_Mouse_Click_Handler (Widget : in out Widget_Type)
+    is
+    begin
+        Widget.Mouse_Click_Handler := null;
+    end Remove_Mouse_Click_Handler;
+
+    procedure Remove_Mouse_Move_Handler (Widget : in out Widget_Type)
+    is
+    begin
+        Widget.Mouse_Move_Handler := null;
+    end Remove_Mouse_Move_Handler;
 
     procedure Resize (Widget : in out Widget_Type; Width, Height : Natural)
     is begin
@@ -123,6 +177,18 @@ package body Widgets is
     begin
         Widget.Height := Height;
     end Set_Height;
+
+    procedure Set_Mouse_Click_Handler (Widget : in out Widget_Type;
+                                       Handler : Mouse_Handler) is
+    begin
+        Widget.Mouse_Click_Handler := Handler;
+    end Set_Mouse_Click_Handler;
+
+    procedure Set_Mouse_Move_Handler (Widget : in out Widget_Type;
+                                      Handler : Mouse_Handler) is
+    begin
+        Widget.Mouse_Move_Handler := Handler;
+    end Set_Mouse_Move_Handler;
 
     procedure Set_Row (Widget : in out Widget_Type; Row : Natural) is
     begin

@@ -15,13 +15,25 @@
 --  GNU General Public License for more details.
 
 --  You should have received a copy of the GNU General Public License
---  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--  along with this program.  If not, see <http://www.gnu.org/Licenses/>.
 
 -------------------------------------------------------------------------
 
+with Mouse;
+use Mouse;
+
+--
+--  Base Widget
+--
+--
+--  Common behaviour and information for all Widgets.
+--  Default events and configuration are alse defined here.
 package Widgets is
 
+    --  ---------------
     --  Configuration
+    --  ---------------
+
     type Border_Type is (Border_None, Border_Simple);
 
     type Widget_Config_Type is record
@@ -33,6 +45,7 @@ package Widgets is
     );
 
     type Widget_Type is tagged private;
+    type Widget_Access_Type is access all Widget_Type'Class;
 
     procedure Initialize (Widget : in out Widget_Type;
                           Row, Column, Width, Height : Natural;
@@ -57,11 +70,57 @@ package Widgets is
 
     procedure Draw (Widget : in out Widget_Type);
 
+    function Is_Coordinates_In_Widget (Widget : Widget_Type; X, Y : Natural)
+        return Boolean;
+    --  Are the point X, Y inside the Widget?
+    --
+    --  Return true if the point coordinate is inside the Widget
+    --  coordinates.
+
+    function Is_Mouse_In_Widget (Widget : Widget_Type; X, Y : Natural)
+        return Boolean
+        is (Is_Coordinates_In_Widget (Widget, X, Y));
+
+    function Is_Mouse_In_Widget (Widget : Widget_Type;
+                                 Mouse_Event : Mouse_Event_Type)
+                                 return Boolean
+        is (Is_Mouse_In_Widget (Widget, Mouse_Event.X, Mouse_Event.Y));
+
     --  ----------
     --  Events
     --  ----------
 
+    type Mouse_Handler is access procedure (Mouse_Event : Mouse_Event_Type);
+
     procedure Key_Event (Widget : in out Widget_Type; Key : Character);
+
+    procedure Mouse_Event (Widget : in out Widget_Type;
+                           Mouse_Event : Mouse_Event_Type);
+    --  What to do when the mouse is moved in or out this Widget.
+    --
+    --  Call Mouse_Move_Event or Mouse_Clicked_Event if the mouse is
+    --  inside the Widget.
+    --
+    --  This subprogram can be overriden, but ensure to call
+    --  Widget.Mouse_Event for the other two event Handling.
+
+    procedure Set_Mouse_Click_Handler (Widget : in out Widget_Type;
+                                       Handler : Mouse_Handler);
+
+    procedure Remove_Mouse_Click_Handler (Widget : in out Widget_Type);
+
+    procedure Set_Mouse_Move_Handler (Widget : in out Widget_Type;
+                                      Handler : Mouse_Handler);
+
+    procedure Remove_Mouse_Move_Handler (Widget : in out Widget_Type);
+
+    procedure Call_Mouse_Move_Handler (Widget : Widget_Type;
+                                       Mouse_Event : Mouse_Event_Type);
+    --  Call the Mouse_Move_Handler procedure.
+
+    procedure Call_Mouse_Click_Handler (Widget : Widget_Type;
+                                        Mouse_Event : Mouse_Event_Type);
+    --  Call the Mouse_Clicked_Handler procedure.
 
 private
     --  1 : The last key pressed.
@@ -72,7 +131,13 @@ private
         Row, Column, Width, Height : Natural;
         Last_Key_Event : Last_Event_Array_Type;
         Config : Widget_Config_Type;
+
+        --  Event handlers:
+
+        Mouse_Move_Handler : Mouse_Handler := null;
+        Mouse_Click_Handler : Mouse_Handler := null;
     end record;
 
     procedure Draw_Border (Widget : Widget_Type);
+
 end Widgets;
