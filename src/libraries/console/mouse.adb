@@ -30,6 +30,42 @@ use Ada.Characters.Latin_1;
 
 package body Mouse is
 
+    function Codes_To_Event (Code : Code_Type) return Mouse_Event_Type
+    is
+        Event : Mouse_Event_Type;
+    begin
+        if Code.Invalid then
+            return Invalid_Mouse_Event;
+        end if;
+
+        Event.Invalid := False;
+
+        Event.X := Code.X;
+        Event.Y := Code.Y;
+
+        if (Code.B and Byte (2#0000_0001#)) /= 0 then
+            Event.Button_1_Pressed := True;
+        end if;
+        --  if (Code.B and Natural (2#0000_0010#)) /= 0 then
+        --      Event.Button_2_Pressed := True;
+        --  end if;
+        --  if (Code.B and Natural (2#0000_0100#)) /= 0 then
+        --      Event.Button_3_Pressed := True;
+        --  end if;
+
+        --  if (Code.B and 2#0001_0000#) /= 0 then
+        --      Event.Shift_Pressed := True;
+        --  end if;
+        --  if (Code.B and 2#0010_0000#) /= 0 then
+        --      Event.Meta_Pressed := True;
+        --  end if;
+        --  if (Code.B and 2#0100_0000#) /= 0 then
+        --      Event.Control_Pressed := True;
+        --  end if;
+
+        return Event;
+    end Codes_To_Event;
+
     procedure Disable_Mouse is
     begin
         Put (ESC & "[?1000l");
@@ -37,7 +73,11 @@ package body Mouse is
 
     procedure Enable_Mouse is
     begin
-        Put (ESC & "[?1003h" & ESC & "[?1015h" & ESC & "[?1006h");
+        --  1003 : Report all mouse Tracking.
+        --  1015 : Report mouse tracking in
+
+        Put (ESC & "[?1000h" & ESC & "[?1003h"
+            & ESC & "[?1015h" & ESC & "[?1006h");
     end Enable_Mouse;
 
     function Split (Codes : String) return String_Array is
@@ -111,7 +151,7 @@ package body Mouse is
         --  Tail: Remove the ESC & "[<" characters.
         Splitted := Split (Tail (Str, Str'Length - 3));
 
-        Result.B := Positive'Value (Splitted (1));
+        Result.B := Byte'Value (Splitted (1));
 
         Result.X := Positive'Value (Splitted (2));
 
