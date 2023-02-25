@@ -63,7 +63,7 @@ package body Ada_Tuis is
     begin
         for Widget : Widget_Access_Type of Tui.Widgets loop
             if Is_Mouse_In_Widget (Widget.all, Mouse_Event) then
-                Call_Mouse_Move_Handler (Widget.all, Mouse_Event);
+                Call_Mouse_Click_Handler (Widget.all, Mouse_Event);
             end if;
         end loop;
     end Call_On_Click_Handlers;
@@ -81,13 +81,13 @@ package body Ada_Tuis is
 
     procedure Draw (Tui : Ada_Tui_Type) is
     begin
-        --  Store_Current_Position;
+        Console.Save_Cursor_Position;
 
         for Widget : Widget_Access_Type of Tui.Widgets loop
             Draw (Widget.all);
         end loop;
 
-        --  Restore_Previous_Position;
+        Console.Restore_Cursor_Position;
     end Draw;
 
     procedure Event_Loop (Tui : in out Ada_Tui_Type) is
