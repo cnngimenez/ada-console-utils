@@ -40,28 +40,20 @@ package body Mouse is
 
         Event.Invalid := False;
 
+        Event.Release := Code.M = 'M';
         Event.X := Code.X;
         Event.Y := Code.Y;
 
-        if (Code.B and Byte (2#0000_0001#)) /= 0 then
-            Event.Button_1_Pressed := True;
-        end if;
-        --  if (Code.B and Natural (2#0000_0010#)) /= 0 then
-        --      Event.Button_2_Pressed := True;
-        --  end if;
-        --  if (Code.B and Natural (2#0000_0100#)) /= 0 then
-        --      Event.Button_3_Pressed := True;
-        --  end if;
+        Event.Button_1_Pressed :=
+            (Code.B and Byte (2#0000_0011#)) = 0;
+        Event.Button_2_Pressed :=
+            (Code.B and Byte (2#0000_0011#)) = 1;
+        Event.Button_3_Pressed :=
+            (Code.B and Byte (2#0000_0011#)) = 2;
 
-        --  if (Code.B and 2#0001_0000#) /= 0 then
-        --      Event.Shift_Pressed := True;
-        --  end if;
-        --  if (Code.B and 2#0010_0000#) /= 0 then
-        --      Event.Meta_Pressed := True;
-        --  end if;
-        --  if (Code.B and 2#0100_0000#) /= 0 then
-        --      Event.Control_Pressed := True;
-        --  end if;
+        Event.Shift_Pressed := (Code.B and 2#0001_0000#) /= 0;
+        Event.Meta_Pressed := (Code.B and 2#0010_0000#) /= 0;
+        Event.Control_Pressed := (Code.B and 2#0100_0000#) /= 0;
 
         return Event;
     end Codes_To_Event;
