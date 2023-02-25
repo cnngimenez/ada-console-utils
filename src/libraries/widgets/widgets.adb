@@ -29,6 +29,10 @@ package body Widgets is
                                         Mouse_Event : Mouse_Event_Type)
     is
     begin
+        if Widget.Mouse_Click_Handler = null then
+            return;
+        end if;
+
         Widget.Mouse_Click_Handler (Mouse_Event);
     end Call_Mouse_Click_Handler;
 
@@ -36,6 +40,10 @@ package body Widgets is
                                        Mouse_Event : Mouse_Event_Type)
     is
     begin
+        if Widget.Mouse_Move_Handler = null then
+            return;
+        end if;
+
         Widget.Mouse_Move_Handler (Mouse_Event);
     end Call_Mouse_Move_Handler;
 
@@ -43,7 +51,7 @@ package body Widgets is
     begin
         if Widget.Config.Draw_Border = Border_Simple then
             Draw_Border (Widget);
-            Console.Cursor_Position (Widget.Row + 2, Widget.Column + 1);
+            Console.Cursor_Position (Widget.Row + 1, Widget.Column + 1);
         else
             Console.Cursor_Position (Widget.Row, Widget.Column);
         end if;
@@ -59,13 +67,15 @@ package body Widgets is
         end loop;
         Put_Line ("┐");
 
-        for I in (Widget.Row + 1) .. (Widget.Row + Widget.Height - 1)
+        for I in (Widget.Row + 1) .. (Widget.Row + Widget.Height)
         loop
+            Console.Cursor_Horizontal (Widget.Column);
             Put ("│");
-            Console.Cursor_Horizontal (Widget.Width);
+            Console.Cursor_Horizontal (Widget.Column + Widget.Width - 1);
             Put_Line ("│");
         end loop;
 
+        Console.Cursor_Horizontal (Widget.Column);
         Put ("└");
         for I in (Widget.Column + 1) .. (Widget.Column + Widget.Width - 2) loop
             Put ("─");
