@@ -21,6 +21,8 @@
 
 with Ada.Text_IO;
 use Ada.Text_IO;
+with Ada.Strings.Fixed;
+use Ada.Strings.Fixed;
 with Console;
 with Mouse;
 use Mouse;
@@ -31,8 +33,10 @@ procedure Mouse_Test is
 
     procedure Put_Characters (Codes : String) is
     begin
+        Put ("^[" & Codes (Codes'First + 1 .. Codes'Last));
+        Put (" ");
         for C of Codes loop
-            Put (C & Character'Pos (C)'Image & " ");
+            Put (Character'Pos (C)'Image & " ");
         end loop;
     end Put_Characters;
 
@@ -50,7 +54,7 @@ procedure Mouse_Test is
         end if;
     end Put_Code;
 
-    Codes : String (1 .. 12);
+    Codes : String (1 .. 15);
     I : Positive := Codes'First;
     C : Character;
     Num : Natural := 0;
@@ -75,6 +79,8 @@ begin
                 Console.Cursor_Position (0, 0);
                 Num := 0;
             end if;
+
+            Codes := Codes'Length * ' ';
         end if;
 
         exit when C = 'q';
