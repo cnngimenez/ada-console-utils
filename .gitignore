@@ -5,3 +5,4 @@ bin/**
 *.ali
 lib/**
 makefile.setup
+docs/*.texi

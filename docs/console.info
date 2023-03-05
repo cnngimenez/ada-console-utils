@@ -1,0 +1,175 @@
+This is console.info, produced by makeinfo version 6.8 from
+console.texi.
+
+INFO-DIR-SECTION A category
+START-INFO-DIR-ENTRY
+* Console subprograms: (console). One line description.
+END-INFO-DIR-ENTRY
+
+
+File: console.info,  Node: Top,  Next: Control Characters,  Up: (dir)
+
+Console subprograms
+*******************
+
+* Menu:
+
+* Control Characters::
+* Mouse::
+* References::
+
+— The Detailed Node Listing —
+
+Mouse
+
+* Codes::
+* Result codes::
+
+
+
+File: console.info,  Node: Control Characters,  Next: Mouse,  Prev: Top,  Up: Top
+
+1 Control Characters
+********************
+
+The Table *note Table 1.1: tabcontrol-sequence. list the acronym and the
+control characters it represents at the DEC VT100 and similar terminal
+emulators Moy [*note 2005: citeproc_bib_item_2.].  Only the control
+sequence used in this work are listed in the table.  Consider lowercase
+letters as the character itself, and uppercase letters as a parameter to
+be replaced.
+
+Acronym   Control sequence name         Characters   Parameters
+------------------------------------------------------------------
+CSI       Control Sequence Introducer   ESC [
+DECSET    DEC Private Mode Set          CSI ?  P h   P: number
+DECRST    DEC Private Mode Reset        CSI ?  P l   P: number
+
+
+Table 1.1: Control sequence used in this work.
+
+
+File: console.info,  Node: Mouse,  Next: References,  Prev: Control Characters,  Up: Top
+
+2 Mouse
+*******
+
+* Menu:
+
+* Codes::
+* Result codes::
+
+
+File: console.info,  Node: Codes,  Next: Result codes,  Up: Mouse
+
+2.1 Codes
+=========
+
+According to iani et al.  [*note 2011: citeproc_bib_item_1.], the
+terminal emulators can receive the following DECSET codes by using print
+or echo commands:
+
+     9 -> X10 mouse reporting, for compatibility with X10's xterm, reports on button press.
+     1000 -> X11 mouse reporting, reports on button press and release.
+     1001 -> highlight reporting, useful for reporting mouse highlights.
+     1002 -> button movement reporting, reports movement when a button is pressed.
+     1003 -> all movement reporting, reports all movements.
+
+     1006 -> report back as decimal values (xterm, many other terminal emulators, but not urxvt)
+     1015 -> report back as decimal values (urxvt, xterm, other terminal emulators, some applications find it complex to parse)
+     1005 -> report back encoded as utf-8 (xterm, urxvt, broken in several ways)
+
+   Therefore, to enable the XTerm mouse reporting press and release, the
+following should be used:
+
+     echo -e "\e[?1000h"
+
+   To report all the movement too, use the following DECSET:
+
+     echo -e "\e[?1003h"
+
+   To disable all, use the corresponding DECRST:
+
+     echo -e "\e?1003l\e[?1000l"
+
+
+File: console.info,  Node: Result codes,  Prev: Codes,  Up: Mouse
+
+2.2 Result codes
+================
+
+XTerm, Konsole, Tmux, Kitty, and similar terminals return the following
+codes when the user clicks or moves the mouse.  These codes can be red
+with the usual standard input commands (in Ada, the
+‘Ada.Text_IO.Get_Immediate’ subprograms).  The terminal output usually
+prints ‘^[’ as the escape character (ASCII number 27), and the CSI as
+‘^[[’.
+
+   When the user move the mouse through coordinates 1,2 (column 1, row
+2, or the first character from left to right, and the second from top to
+bottom) without clicking, its output is:
+
+     ^[[<35;1;2M
+
+   When clicking with the first button, the terminal outputs the press
+and release codes:
+
+     ^[[<0;1;2m
+     ^[[<0;1;2M
+
+   Therefore, the code syntax is:
+
+     ESC[<B;X;Y;M
+
+   Where B can be 0, 1, 2, or 35.  X and Y are the column and row
+coordinates, X characters from left to right and Y from to to bottom.  M
+can be the character ’m’ when the button is pressed or ’M’ when
+released.
+
+   Some manuals states that the codes are ‘ESC[Mbxy’, where the lower
+two bits of ‘b’ encode the button, the upper two the modifier key
+(shift, control or meta/alt) [*note man-pages project 2017:
+citeproc_bib_item_3.; *note Moy 2005: citeproc_bib_item_2.].
+
+   However, this is not seems to be the case when using the
+‘mouse_test.adb’ program on the mentioned terminal emulators.  The
+output format is not as the manual indicates, instead is: ‘ESC[<B;X;YM’
+where B indicates the button pressed, X and Y the coordinates, and M the
+released or pressed state (as the examples shown).
+
+
+File: console.info,  Node: References,  Prev: Mouse,  Up: Top
+
+3 References
+************
+
+IANI, DICKEY, T., AND NINJALJ.  2011.  The stackoverflow question “how
+to get mousemove and mouseclick in bash?’’.
+<https://stackoverflow.com/a/5970472>.
+
+   MOY, E.  2005.  Xterm control sequence - the ctlseqs manpage.
+<https://www.xfree86.org/current/ctlseqs.html>.
+
+   MAN-PAGES PROJECT, L., ED.  2017.  Console\_codes(4) manpage.
+<http://man.he.net/man4/console_codes>.
+
+
+
+Tag Table:
+Node: Top200
+Node: Control Characters443
+Ref: tabcontrol-sequence942
+Node: Mouse1295
+Node: Codes1441
+Node: Result codes2674
+Node: References4336
+Ref: citeproc_bib_item_14428
+Ref: citeproc_bib_item_24589
+Ref: citeproc_bib_item_34703
+
+End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:

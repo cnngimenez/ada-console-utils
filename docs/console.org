@@ -1,0 +1,153 @@
+
+* Control Characters
+The Table [[tab:control-sequence]] list the acronym and the control characters it represents at the DEC VT100 and similar terminal emulators [cite/text:@moy05:_xterm_contr_sequen]. Only the control sequence used in this work are listed in the table. Consider lowercase letters as the character itself, and uppercase letters as a parameter to be replaced.
+
+#+name: tab:control-sequence
+#+caption: Control sequence used in this work.
+| Acronym | Control sequence name       | Characters | Parameters |
+|---------+-----------------------------+------------+------------|
+| CSI     | Control Sequence Introducer | ESC [      |            |
+| DECSET  | DEC Private Mode Set        | CSI ? P h  | P: number  |
+| DECRST  | DEC Private Mode Reset      | CSI ? P l  | P: number  |
+
+* Mouse
+
+** Codes
+According to [cite/text:@iani11:_stack_mousem_mousec], the terminal emulators can receive the following DECSET codes by using print or echo commands:
+
+#+BEGIN_SRC text
+9 -> X10 mouse reporting, for compatibility with X10's xterm, reports on button press.
+1000 -> X11 mouse reporting, reports on button press and release.
+1001 -> highlight reporting, useful for reporting mouse highlights.
+1002 -> button movement reporting, reports movement when a button is pressed.
+1003 -> all movement reporting, reports all movements.
+
+1006 -> report back as decimal values (xterm, many other terminal emulators, but not urxvt)
+1015 -> report back as decimal values (urxvt, xterm, other terminal emulators, some applications find it complex to parse)
+1005 -> report back encoded as utf-8 (xterm, urxvt, broken in several ways)  
+#+END_SRC
+
+Therefore, to enable the XTerm mouse reporting press and release, the following should be used:
+
+: echo -e "\e[?1000h"
+
+To report all the movement too, use the following DECSET:
+
+: echo -e "\e[?1003h"
+
+To disable all, use the corresponding DECRST:
+
+: echo -e "\e?1003l\e[?1000l"
+
+** Result codes
+XTerm, Konsole, Tmux, Kitty, and similar terminals return the following codes when the user clicks or moves the mouse. These codes can be red with the usual standard input commands (in Ada, the =Ada.Text_IO.Get_Immediate= subprograms).
+The terminal output usually prints =^[= as the escape character (ASCII number 27), and the CSI as =^[[=.
+
+When the user move the mouse through coordinates 1,2 (column 1, row 2, or the first character from left to right, and the second from top to bottom) without clicking, its output is:
+
+: ^[[<35;1;2M
+
+When clicking with the first button, the terminal outputs the press and release codes:
+
+: ^[[<0;1;2m
+: ^[[<0;1;2M
+
+Therefore, the code syntax is:
+
+: ESC[<B;X;Y;M
+
+Where B can be 0, 1, 2, or 35. X and Y are the column and row coordinates, X characters from left to right and Y from to to bottom. M can be the character 'm' when the button is pressed or 'M' when released.
+
+Some manuals states that the codes are =ESC[Mbxy=, where the lower two bits of =b= encode the button, the upper two the modifier key (shift, control or meta/alt) [cite:@project17;@moy05:_xterm_contr_sequen].
+
+However, this is not seems to be the case when using the =mouse_test.adb= program on the mentioned terminal emulators. The output format is not as the manual indicates, instead is: =ESC[<B;X;YM= where B indicates the button pressed, X and Y the coordinates, and M the released or pressed state (as the examples shown).
+
+* References
+#+print_bibliography:
+
+* Meta     :noexport:
+
+# ----------------------------------------------------------------------
+#+TITLE:  Console subprograms
+#+SUBTITLE:
+#+AUTHOR: Christian Gimenez
+#+DATE:   09 feb 2023
+#+EMAIL:
+#+DESCRIPTION: 
+#+KEYWORDS:
+#+cite_export: csl ./acm-siggraph.csl
+# #+cite_export: biblatex alphabetic 
+#+bibliography: biblio.bib
+
+#+STARTUP: inlineimages hidestars content hideblocks entitiespretty
+#+STARTUP: indent fninline latexpreview
+
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS: tex:imagemagick
+
+#+TODO: TODO(t!) CURRENT(c!) PAUSED(p!) | DONE(d!) CANCELED(C!@)
+
+# -- Export
+#+LANGUAGE: en
+#+LINK_UP:   
+#+LINK_HOME: 
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+# #+export_file_name: index
+
+# -- HTML Export
+#+INFOJS_OPT: view:info toc:t ftoc:t ltoc:t mouse:underline buttons:t path:libs/org-info.js
+#+HTML_LINK_UP: index.html
+#+HTML_LINK_HOME: index.html
+#+XSLT:
+
+# -- For ox-twbs or HTML Export
+# #+HTML_HEAD: <link href="libs/bootstrap.min.css" rel="stylesheet">
+# -- -- LaTeX-CSS
+# #+HTML_HEAD: <link href="css/style-org.css" rel="stylesheet">
+
+# #+HTML_HEAD: <script src="libs/jquery.min.js"></script> 
+# #+HTML_HEAD: <script src="libs/bootstrap.min.js"></script>
+
+
+# -- LaTeX Export
+# #+LATEX_CLASS: article
+#+latex_compiler: lualatex
+# #+latex_class_options: [12pt, twoside]
+
+#+latex_header: \usepackage{csquotes}
+# #+latex_header: \usepackage[spanish]{babel}
+# #+latex_header: \usepackage[margin=2cm]{geometry}
+# #+latex_header: \usepackage{fontspec}
+# -- biblatex
+# #+latex_header: \usepackage[backend=biber, style=alphabetic, backref=true]{biblatex}
+# #+latex_header: \addbibresource{tangled/biblio.bib}
+# -- -- Tikz
+# #+LATEX_HEADER: \usepackage{tikz}
+# #+LATEX_HEADER: \usetikzlibrary{arrows.meta}
+# #+LATEX_HEADER: \usetikzlibrary{decorations}
+# #+LATEX_HEADER: \usetikzlibrary{decorations.pathmorphing}
+# #+LATEX_HEADER: \usetikzlibrary{shapes.geometric}
+# #+LATEX_HEADER: \usetikzlibrary{shapes.symbols}
+# #+LATEX_HEADER: \usetikzlibrary{positioning}
+# #+LATEX_HEADER: \usetikzlibrary{trees}
+
+# #+LATEX_HEADER_EXTRA:
+
+# --  Info Export
+#+TEXINFO_DIR_CATEGORY: A category
+#+TEXINFO_DIR_TITLE: Console subprograms: (console)
+#+TEXINFO_DIR_DESC: One line description.
+#+TEXINFO_PRINTED_TITLE: Console subprograms
+#+TEXINFO_FILENAME: console.info
+
+
+# Local Variables:
+# org-hide-emphasis-markers: t
+# org-use-sub-superscripts: "{}"
+# fill-column: 80
+# visual-line-fringe-indicators: t
+# ispell-local-dictionary: "british"
+# org-latex-default-figure-position: "tbp"
+# End:
