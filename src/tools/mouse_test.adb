@@ -60,6 +60,7 @@ procedure Mouse_Test is
     Num : Natural := 0;
 begin
     Enable_Mouse;
+    Console.Erase_Display (Console.Entire_Screen);
     Console.Cursor_Position (0, 0);
 
     loop
