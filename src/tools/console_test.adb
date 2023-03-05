@@ -116,9 +116,12 @@ procedure Console_Test is
 
     procedure Set_RGB_Background_Test is
     begin
-        for R in RGB_Type'First .. RGB_Type'Last / 20 loop
-            for G in RGB_Type'First .. RGB_Type'Last / 20 loop
-                for B in RGB_Type'First .. RGB_Type'Last / 20 loop
+        for R in RGB_Number_Type'First .. RGB_Number_Type'Last / 20
+        loop
+            for G in RGB_Number_Type'First .. RGB_Number_Type'Last / 20
+            loop
+                for B in RGB_Number_Type'First .. RGB_Number_Type'Last / 20
+                loop
                     Set_RGB_Background (R * 20, G * 20, B * 20);
                     Put ("A");
                 end loop;
@@ -130,9 +133,12 @@ procedure Console_Test is
 
     procedure Set_RGB_Test is
     begin
-        for R in RGB_Type'First .. RGB_Type'Last / 20 loop
-            for G in RGB_Type'First .. RGB_Type'Last / 20 loop
-                for B in RGB_Type'First .. RGB_Type'Last / 20 loop
+        for R in RGB_Number_Type'First .. RGB_Number_Type'Last / 20
+        loop
+            for G in RGB_Number_Type'First .. RGB_Number_Type'Last / 20
+            loop
+                for B in RGB_Number_Type'First .. RGB_Number_Type'Last / 20
+                loop
 
                     Set_RGB_Colour (R * 20, G * 20, B * 20);
                     Put ("A");

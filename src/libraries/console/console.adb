@@ -461,7 +461,7 @@ package body Console is
         end if;
     end Set_Colour;
 
-    procedure Set_RGB_Background (R, G, B : RGB_Type) is
+    procedure Set_RGB_Background (R, G, B : RGB_Number_Type) is
     begin
         Put (ESC & "[48;2;"
                & Trim (R'Image, Both) & ";"
@@ -469,12 +469,22 @@ package body Console is
                & Trim (B'Image, Both) & "m");
     end Set_RGB_Background;
 
-    procedure Set_RGB_Colour (R, G, B : RGB_Type) is
+    procedure Set_RGB_Background (Colour : RGB_Colour_Type) is
+    begin
+        Set_RGB_Background (Colour.Red, Colour.Green, Colour.Blue);
+    end Set_RGB_Background;
+
+    procedure Set_RGB_Colour (R, G, B : RGB_Number_Type) is
     begin
         Put (ESC & "[38;2;"
                & Trim (R'Image, Both) & ";"
                & Trim (G'Image, Both) & ";"
                & Trim (B'Image, Both) & "m");
+    end Set_RGB_Colour;
+
+    procedure Set_RGB_Colour (Colour : RGB_Colour_Type) is
+    begin
+        Set_RGB_Colour (Colour.Red, Colour.Green, Colour.Blue);
     end Set_RGB_Colour;
 
     procedure Underline is
