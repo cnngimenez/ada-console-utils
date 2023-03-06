@@ -142,12 +142,21 @@ package Widgets is
 
     procedure Set_Mouse_Move_Handler (Widget : in out Widget_Type;
                                       Handler : Mouse_Handler);
+    --  Handler used when the mouse moved, in or out the widget.
+
+    procedure Set_Mouse_Move_In_Handler (Widget : in out Widget_Type;
+                                         Handler : Mouse_Handler);
+    --  Handler used when the mouse moved inside the widget.
 
     procedure Remove_Mouse_Move_Handler (Widget : in out Widget_Type);
 
     procedure Call_Mouse_Move_Handler (Widget : in out Widget_Type;
                                        Mouse_Event : Mouse_Event_Type);
     --  Call the Mouse_Move_Handler procedure.
+
+    procedure Call_Mouse_Move_In_Handler (Widget : in out Widget_Type;
+                                          Mouse_Event : Mouse_Event_Type);
+    --  Call the Mouse_Move_In_Handler procedure.
 
     procedure Call_Mouse_Click_Handler (Widget : in out Widget_Type;
                                         Mouse_Event : Mouse_Event_Type);
@@ -172,6 +181,7 @@ private
         --  Event handlers:
 
         Mouse_Move_Handler : Mouse_Handler := null;
+        Mouse_Move_In_Handler : Mouse_Handler := null;
         Mouse_Click_Handler : Mouse_Handler := null;
     end record;
 

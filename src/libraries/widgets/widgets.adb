@@ -46,6 +46,17 @@ package body Widgets is
         Widget.Mouse_Move_Handler (Widget, Mouse_Event);
     end Call_Mouse_Move_Handler;
 
+    procedure Call_Mouse_Move_In_Handler (Widget : in out Widget_Type;
+                                         Mouse_Event : Mouse_Event_Type)
+    is
+    begin
+        if Widget.Mouse_Move_In_Handler = null then
+            return;
+        end if;
+
+        Widget.Mouse_Move_In_Handler (Widget, Mouse_Event);
+    end Call_Mouse_Move_In_Handler;
+
     procedure Draw (Widget : in out Widget_Type) is
     begin
         if Widget.Config.Draw_Border = Border_Simple then
@@ -149,6 +160,8 @@ package body Widgets is
                            Mouse_Event : Mouse_Event_Type)
     is
     begin
+        Call_Mouse_Move_Handler (Widget, Mouse_Event);
+
         if not Widget.Is_Mouse_In_Widget (Mouse_Event.X, Mouse_Event.Y) then
             return;
         end if;
@@ -157,9 +170,9 @@ package body Widgets is
             or else Mouse_Event.Button_2_Pressed
             or else Mouse_Event.Button_3_Pressed
         then
-            Widget.Mouse_Click_Handler (Widget, Mouse_Event);
+            Call_Mouse_Click_Handler (Widget, Mouse_Event);
         else
-            Widget.Mouse_Move_Handler (Widget, Mouse_Event);
+            Call_Mouse_Move_In_Handler (Widget, Mouse_Event);
         end if;
     end Mouse_Event;
 
@@ -215,6 +228,12 @@ package body Widgets is
     begin
         Widget.Mouse_Move_Handler := Handler;
     end Set_Mouse_Move_Handler;
+
+    procedure Set_Mouse_Move_In_Handler (Widget : in out Widget_Type;
+                                         Handler : Mouse_Handler) is
+    begin
+        Widget.Mouse_Move_In_Handler := Handler;
+    end Set_Mouse_Move_In_Handler;
 
     procedure Set_Row (Widget : in out Widget_Type; Row : Natural) is
     begin

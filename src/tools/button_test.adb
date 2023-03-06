@@ -76,7 +76,7 @@ begin
     Hello_Button.Set_Width (17);
 
     Hello_Button.Set_Mouse_Click_Handler (Click_Handler);
-    Hello_Button.Set_Mouse_Move_Handler (Move_Handler);
+    Hello_Button.Set_Mouse_Move_In_Handler (Move_Handler);
 
     Config.Draw_Border := Widgets.Border_Simple;
     Hello_Button.Set_Config (Config);
