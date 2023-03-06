@@ -1,3 +1,10 @@
+This manual explains Ada Console Utils, which are libraries to provide an data structures and subprograms to control the terminal features. They are implemented in the Ada programming language and ready to be installed and included in any project by using the GPRBuild project.
+
+The current implemented features are:
+
+- Manipulate TTY terminal colours, cursor, regions, and several control characters.
+- Control mouse move, and clicking/taping.
+- Provide a framework to create widgets and other Terminal User Interface (TUI).
 
 * Control Characters
 The Table [[tab:control-sequence]] list the acronym and the control characters it represents at the DEC VT100 and similar terminal emulators [cite/text:@moy05:_xterm_contr_sequen]. Only the control sequence used in this work are listed in the table. Consider lowercase letters as the character itself, and uppercase letters as a parameter to be replaced.
@@ -11,8 +18,15 @@ The Table [[tab:control-sequence]] list the acronym and the control characters i
 | DECRST  | DEC Private Mode Reset      | CSI ? P l  | P: number  |
 
 * Mouse
+This section describes the terminal input and output codes to enable and retrieve mouse events. The =mouse.adb= and =console.adb= package bodies implement and use the elemnts explained here. The =mouse.ads= package usage is not explained here. See =mouse_test.adb= file for an usage example.
 
-** Codes
+Mouse events are reported by the terminal in specific codes. These codes are in form of characters and can be captured by any read command, as it were user input characters. In Ada, the =Ada.Text_IO.Get_Immediate= procedure should be used. If not captured, the default behaviour is to be printed on the terminal, depending on its configuration.
+
+By default, the mouse events, like movement or clicking, are not reported. It must be enabled by sending specific codes with any print command. In Ada, the =Ada.Text_IO.Put= and =Put_Line= can be used to send them, along with =Ada.Characters.Latin_1= to use control characters.
+
+The folowing section explains how to enable and disable the mouse event reporting. The next section you can read how to interpret and process the result codes provided by the terminal.
+
+** Enable and disable codes
 According to [cite/text:@iani11:_stack_mousem_mousec], the terminal emulators can receive the following DECSET codes by using print or echo commands:
 
 #+BEGIN_SRC text
@@ -39,6 +53,27 @@ To disable all, use the corresponding DECRST:
 
 : echo -e "\e?1003l\e[?1000l"
 
+In Ada, the same behaviour can be achieved by the following code:
+
+#+BEGIN_SRC alight
+with Ada.Text_IO;
+use Ada.Text_IO;
+with Ada.Characters.Latin_1;
+use Ada.Characters.Latin_1;
+
+procedure Enable_Disable_Codes is
+begin
+    --  Enable mouse press and release reports:
+    Put (ESC & "?1000h");
+    --  Enable mouse move reports:
+    Put (ESC & "?1003h");
+
+    --  Disable all
+    Put (ESC & "?1003l" & ESC & "?1000l");
+end Enable_Disable_Codes;
+#+END_SRC
+
+
 ** Result codes
 XTerm, Konsole, Tmux, Kitty, and similar terminals return the following codes when the user clicks or moves the mouse. These codes can be red with the usual standard input commands (in Ada, the =Ada.Text_IO.Get_Immediate= subprograms).
 The terminal output usually prints =^[= as the escape character (ASCII number 27), and the CSI as =^[[=.
@@ -61,6 +96,27 @@ Where B can be 0, 1, 2, or 35. X and Y are the column and row coordinates, X cha
 Some manuals states that the codes are =ESC[Mbxy=, where the lower two bits of =b= encode the button, the upper two the modifier key (shift, control or meta/alt) [cite:@project17;@moy05:_xterm_contr_sequen].
 
 However, this is not seems to be the case when using the =mouse_test.adb= program on the mentioned terminal emulators. The output format is not as the manual indicates, instead is: =ESC[<B;X;YM= where B indicates the button pressed, X and Y the coordinates, and M the released or pressed state (as the examples shown).
+
+
+* Problems when clicking?
+Termux does not recognise taps or clicks, not until the user press enter. To fix it, run the following before executing any of the Ada Console Utils programs:
+
+: stty -icanon -echo min 1
+
+The stty command configures the terminal input and output. The =-icanon= parameter disables the erase, kill, and similar characters. The =-echo= disables the echo input characters. And =min 1= is the minimun characters to satisfy a read, but =-icanon= must be used.
+
+The [[info:coreutils#stty invocation][coreutils#stty invocation]] info manual has more information about the stty command and how to use it.
+
+* License
+This project is under the GNU General Public License version 3 (GPLv3) license except were stated.
+
+Christian Gimenez, 2019.
+
+The test/emoji-test.txt file has been downloaded from unicode.org, which it has its own copyright notices and state as follow:
+
+: © 2019 Unicode®, Inc.
+: Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+: For terms of use, see http://www.unicode.org/terms_of_use.html
 
 * References
 #+print_bibliography:
