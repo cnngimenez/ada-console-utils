@@ -55,15 +55,27 @@ package body Widgets is
             Console.Cursor_Position (Widget.Row, Widget.Column);
         end if;
 
-        Console.Set_RGB_Colour (Widget.Config.Foreground_Colour);
-        Console.Set_RGB_Background (Widget.Config.Background_Colour);
+        if Widget.Invert_Colours then
+            Console.Set_RGB_Colour (Widget.Config.Background_Colour);
+            Console.Set_RGB_Background (Widget.Config.Foreground_Colour);
+        else
+            Console.Set_RGB_Colour (Widget.Config.Foreground_Colour);
+            Console.Set_RGB_Background (Widget.Config.Background_Colour);
+        end if;
     end Draw;
 
     procedure Draw_Border (Widget : Widget_Type) is
     begin
         Console.Cursor_Position (Widget.Row, Widget.Column);
-        Console.Set_RGB_Colour (Widget.Config.Border_Foreground_Colour);
-        Console.Set_RGB_Background (Widget.Config.Border_Background_Colour);
+        if Widget.Invert_Colours then
+            Console.Set_RGB_Colour (Widget.Config.Border_Background_Colour);
+            Console.Set_RGB_Background (
+                Widget.Config.Border_Foreground_Colour);
+        else
+            Console.Set_RGB_Colour (Widget.Config.Border_Foreground_Colour);
+            Console.Set_RGB_Background (
+                Widget.Config.Border_Background_Colour);
+        end if;
 
         Put ("┌");
         for I in (Widget.Column + 1) .. (Widget.Column + Widget.Width - 2) loop

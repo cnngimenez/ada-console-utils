@@ -163,6 +163,12 @@ private
         Last_Key_Event : Last_Event_Array_Type;
         Config : Widget_Config_Type;
 
+        Invert_Colours : Boolean := False;
+        --  Invert colours means to use foreground as background and
+        --  viceversa.  This is useful for selections, focus, or
+        --  providing a fast user feedback when something is Happening
+        --  with the widget.
+
         --  Event handlers:
 
         Mouse_Move_Handler : Mouse_Handler := null;
