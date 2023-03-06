@@ -24,6 +24,14 @@ with Console;
 
 package body Widgets.Buttons is
 
+    procedure Default_Mouse_Move_Handler (Widget : in out Widget_Type'Class;
+                                          Mouse_Event : Mouse_Event_Type)
+    is
+    begin
+        Widget.Invert_Colours := Is_Mouse_In_Widget (Widget, Mouse_Event);
+        Widget.Draw;
+    end Default_Mouse_Move_Handler;
+
     overriding procedure Draw (Button : in out Button_Type) is
         use Console;
         use Ada.Wide_Wide_Text_IO;
@@ -60,6 +68,7 @@ package body Widgets.Buttons is
                             Default_Width, Default_Height);
 
         Button.Text := Text;
+        Button.Set_Mouse_Move_Handler (Default_Mouse_Move_Handler'Access);
     end Initialize;
 
     procedure Set_Text (Button : in out Button_Type;

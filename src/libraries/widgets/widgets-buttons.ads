@@ -47,6 +47,9 @@ package Widgets.Buttons is
 
     overriding procedure Draw (Button : in out Button_Type);
 
+    procedure Default_Mouse_Move_Handler (Widget : in out Widget_Type'Class;
+                                          Mouse_Event : Mouse_Event_Type);
+
 private
 
     type Button_Type is new Widget_Type with
