@@ -32,7 +32,7 @@ package body Widgets is
             return;
         end if;
 
-        Widget.Mouse_Click_Handler (Mouse_Event);
+        Widget.Mouse_Click_Handler (Widget, Mouse_Event);
     end Call_Mouse_Click_Handler;
 
     procedure Call_Mouse_Move_Handler (Widget : Widget_Type;
@@ -43,7 +43,7 @@ package body Widgets is
             return;
         end if;
 
-        Widget.Mouse_Move_Handler (Mouse_Event);
+        Widget.Mouse_Move_Handler (Widget, Mouse_Event);
     end Call_Mouse_Move_Handler;
 
     procedure Draw (Widget : in out Widget_Type) is
@@ -145,9 +145,9 @@ package body Widgets is
             or else Mouse_Event.Button_2_Pressed
             or else Mouse_Event.Button_3_Pressed
         then
-            Widget.Mouse_Click_Handler (Mouse_Event);
+            Widget.Mouse_Click_Handler (Widget, Mouse_Event);
         else
-            Widget.Mouse_Move_Handler (Mouse_Event);
+            Widget.Mouse_Move_Handler (Widget, Mouse_Event);
         end if;
     end Mouse_Event;
 

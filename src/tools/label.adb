@@ -47,7 +47,8 @@ procedure Label is
 
     procedure Configure_Button;
     procedure Configure_Label;
-    procedure Quit_Button_Click_Handler (Mouse_Event : Mouse.Mouse_Event_Type);
+    procedure Quit_Button_Click_Handler (Widget : Widgets.Widget_Type'Class;
+                                         Mouse_Event : Mouse.Mouse_Event_Type);
     procedure Show_Help;
     procedure Read_Message;
 
@@ -70,9 +71,10 @@ procedure Label is
         Text_Label.Set_Config (Config);
     end Configure_Label;
 
-    procedure Quit_Button_Click_Handler (Mouse_Event : Mouse.Mouse_Event_Type)
+    procedure Quit_Button_Click_Handler (Widget : Widgets.Widget_Type'Class;
+                                         Mouse_Event : Mouse.Mouse_Event_Type)
     is
-        pragma Unreferenced (Mouse_Event);
+        pragma Unreferenced (Widget, Mouse_Event);
     begin
         Quit := True;
     end Quit_Button_Click_Handler;

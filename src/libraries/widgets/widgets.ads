@@ -120,7 +120,8 @@ package Widgets is
     --  Events
     --  ----------
 
-    type Mouse_Handler is access procedure (Mouse_Event : Mouse_Event_Type);
+    type Mouse_Handler is access procedure (Widget : Widget_Type'Class;
+                                            Mouse_Event : Mouse_Event_Type);
 
     procedure Key_Event (Widget : in out Widget_Type; Key : Character);
 

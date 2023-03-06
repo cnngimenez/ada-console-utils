@@ -32,24 +32,30 @@ use Widgets.Labels;
 
 procedure Button_Test is
 
-    procedure Hello_Click (Mouse_Event : Mouse.Mouse_Event_Type);
-    procedure Mouse_Move (Mouse_Event : Mouse.Mouse_Event_Type);
+    procedure Hello_Click (Widget : Widgets.Widget_Type'Class;
+                           Mouse_Event : Mouse.Mouse_Event_Type);
+    procedure Mouse_Move (Widget : Widgets.Widget_Type'Class;
+                          Mouse_Event : Mouse.Mouse_Event_Type);
 
     Tui : Ada_Tui_Type;
     Hello_Label : aliased Label_Type;
     Hello_Button : aliased Button_Type;
     Quit : Boolean := False;
 
-    procedure Hello_Click (Mouse_Event : Mouse.Mouse_Event_Type) is
-        pragma Unreferenced (Mouse_Event);
+    procedure Hello_Click (Widget : Widgets.Widget_Type'Class;
+                           Mouse_Event : Mouse.Mouse_Event_Type)
+    is
+        pragma Unreferenced (Mouse_Event, Widget);
     begin
         Hello_Label.Set_Text ("The button was Clicked!");
         Put_Line ("Trying a simple put_line");
         Quit := True;
     end Hello_Click;
 
-    procedure Mouse_Move (Mouse_Event : Mouse.Mouse_Event_Type) is
-        pragma Unreferenced (Mouse_Event);
+    procedure Mouse_Move (Widget : Widgets.Widget_Type'Class;
+                          Mouse_Event : Mouse.Mouse_Event_Type)
+    is
+        pragma Unreferenced (Mouse_Event, Widget);
     begin
         Hello_Button.Set_Text ("Press Me!!!  ");
     end Mouse_Move;
