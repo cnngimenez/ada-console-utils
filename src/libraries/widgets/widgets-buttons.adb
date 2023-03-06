@@ -20,7 +20,7 @@
 -------------------------------------------------------------------------
 
 with Ada.Wide_Wide_Text_IO;
-with Console;
+--  with Console;
 
 package body Widgets.Buttons is
 
@@ -29,20 +29,17 @@ package body Widgets.Buttons is
     is
     begin
         Widget.Invert_Colours := Is_Mouse_In_Widget (Widget, Mouse_Event);
-        Widget.Draw;
+        Draw (Button_Type (Widget));
     end Default_Mouse_Move_Handler;
 
     overriding procedure Draw (Button : in out Button_Type) is
-        use Console;
+        --  use Console;
         use Ada.Wide_Wide_Text_IO;
     begin
         Widgets.Draw (Widget_Type (Button));
         --  Cursor_Position (Button.Row, Button.Column);
 
-        Set_RGB_Background (255, 255, 255);
-        Set_Colour (Black);
         Put (To_Wide_Wide_String (Button.Text));
-        Reset_All;
     end Draw;
 
     function Get_Text (Button : Button_Type) return Unbounded_Wide_Wide_String
