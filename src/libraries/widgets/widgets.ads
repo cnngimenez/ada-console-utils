@@ -120,7 +120,7 @@ package Widgets is
     --  Events
     --  ----------
 
-    type Mouse_Handler is access procedure (Widget : Widget_Type'Class;
+    type Mouse_Handler is access procedure (Widget : in out Widget_Type'Class;
                                             Mouse_Event : Mouse_Event_Type);
 
     procedure Key_Event (Widget : in out Widget_Type; Key : Character);
@@ -145,11 +145,11 @@ package Widgets is
 
     procedure Remove_Mouse_Move_Handler (Widget : in out Widget_Type);
 
-    procedure Call_Mouse_Move_Handler (Widget : Widget_Type;
+    procedure Call_Mouse_Move_Handler (Widget : in out Widget_Type;
                                        Mouse_Event : Mouse_Event_Type);
     --  Call the Mouse_Move_Handler procedure.
 
-    procedure Call_Mouse_Click_Handler (Widget : Widget_Type;
+    procedure Call_Mouse_Click_Handler (Widget : in out Widget_Type;
                                         Mouse_Event : Mouse_Event_Type);
     --  Call the Mouse_Clicked_Handler procedure.
 

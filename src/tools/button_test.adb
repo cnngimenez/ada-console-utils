@@ -32,9 +32,9 @@ use Widgets.Labels;
 
 procedure Button_Test is
 
-    procedure Hello_Click (Widget : Widgets.Widget_Type'Class;
+    procedure Hello_Click (Widget : in out Widgets.Widget_Type'Class;
                            Mouse_Event : Mouse.Mouse_Event_Type);
-    procedure Mouse_Move (Widget : Widgets.Widget_Type'Class;
+    procedure Mouse_Move (Widget : in out Widgets.Widget_Type'Class;
                           Mouse_Event : Mouse.Mouse_Event_Type);
 
     Tui : Ada_Tui_Type;
@@ -42,7 +42,7 @@ procedure Button_Test is
     Hello_Button : aliased Button_Type;
     Quit : Boolean := False;
 
-    procedure Hello_Click (Widget : Widgets.Widget_Type'Class;
+    procedure Hello_Click (Widget : in out Widgets.Widget_Type'Class;
                            Mouse_Event : Mouse.Mouse_Event_Type)
     is
         pragma Unreferenced (Mouse_Event, Widget);
@@ -52,7 +52,7 @@ procedure Button_Test is
         Quit := True;
     end Hello_Click;
 
-    procedure Mouse_Move (Widget : Widgets.Widget_Type'Class;
+    procedure Mouse_Move (Widget : in out Widgets.Widget_Type'Class;
                           Mouse_Event : Mouse.Mouse_Event_Type)
     is
         pragma Unreferenced (Mouse_Event, Widget);

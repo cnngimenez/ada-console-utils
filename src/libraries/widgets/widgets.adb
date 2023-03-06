@@ -24,7 +24,7 @@ use Ada.Wide_Wide_Text_IO;
 
 package body Widgets is
 
-    procedure Call_Mouse_Click_Handler (Widget : Widget_Type;
+    procedure Call_Mouse_Click_Handler (Widget : in out Widget_Type;
                                         Mouse_Event : Mouse_Event_Type)
     is
     begin
@@ -35,7 +35,7 @@ package body Widgets is
         Widget.Mouse_Click_Handler (Widget, Mouse_Event);
     end Call_Mouse_Click_Handler;
 
-    procedure Call_Mouse_Move_Handler (Widget : Widget_Type;
+    procedure Call_Mouse_Move_Handler (Widget : in out Widget_Type;
                                        Mouse_Event : Mouse_Event_Type)
     is
     begin
