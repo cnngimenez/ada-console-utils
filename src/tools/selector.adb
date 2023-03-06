@@ -62,7 +62,11 @@ procedure Selector is
     use Myselector;
 
     Widget_Config : constant Widgets.Widget_Config_Type := (
-        Draw_Border => Widgets.Border_Simple
+        Draw_Border => Widgets.Border_Simple,
+        Border_Foreground_Colour => Widgets.Default_Border_Foreground_Colour,
+        Border_Background_Colour => Widgets.Default_Border_Background_Colour,
+        Background_Colour => Widgets.Default_Background_Colour,
+        Foreground_Colour => Widgets.Default_Foreground_Colour
     );
     Selector : Selector_Type;
     File : File_Type;

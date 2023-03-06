@@ -342,6 +342,7 @@ package body Widgets.Selectors is
                  Default_Height
              else
                  Default_Height - 2);
+
     begin
         for I in Selector.Current_Selection ..
                  Selector.Current_Selection + Entry_Amount
