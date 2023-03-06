@@ -166,9 +166,10 @@ package body Widgets is
             return;
         end if;
 
-        if Mouse_Event.Button_1_Pressed
-            or else Mouse_Event.Button_2_Pressed
-            or else Mouse_Event.Button_3_Pressed
+        if not Mouse_Event.Release
+            and then (Mouse_Event.Button_1_Pressed
+                or else Mouse_Event.Button_2_Pressed
+                or else Mouse_Event.Button_3_Pressed)
         then
             Call_Mouse_Click_Handler (Widget, Mouse_Event);
         else

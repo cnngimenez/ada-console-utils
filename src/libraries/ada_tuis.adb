@@ -129,15 +129,9 @@ package body Ada_Tuis is
             return;
         end if;
 
-        if Mouse_Event.Release = False
-            and then (Mouse_Event.Button_1_Pressed
-                or else Mouse_Event.Button_2_Pressed
-                or else Mouse_Event.Button_3_Pressed)
-        then
-            Tui.Call_On_Click_Handlers (Mouse_Event);
-        else
-            Tui.Call_On_Mouse_Move_Handlers (Mouse_Event);
-        end if;
+        for Widget : Widget_Access_Type of Tui.Widgets loop
+            Widget.Mouse_Event (Mouse_Event);
+        end loop;
     end Process_Mouse_Event;
 
     procedure Read_Escape_Codes (Codes : out Code_String_Type) is
