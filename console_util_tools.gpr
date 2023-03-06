@@ -48,7 +48,8 @@ project Console_Util_Tools is
               "selector.adb",
               "keys.adb",
               "mouse_test.adb",
-              "countdown.adb"
+              "countdown.adb",
+              "label.adb"
              );
 
    package Compiler is
