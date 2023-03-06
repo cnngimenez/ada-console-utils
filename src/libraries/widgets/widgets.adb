@@ -19,7 +19,6 @@
 
 -------------------------------------------------------------------------
 
-with Console;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
@@ -55,11 +54,16 @@ package body Widgets is
         else
             Console.Cursor_Position (Widget.Row, Widget.Column);
         end if;
+
+        Console.Set_RGB_Colour (Widget.Config.Foreground_Colour);
+        Console.Set_RGB_Background (Widget.Config.Background_Colour);
     end Draw;
 
     procedure Draw_Border (Widget : Widget_Type) is
     begin
         Console.Cursor_Position (Widget.Row, Widget.Column);
+        Console.Set_RGB_Colour (Widget.Config.Border_Foreground_Colour);
+        Console.Set_RGB_Background (Widget.Config.Border_Background_Colour);
 
         Put ("┌");
         for I in (Widget.Column + 1) .. (Widget.Column + Widget.Width - 2) loop

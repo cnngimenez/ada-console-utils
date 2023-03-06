@@ -21,6 +21,7 @@
 
 with Mouse;
 use Mouse;
+with Console;
 
 --
 --  Base Widget
@@ -38,10 +39,39 @@ package Widgets is
 
     type Widget_Config_Type is record
         Draw_Border : Border_Type := Border_None;
+        Border_Foreground_Colour : Console.RGB_Colour_Type;
+        Border_Background_Colour : Console.RGB_Colour_Type;
+        Background_Colour : Console.RGB_Colour_Type;
+        Foreground_Colour : Console.RGB_Colour_Type;
     end record;
 
+    Default_Border_Foreground_Colour : constant Console.RGB_Colour_Type := (
+        Red => 255,
+        Green => 100,
+        Blue => 255
+    );
+    Default_Border_Background_Colour : constant Console.RGB_Colour_Type := (
+        Red => 10,
+        Green => 10,
+        Blue => 10
+    );
+    Default_Background_Colour : constant Console.RGB_Colour_Type := (
+        Red => 0,
+        Green => 0,
+        Blue => 0
+    );
+    Default_Foreground_Colour : constant Console.RGB_Colour_Type := (
+        Red => 255,
+        Green => 255,
+        Blue => 255
+    );
+
     Default_Widget_Config : constant Widget_Config_Type := (
-        Draw_Border => Border_None
+        Draw_Border => Border_None,
+        Border_Foreground_Colour => Default_Border_Foreground_Colour,
+        Border_Background_Colour => Default_Border_Background_Colour,
+        Background_Colour => Default_Background_Colour,
+        Foreground_Colour => Default_Foreground_Colour
     );
 
     type Widget_Type is tagged private;
