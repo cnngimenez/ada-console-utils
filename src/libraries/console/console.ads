@@ -215,12 +215,33 @@ package Console is
     procedure Show_Cursor;
 
     --  --------------------------------------------------
-    --  XTerm-compatible window manipulation
+    --  XTerm-compatible window Manipulation
     --  --------------------------------------------------
 
+    --
     --  The following are "CSI Code ; Par1 ; Par2 t" Codes.  They are
     --  mostly used on XTerm, and other terminal emulators compatible
-    --  to its specifications.
+    --  to its Specifications.
+    --
+    --  All Report_* procedures produces output from XTerm.  This output
+    --  can be parsed with Parse_*_Codes functions declared immediately
+    --  below their corresponding report procedures.
+    --
+    --  Some Parse_*_Codes functions return a specific type.  If the
+    --  code sequence parsed is not the expected one, the type has a
+    --  Valid field which will be set to False.
+
+    type Screen_Size_Type is
+    record
+        Valid : Boolean;
+        Height, Width : Positive;
+    end record;
+
+    type Screen_Position_Type is
+    record
+        Valid : Boolean;
+        X, Y : Positive;
+    end record;
 
     Procedure Deiconify_Window;
     --  Code 1
@@ -255,11 +276,24 @@ package Console is
     procedure Report_Window_State;
     --  Code 11
 
+    type Window_State_Type is (Open, Iconified);
+
+    function Parse_Window_State_Codes (Str : String)
+        return Window_State_Type;
+
     procedure Report_Window_Position;
     --  Code 13
 
+    function Parse_Window_Position_Codes (Str : String)
+        return Screen_Position_Type;
+    --  Valid codes are : "CSI 3 ; X ; Y t"
+
     procedure Report_Window_Size_In_Pixels;
     --  Code 14
+
+    function Parse_Window_Size_In_Pixels_Codes (Str : String)
+        return Screen_Size_Type;
+    --  Valid codes are : "CSI 4 ; HEIGHT ; WIDTH t"
 
     procedure Report_Window_Text_Area_Size;
     --  Code 18
@@ -267,16 +301,31 @@ package Console is
     --  Send a report request of the window texta rea size in
     --  characters.
 
+    function Parse_Window_Text_Area_Size_Codes (Str : String)
+        return Screen_Size_Type;
+    --  Valid codes are : "CSI 8 ; HEIGHT ; WIDTH t"
+    --
+    --  Return Screen_Size.Valid as False if the code are invalid.
+
     procedure Report_Screen_Size;
     --  Code 19
     --
-    --  Send a report request of the screen size in characters.
+    --  Send a report request of the screen size in Characters.
+
+    function Parse_Screen_Size_Codes (Str : String) return Screen_Size_Type;
+    --  Valid codes are : "CSI 9 ; HEIGHT ; WIDTH t"
 
     procedure Report_Window_Icon_Label;
     --  Code 20
 
+    function Parse_Window_Icon_Label_Codes (Str : String) return String;
+    --  Valid codes are: "OSC L TITLE ST"
+
     procedure Report_Window_Title;
     --  Code 21
+
+    function Parse_Window_Title_Codes (Str : String) return String;
+    --  Valid codes are: "OSC l TITLE ST"
 
     procedure Resize_To_Lines (Lines : Positive);
     --  Codes >= 24
