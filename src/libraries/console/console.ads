@@ -40,6 +40,10 @@ package Console is
 
     type Colour_8bit_Type is range 0 .. 255;
 
+    --  --------------------------------------------------
+    --  CSI Public Sequences - Set Graphic Rendition (SGR)
+    --  --------------------------------------------------
+
     --  Code 0
     procedure Reset_All;
     procedure Bold;
@@ -153,4 +157,128 @@ package Console is
     function Bg_Colour_To_Ansi (C : Colour_Type) return String;
     function Colour_To_Ansi (C : Colour_Type) return String;
     function Colour_To_Ansi_Bright (C : Colour_Type) return String;
+
+    --  --------------------------------------------------
+    --  DEC Private Sequences
+    --  --------------------------------------------------
+
+    --  CSI numbers in this case are "ESC[?" characters.
+
+    --  Codes 0:
+
+    procedure Cursor_Keys_Sends_Esc_O (Enable : Boolean := False);
+    --  Send ESC O instead ESC [ when cursor key is pressed (CSI 1).
+    --
+    --  DECCKM.
+
+    type Column_Mode_Type is (Column_80, Column_132);
+
+    procedure Column_Mode_Switch (
+        Column_Mode : Column_Mode_Type := Column_80);
+    --  80/132 column mode switch (CSI 3).
+    --
+    --  DECCOLM.
+
+    procedure Reverse_Video (Enable : Boolean := False);
+    --  Enable/disable reverse video (CSI 5).
+    --
+    --  DECSCNM.
+
+    procedure Cursor_Address_Scrollig_Region (Enable : Boolean := False);
+    --  Cursor address relative to upper left corner (CSI 6).
+    --
+    --  DECOM.
+
+    procedure Autowrap (Enable : Boolean := True);
+    --  Enable/disable autowrap (CSI 7).
+    --
+    --  DECAWM.  Characters printed after column 80 would be printed at
+    --  the firts column at the next line.
+
+    procedure Autorepeat_Keyboard (Autorepeat : Boolean := True);
+    --  Enable/disable keyboard autorepeat (CSI 8)
+    --
+    --  DECARM.
+
+    --  Codes 20:
+
+    procedure Cursor_Visible (Visible : Boolean := True);
+    --  Make the cursor visible (CSI 25).
+    --
+    --  DECTECM.
+
+    --  CSI 1000: check mouse.ads library!
+
+    --  Aliases
+
+    procedure Hide_Cursor;
+    procedure Show_Cursor;
+
+    --  --------------------------------------------------
+    --  XTerm-compatible window manipulation
+    --  --------------------------------------------------
+
+    --  The following are "CSI Code ; Par1 ; Par2 t" Codes.  They are
+    --  mostly used on XTerm, and other terminal emulators compatible
+    --  to its specifications.
+
+    Procedure Deiconify_Window;
+    --  Code 1
+
+    procedure Iconify_Window;
+    --  Code 2
+
+    procedure Move_Window (X, Y : Positive);
+    --  Code 3
+
+    procedure Resize_Window (Height, Width : Positive);
+    --  Code 4
+
+    procedure Raise_Window;
+    --  Code 5
+
+    procedure Lower_Window;
+    --  Code 6
+
+    procedure Refresh_Window;
+    --  Code 7
+
+    procedure Resize_Text_Area (Height, Width : Positive);
+    --  Code 8
+
+    procedure Restore_Maximized_Window;
+    --  Code 9 ; 0
+
+    procedure Maximize_Window;
+    --  Code 9 ; 1
+
+    procedure Report_Window_State;
+    --  Code 11
+
+    procedure Report_Window_Position;
+    --  Code 13
+
+    procedure Report_Window_Size_In_Pixels;
+    --  Code 14
+
+    procedure Report_Window_Text_Area_Size;
+    --  Code 18
+    --
+    --  Send a report request of the window texta rea size in
+    --  characters.
+
+    procedure Report_Screen_Size;
+    --  Code 19
+    --
+    --  Send a report request of the screen size in characters.
+
+    procedure Report_Window_Icon_Label;
+    --  Code 20
+
+    procedure Report_Window_Title;
+    --  Code 21
+
+    procedure Resize_To_Lines (Lines : Positive);
+    --  Codes >= 24
+
 end Console;

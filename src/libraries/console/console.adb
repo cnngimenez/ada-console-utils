@@ -242,6 +242,11 @@ package body Console is
         Put (ESC & "[39m");
     end Default_Colour;
 
+    procedure Deiconify_Window is
+    begin
+        Put (ESC & "[1t");
+    end Deiconify_Window;
+
     procedure Device_Status_Report is
     begin
         Put (ESC & "[6n");
@@ -298,6 +303,11 @@ package body Console is
         Put (ESC & "[51m");
     end Framed;
 
+    procedure Iconify_Window is
+    begin
+        Put (ESC & "[2t");
+    end Iconify_Window;
+
     procedure Ideogram_Double_Overline is
     begin
         Put (ESC & "[63m");
@@ -332,6 +342,23 @@ package body Console is
     begin
         Put (ESC & "[3m");
     end Italic;
+
+    procedure Lower_Window is
+    begin
+        Put (ESC & "[6t");
+    end Lower_Window;
+
+    procedure Maximized_Window is
+    begin
+        Put (ESC & "[9;1t");
+    end Maximized_Window;
+
+    procedure Move_Window (X, Y : Positive) is
+    begin
+        Put (ESC & "[3;"
+            & Trim (X'Image, Both) & ";"
+            & Trim (Y'Image, Both) & "t");
+    end Move_Window;
 
     procedure Normal_Colour is
     begin
@@ -370,20 +397,95 @@ package body Console is
                & Parameter & "m");
     end Put_SGR;
 
+    procedure Raise_Window is
+    begin
+        Put (ESC & "[5t");
+    end Raise_Window;
+
     procedure Rapid_Blink is
     begin
         Put (ESC & "[6m");
     end Rapid_Blink;
+
+    procedure Refresh_Window is
+    begin
+        Put (ESC & "[7t");
+    end Refresh_Window;
+
+    procedure Report_Screen_Size is
+    begin
+        Put (ESC & "[19t");
+    end Report_Screen_Size;
+
+    procedure Report_Window_Icon_Label is
+    begin
+        Put (ESC & "[20t");
+    end Report_Window_Icon_Label;
+
+    procedure Report_Window_Position is
+    begin
+        Put (ESC & "[13t");
+    end Report_Window_Position;
+
+
+    procedure Report_Window_Size_In_Pixels is
+    begin
+        Put (ESC & "[14t");
+    end Report_Window_Size_In_Pixels;
+
+    procedure Report_Window_State is
+    begin
+        Put (ESC & "[11t");
+    end Report_Window_State;
+
+    procedure Report_Window_Text_Area_Size is
+    begin
+        Put (ESC & "[18t");
+    end Report_Window_Text_Area_Size;
+
+
+    procedure Report_Window_Title is
+    begin
+        Put (ESC & "[21t");
+    end Report_Window_Title;
 
     procedure Reset_All is
     begin
         Put (ESC & "[0m");
     end Reset_All;
 
+    procedure Resize_Text_Area (Height, Width : Positive) is
+    begin
+        Put (ESC & "[8;"
+            & Trim (Height'Image, Both) & ";"
+            & Trim (Width'Image, Both) & "t");
+    end Resize_Text_Area;
+
+    procedure Resize_To_Lines (Lines : Positive) is
+    begin
+        if Lines < 24 then
+            return;
+        end if;
+        Put (ESC & "["
+            & Trim (Lines'Image, Both) & "t");
+    end Resize_To_Lines;
+
+    procedure Resize_Window (Height, Width : Positive) is
+    begin
+        Put (ESC & "[4;"
+            & Trim (Height'Image, Both) & ";"
+            & Trim (Width'Image, Both) & "t");
+    end Resize_Window;
+
     procedure Restore_Cursor_Position is
     begin
         Put (ESC & "[u");
     end Restore_Cursor_Position;
+
+    procedure Restore_Maximized_Window is
+    begin
+        Put (ESC & "[9;0t");
+    end Restore_Maximized_Window;
 
     procedure Reveal is
     begin
