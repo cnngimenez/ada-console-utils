@@ -22,8 +22,6 @@
 with Ada.Strings.Fixed;
 use Ada.Strings.Fixed;
 use Ada.Strings;
-with Ada.Characters.Latin_1;
-use Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -37,6 +35,18 @@ package body Console is
                Trim (Param_Number'Image, Both)
                & "m");
     end Alternative_Font;
+
+    procedure Autorepeat_Keyboard (Autorepeat : Boolean := True) is
+    begin
+        Put (ESC & "[?8"
+            & (if Autorepeat then "h" else "l"));
+    end Autorepeat_Keyboard;
+
+    procedure Autowrap (Enable : Boolean := True) is
+    begin
+        Put (ESC & "[?7"
+            & (if Enable then "h" else "l"));
+    end Autowrap;
 
     procedure Aux_Port_Off is
     begin
@@ -159,6 +169,14 @@ package body Console is
         end case;
     end Colour_To_Ansi_Bright;
 
+    procedure Column_Mode_Switch (
+        Column_Mode : Column_Mode_Type := Column_80)
+    is
+    begin
+        Put (ESC & "[?3"
+            & (if Column_Mode = Column_80 then "l" else "h"));
+    end Column_Mode_Switch;
+
     procedure Conceal is
     begin
         Put (ESC & "[8m");
@@ -173,6 +191,13 @@ package body Console is
     begin
         Put (ESC & "[29m");
     end Crossed_Out_Off;
+
+    procedure Cursor_Address_Scrollig_Region (Enable : Boolean := False)
+    is
+    begin
+        Put (ESC & "[?6"
+            & (if Enable then "h" else "l"));
+    end Cursor_Address_Scrollig_Region;
 
     procedure Cursor_Back (Steps : Natural := 1) is
     begin
@@ -201,6 +226,12 @@ package body Console is
                Trim (Steps'Image, Both)
                & "G");
     end Cursor_Horizontal;
+
+    procedure Cursor_Keys_Sends_Esc_O (Enable : Boolean := False) is
+    begin
+        Put (ESC & "[?1"
+            & (if Enable then "h" else "l"));
+    end Cursor_Keys_Sends_Esc_O;
 
     procedure Cursor_Next_Line (Steps : Natural := 1) is
     begin
@@ -232,6 +263,12 @@ package body Console is
                & "A");
     end Cursor_Up;
 
+    procedure Cursor_Visible (Visible : Boolean := True) is
+    begin
+        Put (ESC & "[?25"
+            & (if Visible then "h" else "l"));
+    end Cursor_Visible;
+
     procedure Default_Background is
     begin
         Put (ESC & "[49m");
@@ -241,11 +278,6 @@ package body Console is
     begin
         Put (ESC & "[39m");
     end Default_Colour;
-
-    procedure Deiconify_Window is
-    begin
-        Put (ESC & "[1t");
-    end Deiconify_Window;
 
     procedure Device_Status_Report is
     begin
@@ -303,10 +335,10 @@ package body Console is
         Put (ESC & "[51m");
     end Framed;
 
-    procedure Iconify_Window is
+    procedure Hide_Cursor is
     begin
-        Put (ESC & "[2t");
-    end Iconify_Window;
+        Cursor_Visible (False);
+    end Hide_Cursor;
 
     procedure Ideogram_Double_Overline is
     begin
@@ -342,23 +374,6 @@ package body Console is
     begin
         Put (ESC & "[3m");
     end Italic;
-
-    procedure Lower_Window is
-    begin
-        Put (ESC & "[6t");
-    end Lower_Window;
-
-    procedure Maximized_Window is
-    begin
-        Put (ESC & "[9;1t");
-    end Maximized_Window;
-
-    procedure Move_Window (X, Y : Positive) is
-    begin
-        Put (ESC & "[3;"
-            & Trim (X'Image, Both) & ";"
-            & Trim (Y'Image, Both) & "t");
-    end Move_Window;
 
     procedure Normal_Colour is
     begin
@@ -397,100 +412,31 @@ package body Console is
                & Parameter & "m");
     end Put_SGR;
 
-    procedure Raise_Window is
-    begin
-        Put (ESC & "[5t");
-    end Raise_Window;
-
     procedure Rapid_Blink is
     begin
         Put (ESC & "[6m");
     end Rapid_Blink;
-
-    procedure Refresh_Window is
-    begin
-        Put (ESC & "[7t");
-    end Refresh_Window;
-
-    procedure Report_Screen_Size is
-    begin
-        Put (ESC & "[19t");
-    end Report_Screen_Size;
-
-    procedure Report_Window_Icon_Label is
-    begin
-        Put (ESC & "[20t");
-    end Report_Window_Icon_Label;
-
-    procedure Report_Window_Position is
-    begin
-        Put (ESC & "[13t");
-    end Report_Window_Position;
-
-
-    procedure Report_Window_Size_In_Pixels is
-    begin
-        Put (ESC & "[14t");
-    end Report_Window_Size_In_Pixels;
-
-    procedure Report_Window_State is
-    begin
-        Put (ESC & "[11t");
-    end Report_Window_State;
-
-    procedure Report_Window_Text_Area_Size is
-    begin
-        Put (ESC & "[18t");
-    end Report_Window_Text_Area_Size;
-
-
-    procedure Report_Window_Title is
-    begin
-        Put (ESC & "[21t");
-    end Report_Window_Title;
 
     procedure Reset_All is
     begin
         Put (ESC & "[0m");
     end Reset_All;
 
-    procedure Resize_Text_Area (Height, Width : Positive) is
-    begin
-        Put (ESC & "[8;"
-            & Trim (Height'Image, Both) & ";"
-            & Trim (Width'Image, Both) & "t");
-    end Resize_Text_Area;
-
-    procedure Resize_To_Lines (Lines : Positive) is
-    begin
-        if Lines < 24 then
-            return;
-        end if;
-        Put (ESC & "["
-            & Trim (Lines'Image, Both) & "t");
-    end Resize_To_Lines;
-
-    procedure Resize_Window (Height, Width : Positive) is
-    begin
-        Put (ESC & "[4;"
-            & Trim (Height'Image, Both) & ";"
-            & Trim (Width'Image, Both) & "t");
-    end Resize_Window;
-
     procedure Restore_Cursor_Position is
     begin
         Put (ESC & "[u");
     end Restore_Cursor_Position;
 
-    procedure Restore_Maximized_Window is
-    begin
-        Put (ESC & "[9;0t");
-    end Restore_Maximized_Window;
-
     procedure Reveal is
     begin
         Put (ESC & "[28m");
     end Reveal;
+
+    procedure Reverse_Video (Enable : Boolean := False) is
+    begin
+        Put (ESC & "[?5"
+            & (if Enable then "h" else "l"));
+    end Reverse_Video;
 
     procedure Reverse_Video is
     begin
@@ -588,6 +534,11 @@ package body Console is
     begin
         Set_RGB_Colour (Colour.Red, Colour.Green, Colour.Blue);
     end Set_RGB_Colour;
+
+    procedure Show_Cursor is
+    begin
+        Cursor_Visible (True);
+    end Show_Cursor;
 
     procedure Underline is
     begin
