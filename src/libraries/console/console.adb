@@ -36,18 +36,6 @@ package body Console is
                & "m");
     end Alternative_Font;
 
-    procedure Autorepeat_Keyboard (Autorepeat : Boolean := True) is
-    begin
-        Put (ESC & "[?8"
-            & (if Autorepeat then "h" else "l"));
-    end Autorepeat_Keyboard;
-
-    procedure Autowrap (Enable : Boolean := True) is
-    begin
-        Put (ESC & "[?7"
-            & (if Enable then "h" else "l"));
-    end Autowrap;
-
     procedure Aux_Port_Off is
     begin
         Put (ESC & "[4i");
@@ -169,14 +157,6 @@ package body Console is
         end case;
     end Colour_To_Ansi_Bright;
 
-    procedure Column_Mode_Switch (
-        Column_Mode : Column_Mode_Type := Column_80)
-    is
-    begin
-        Put (ESC & "[?3"
-            & (if Column_Mode = Column_80 then "l" else "h"));
-    end Column_Mode_Switch;
-
     procedure Conceal is
     begin
         Put (ESC & "[8m");
@@ -191,13 +171,6 @@ package body Console is
     begin
         Put (ESC & "[29m");
     end Crossed_Out_Off;
-
-    procedure Cursor_Address_Scrollig_Region (Enable : Boolean := False)
-    is
-    begin
-        Put (ESC & "[?6"
-            & (if Enable then "h" else "l"));
-    end Cursor_Address_Scrollig_Region;
 
     procedure Cursor_Back (Steps : Natural := 1) is
     begin
@@ -226,12 +199,6 @@ package body Console is
                Trim (Steps'Image, Both)
                & "G");
     end Cursor_Horizontal;
-
-    procedure Cursor_Keys_Sends_Esc_O (Enable : Boolean := False) is
-    begin
-        Put (ESC & "[?1"
-            & (if Enable then "h" else "l"));
-    end Cursor_Keys_Sends_Esc_O;
 
     procedure Cursor_Next_Line (Steps : Natural := 1) is
     begin
@@ -262,12 +229,6 @@ package body Console is
                Trim (Steps'Image, Both)
                & "A");
     end Cursor_Up;
-
-    procedure Cursor_Visible (Visible : Boolean := True) is
-    begin
-        Put (ESC & "[?25"
-            & (if Visible then "h" else "l"));
-    end Cursor_Visible;
 
     procedure Default_Background is
     begin
@@ -334,11 +295,6 @@ package body Console is
     begin
         Put (ESC & "[51m");
     end Framed;
-
-    procedure Hide_Cursor is
-    begin
-        Cursor_Visible (False);
-    end Hide_Cursor;
 
     procedure Ideogram_Double_Overline is
     begin
@@ -431,12 +387,6 @@ package body Console is
     begin
         Put (ESC & "[28m");
     end Reveal;
-
-    procedure Reverse_Video (Enable : Boolean := False) is
-    begin
-        Put (ESC & "[?5"
-            & (if Enable then "h" else "l"));
-    end Reverse_Video;
 
     procedure Reverse_Video is
     begin
@@ -534,11 +484,6 @@ package body Console is
     begin
         Set_RGB_Colour (Colour.Red, Colour.Green, Colour.Blue);
     end Set_RGB_Colour;
-
-    procedure Show_Cursor is
-    begin
-        Cursor_Visible (True);
-    end Show_Cursor;
 
     procedure Underline is
     begin
