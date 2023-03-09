@@ -29,9 +29,47 @@ use Ada.Characters.Latin_1;
 --  explanation and references.
 package Console is
 
+    --  -------------------------
+    --  C1 (8-bit) Control Characters
+    --  -------------------------
+
+    IND : constant String := ESC & "D";
+    --  Index.
+    NEL : constant String := ESC & "E";
+    --  Next Line.
+    HTS : constant String := ESC & "H";
+    --  Tab Set.
+    RI : constant String := ESC & "M";
+    --  Reverse Index.
+    SS2 : constant String := ESC & "N";
+    --  Single Shift Select of G2 Character Set.
+    SS3 : constant String := ESC & "O";
+    --  Single Shift Select of G3 Character Set.
+    DCS : constant String := ESC & "P";
+    --  Device Control String.
+    SPA : constant String := ESC & "V";
+    --  Start of Guarded Area.
+    EPA : constant String := ESC & "W";
+    --  End of Guarded Area.
+    SOS : constant String := ESC & "X";
+    --  Start of String.
+    DA : constant String := ESC & "Z";
+    --  Return Terminal ID.
+    --  DA is an obsolete form of CSI.
     CSI : constant String := ESC & "[";
-    OSC : constant String := ESC & "]";
+    --  Control Sequence Introducer.
     ST : constant String := ESC  & "\";
+    --  String Terminator.
+    OSC : constant String := ESC & "]";
+    --  Operating System Command.
+    PM : constant String := ESC  & "^";
+    --  Privacy Message.
+    APC : constant String := ESC  & "_";
+    --  Application Program Command.
+
+    --  -------------------------
+    --  CSI Sequences
+    --  -------------------------
 
     procedure Cursor_Up (Steps : Natural := 1);
     procedure Cursor_Down (Steps : Natural := 1);
