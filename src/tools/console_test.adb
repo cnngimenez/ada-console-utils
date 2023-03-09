@@ -30,6 +30,8 @@ with Emojis;
 use Emojis;
 with Console;
 use Console;
+with Console.SGR;
+use Console.SGR;
 
 procedure Console_Test is
     procedure Write (Str : String);

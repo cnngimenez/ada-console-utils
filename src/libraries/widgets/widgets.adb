@@ -67,11 +67,11 @@ package body Widgets is
         end if;
 
         if Widget.Invert_Colours then
-            Console.Set_RGB_Colour (Widget.Config.Background_Colour);
-            Console.Set_RGB_Background (Widget.Config.Foreground_Colour);
+            Console.SGR.Set_RGB_Colour (Widget.Config.Background_Colour);
+            Console.SGR.Set_RGB_Background (Widget.Config.Foreground_Colour);
         else
-            Console.Set_RGB_Colour (Widget.Config.Foreground_Colour);
-            Console.Set_RGB_Background (Widget.Config.Background_Colour);
+            Console.SGR.Set_RGB_Colour (Widget.Config.Foreground_Colour);
+            Console.SGR.Set_RGB_Background (Widget.Config.Background_Colour);
         end if;
     end Draw;
 
@@ -79,12 +79,14 @@ package body Widgets is
     begin
         Console.Cursor_Position (Widget.Row, Widget.Column);
         if Widget.Invert_Colours then
-            Console.Set_RGB_Colour (Widget.Config.Border_Background_Colour);
-            Console.Set_RGB_Background (
+            Console.SGR.Set_RGB_Colour (
+                Widget.Config.Border_Background_Colour);
+            Console.SGR.Set_RGB_Background (
                 Widget.Config.Border_Foreground_Colour);
         else
-            Console.Set_RGB_Colour (Widget.Config.Border_Foreground_Colour);
-            Console.Set_RGB_Background (
+            Console.SGR.Set_RGB_Colour (
+                Widget.Config.Border_Foreground_Colour);
+            Console.SGR.Set_RGB_Background (
                 Widget.Config.Border_Background_Colour);
         end if;
 

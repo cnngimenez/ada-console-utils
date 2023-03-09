@@ -21,7 +21,7 @@
 
 with Mouse;
 use Mouse;
-with Console;
+with Console.SGR;
 
 --
 --  Base Widget
@@ -39,28 +39,32 @@ package Widgets is
 
     type Widget_Config_Type is record
         Draw_Border : Border_Type := Border_None;
-        Border_Foreground_Colour : Console.RGB_Colour_Type;
-        Border_Background_Colour : Console.RGB_Colour_Type;
-        Background_Colour : Console.RGB_Colour_Type;
-        Foreground_Colour : Console.RGB_Colour_Type;
+        Border_Foreground_Colour : Console.SGR.RGB_Colour_Type;
+        Border_Background_Colour : Console.SGR.RGB_Colour_Type;
+        Background_Colour : Console.SGR.RGB_Colour_Type;
+        Foreground_Colour : Console.SGR.RGB_Colour_Type;
     end record;
 
-    Default_Border_Foreground_Colour : constant Console.RGB_Colour_Type := (
+    Default_Border_Foreground_Colour :
+        constant Console.SGR.RGB_Colour_Type := (
         Red => 255,
         Green => 100,
         Blue => 255
     );
-    Default_Border_Background_Colour : constant Console.RGB_Colour_Type := (
+    Default_Border_Background_Colour :
+        constant Console.SGR.RGB_Colour_Type := (
         Red => 10,
         Green => 10,
         Blue => 10
     );
-    Default_Background_Colour : constant Console.RGB_Colour_Type := (
+    Default_Background_Colour :
+        constant Console.SGR.RGB_Colour_Type := (
         Red => 0,
         Green => 0,
         Blue => 0
     );
-    Default_Foreground_Colour : constant Console.RGB_Colour_Type := (
+    Default_Foreground_Colour :
+        constant Console.SGR.RGB_Colour_Type := (
         Red => 255,
         Green => 255,
         Blue => 255

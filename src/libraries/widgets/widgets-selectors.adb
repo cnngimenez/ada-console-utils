@@ -29,6 +29,7 @@ with Ada.Strings.Wide_Wide_Fixed;
 use Ada.Strings.Wide_Wide_Fixed;
 
 with Console;
+with Console.SGR;
 
 package body Widgets.Selectors is
 
@@ -127,8 +128,8 @@ package body Widgets.Selectors is
         Selector.Update_Filtered_Data;
         Selector.Put_Data;
 
-        Console.Set_RGB_Background (100, 200, 100);
-        Console.Set_Colour (Console.Black);
+        Console.SGR.Set_RGB_Background (100, 200, 100);
+        Console.SGR.Set_Colour (Console.SGR.Black);
         Put_Line ("⌨ " & To_Wide_Wide_String (Selector.Current_String));
         Put_Line ("Selection number "
             & To_Wide_Wide_String (Selector.Current_Selection'Image)
@@ -138,7 +139,7 @@ package body Widgets.Selectors is
             & " (total: "
             & To_Wide_Wide_String (Data_Vectors.Length (Selector.Data)'Image)
             & ").");
-        Console.Reset_All;
+        Console.SGR.Reset_All;
     end Draw;
 
     procedure Execute (Selector : in out Selector_Type) is
@@ -334,7 +335,7 @@ package body Widgets.Selectors is
     end Previous_Selection;
 
     procedure Put_Data (Selector : Selector_Type) is
-        use Console;
+        use Console.SGR;
         A_String : Unbounded_Wide_Wide_String;
         Entry_Amount : constant Natural :=
             --  Add 2 lines for the top+bottom border if present.
