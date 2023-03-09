@@ -21,6 +21,8 @@
 
 --  with Ada.Characters.Latin_1;
 --  use Ada.Characters.Latin_1;
+with Ada.Command_Line;
+use Ada.Command_Line;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -41,6 +43,10 @@ procedure Console_Test is
     procedure Set_Colour_8bit_Test;
     procedure Set_Background_8bit_Test;
     procedure Test_Emoji;
+    procedure Pause;
+    procedure Show_Help;
+
+    No_Pause : Boolean := True;
 
     procedure Alternative_Font_Test is
     begin
@@ -65,6 +71,17 @@ procedure Console_Test is
             Write ("Set_Colour (" & Colour'Image & ", Bright := True);");
         end loop;
     end Bright_Colour_Test;
+
+    procedure Pause is
+        C : Character;
+    begin
+        if No_Pause then
+            return;
+        end if;
+
+        Put_Line ("Press a key to continue.");
+        Get_Immediate (C);
+    end Pause;
 
     procedure Set_Background_8bit_Test is
     begin
@@ -127,7 +144,10 @@ procedure Console_Test is
                 end loop;
                 Put_Line ("");
             end loop;
+
             Put_Line ("");
+            Pause;
+
         end loop;
     end Set_RGB_Background_Test;
 
@@ -146,9 +166,26 @@ procedure Console_Test is
                 end loop;
                 Put_Line ("");
             end loop;
+
             Put_Line ("");
+            Pause;
+
         end loop;
     end Set_RGB_Test;
+
+    procedure Show_Help is
+    begin
+        Put_Line ("Try all console codes implemented in this library.");
+        New_Line;
+        Put_Line ("Synopsis:");
+        New_Line;
+        Put_Line ("    console_test [-p|--pause]");
+        New_Line;
+        Put_Line ("Options:");
+        New_Line;
+        Put_Line ("  -p | --pause : Print all tests without "
+            & "waiting for user key.");
+    end Show_Help;
 
     procedure Test_Emoji is
     begin
@@ -165,6 +202,16 @@ procedure Console_Test is
     end Write;
 
 begin
+    if Argument_Count > 0 then
+        if Argument (1) = "-h" or else Argument (1) = "--help" then
+            Show_Help;
+            return;
+        end if;
+
+        if Argument (1) = "-p" or else Argument (1) = "--pause" then
+            No_Pause := False;
+        end if;
+    end if;
 
     --  Code 0
     Put_Line ("----> Testing codes from 0 to 9. ");
@@ -201,6 +248,8 @@ begin
 
     Crossed_Out;
     Write ("Crossed");
+
+    Pause;
 
     --  Code 10
     Put_Line ("----> Testing codes from 10 to 19. ");
@@ -240,6 +289,8 @@ begin
     Crossed_Out_Off; --  Not crossed out
     Write ("Crossed_Out_Off");
 
+    Pause;
+
     --  Code 30
     Put_Line ("----> Testing codes from 30 to 39. ");
 
@@ -255,21 +306,29 @@ begin
     Default_Colour;
     Write ("Default_Colour");
 
+    Pause;
+
     --  Code 40
     Put_Line ("----> Testing codes from 40 to 49.");
 
     Put_Line ("--> 3/4 bit colour test:");
     Set_Background_Test;
 
+    Pause;
+
     Put_Line ("--> 8 bit colour test:");
     Set_Background_8bit_Test;
     Reset_All;
+
+    Pause;
 
     Put_Line ("--> 24 bit colour test: (RGB)");
     Set_RGB_Background_Test;
 
     Default_Background;
     Write ("Default_Background");
+
+    Pause;
 
     --  Code 50
     Put_Line ("----> Testing codes from 50 to 59. ");
@@ -288,6 +347,8 @@ begin
 
     Not_Overlined;
     Write ("Not_Overlined");
+
+    Pause;
 
     --  Code 60
     Put_Line ("----> Testing codes from 60 to 69. ");
