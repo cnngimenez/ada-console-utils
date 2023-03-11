@@ -83,21 +83,16 @@ begin
     end if;
 
     Tests.SGR.Test_Codes_0_To_10;
-    Pause;
     Tests.SGR.Test_Codes_10_To_20;
-    Pause;
     Tests.SGR.Test_Codes_20_To_30;
-    Pause;
-    Tests.SGR.Test_Codes_30_To_40;
+    Pause;  --  To much for a screen
+    Tests.SGR.Test_Codes_30_To_40;  --  Colour tests
     Pause;
     Tests.SGR.Test_Codes_40_To_50;
     Pause;
     Tests.SGR.Test_Codes_50_To_60;
-    Pause;
     Tests.SGR.Test_Codes_60_To_70;
-    Pause;
     Tests.SGR.Test_Codes_90_To_110;
-    Pause;
 
     --  --------------------
 
