@@ -62,8 +62,10 @@ package body Tests.SGR is
 
             Set_8bit_Background (Num);
             Put ("A");
+            Reset_All;
         end loop;
-        Put_Line ("");
+
+        New_Line;
     end Set_Background_8bit_Test;
 
     procedure Set_Background_Test is
@@ -71,6 +73,7 @@ package body Tests.SGR is
         for Colour in Colour_Type'First .. Colour_Type'Last loop
             Set_Background (Colour);
             Write ("Set_Background (" & Colour'Image & ");");
+            Set_Background (Normal);
         end loop;
     end Set_Background_Test;
 
@@ -86,8 +89,10 @@ package body Tests.SGR is
 
             Set_8bit_Colour (Num);
             Put ("A");
+            Reset_All;
         end loop;
-        Put_Line ("");
+
+        New_Line;
     end Set_Colour_8bit_Test;
 
     procedure Set_Colour_Test is
@@ -108,12 +113,12 @@ package body Tests.SGR is
                 loop
                     Set_RGB_Background (R * 20, G * 20, B * 20);
                     Put ("A");
+                    Reset_All;
                 end loop;
-                Put_Line ("");
+                Put (" ");
             end loop;
 
-            Put_Line ("");
-
+            New_Line;
         end loop;
     end Set_RGB_Background_Test;
 
@@ -128,12 +133,13 @@ package body Tests.SGR is
 
                     Set_RGB_Colour (R * 20, G * 20, B * 20);
                     Put ("A");
+                    Reset_All;
 
                 end loop;
-                Put_Line ("");
+                Put (" ");
             end loop;
 
-            Put_Line ("");
+            New_Line;
 
         end loop;
     end Set_RGB_Test;
