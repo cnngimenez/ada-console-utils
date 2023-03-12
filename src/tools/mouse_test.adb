@@ -23,7 +23,7 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 with Ada.Strings.Fixed;
 use Ada.Strings.Fixed;
-with Console;
+with Console.CSI_Codes;
 with Mouse;
 use Mouse;
 
@@ -60,8 +60,8 @@ procedure Mouse_Test is
     Num : Natural := 0;
 begin
     Enable_Mouse;
-    Console.Erase_Display (Console.Entire_Screen);
-    Console.Cursor_Position (0, 0);
+    Console.CSI_Codes.Erase_Display (Console.CSI_Codes.Entire_Screen);
+    Console.CSI_Codes.Cursor_Position (0, 0);
 
     loop
         Get_Immediate (C);
@@ -77,7 +77,7 @@ begin
 
             Num := Num + 1;
             if Num >= 10 then
-                Console.Cursor_Position (0, 0);
+                Console.CSI_Codes.Cursor_Position (0, 0);
                 Num := 0;
             end if;
 

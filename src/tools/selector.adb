@@ -29,8 +29,8 @@ with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
-with Console;
-use Console;
+with Console.CSI_Codes;
+use Console.CSI_Codes;
 
 with Widgets;
 with Widgets.Selectors;

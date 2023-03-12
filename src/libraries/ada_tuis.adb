@@ -21,7 +21,7 @@
 
 with Ada.Text_IO;
 with Ada.Characters.Latin_1;
-with Console;
+with Console.CSI_Codes;
 
 package body Ada_Tuis is
     procedure Add_Widget (Tui : in out Ada_Tui_Type;
@@ -81,13 +81,13 @@ package body Ada_Tuis is
 
     procedure Draw (Tui : Ada_Tui_Type) is
     begin
-        Console.Save_Cursor_Position;
+        Console.CSI_Codes.Save_Cursor_Position;
 
         for Widget : Widget_Access_Type of Tui.Widgets loop
             Draw (Widget.all);
         end loop;
 
-        Console.Restore_Cursor_Position;
+        Console.CSI_Codes.Restore_Cursor_Position;
     end Draw;
 
     procedure Event_Loop (Tui : in out Ada_Tui_Type) is
@@ -156,7 +156,7 @@ package body Ada_Tuis is
     procedure Start (Tui : in out Ada_Tui_Type) is
     begin
         Tui.Last_Key_Pressed := "          ";
-        Console.Erase_Display (Console.Entire_Screen);
+        Console.CSI_Codes.Erase_Display (Console.CSI_Codes.Entire_Screen);
     end Start;
 
 end Ada_Tuis;

@@ -28,7 +28,8 @@ use Ada.Wide_Wide_Characters.Handling;
 with Ada.Strings.Wide_Wide_Fixed;
 use Ada.Strings.Wide_Wide_Fixed;
 
-with Console;
+with Console.CSI_Codes;
+use Console.CSI_Codes;
 with Console.SGR;
 
 package body Widgets.Selectors is
@@ -166,7 +167,7 @@ package body Widgets.Selectors is
         Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
 
         while not Accepted loop
-            Console.Erase_Display (Console.Entire_Screen);
+            Console.CSI_Codes.Erase_Display (Console.CSI_Codes.Entire_Screen);
             Selector.Draw;
             --  Selector.Put_Data;
 
@@ -364,11 +365,11 @@ package body Widgets.Selectors is
             end if;
 
             if Selector.Config.Draw_Border /= Widgets.Border_None then
-                Console.Cursor_Forward;
+                Console.CSI_Codes.Cursor_Forward;
             end if;
             Put (To_Wide_Wide_String (A_String));
-            Console.Cursor_Down;
-            Console.Cursor_Horizontal (Selector.Row);
+            Console.CSI_Codes.Cursor_Down;
+            Console.CSI_Codes.Cursor_Horizontal (Selector.Row);
         end loop;
     end Put_Data;
 

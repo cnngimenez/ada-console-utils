@@ -21,6 +21,7 @@
 
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
+with Console.CSI_Codes;
 
 package body Widgets is
 
@@ -61,9 +62,10 @@ package body Widgets is
     begin
         if Widget.Config.Draw_Border = Border_Simple then
             Draw_Border (Widget);
-            Console.Cursor_Position (Widget.Row + 1, Widget.Column + 1);
+            Console.CSI_Codes.Cursor_Position (Widget.Row + 1,
+                                               Widget.Column + 1);
         else
-            Console.Cursor_Position (Widget.Row, Widget.Column);
+            Console.CSI_Codes.Cursor_Position (Widget.Row, Widget.Column);
         end if;
 
         if Widget.Invert_Colours then
@@ -77,7 +79,7 @@ package body Widgets is
 
     procedure Draw_Border (Widget : Widget_Type) is
     begin
-        Console.Cursor_Position (Widget.Row, Widget.Column);
+        Console.CSI_Codes.Cursor_Position (Widget.Row, Widget.Column);
         if Widget.Invert_Colours then
             Console.SGR.Set_RGB_Colour (
                 Widget.Config.Border_Background_Colour);
@@ -98,13 +100,14 @@ package body Widgets is
 
         for I in (Widget.Row + 1) .. (Widget.Row + Widget.Height)
         loop
-            Console.Cursor_Horizontal (Widget.Column);
+            Console.CSI_Codes.Cursor_Horizontal (Widget.Column);
             Put ("│");
-            Console.Cursor_Horizontal (Widget.Column + Widget.Width - 1);
+            Console.CSI_Codes.Cursor_Horizontal
+                (Widget.Column + Widget.Width - 1);
             Put_Line ("│");
         end loop;
 
-        Console.Cursor_Horizontal (Widget.Column);
+        Console.CSI_Codes.Cursor_Horizontal (Widget.Column);
         Put ("└");
         for I in (Widget.Column + 1) .. (Widget.Column + Widget.Width - 2) loop
             Put ("─");

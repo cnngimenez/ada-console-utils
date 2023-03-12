@@ -1,6 +1,6 @@
---  console.adb ---
+--  console-csi_codes.adb ---
 
---  Copyright 2019 cnngimenez
+--  Copyright 2023 cnngimenez
 --
 --  Author: cnngimenez
 
@@ -25,7 +25,7 @@ use Ada.Strings;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
-package body Console is
+package body Console.CSI_Codes is
 
     procedure Aux_Port_Off is
     begin
@@ -150,4 +150,4 @@ package body Console is
                & "S");
     end Scroll_Up;
 
-end Console;
+end Console.CSI_Codes;
