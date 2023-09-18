@@ -28,6 +28,9 @@ generic
     with procedure On_Selected_Callback (Current_String : Wide_Wide_String);
 package Widgets.Selectors is
 
+    Default_Width : constant Natural := 20;
+    Default_Height : constant Natural := 10;
+
     type Selector_Type is new Widget_Type with private;
 
     package Data_Vectors is new Ada.Containers.Vectors
@@ -68,6 +71,13 @@ package Widgets.Selectors is
     function Filter_Data (Selector : Selector_Type;
                           Substring : Wide_Wide_String)
                          return Data_Vector;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Wide_Wide_String);
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Unbounded_Wide_Wide_String);
+    procedure Update_Filtered_Data (Selector : in out Selector_Type);
+
     function Current_Filter_Data (Selector : Selector_Type)
                                  return Data_Vector;
 
@@ -87,6 +97,7 @@ private
     type Selector_Type is new Widget_Type with
        record
            Data : Data_Vector;
+           Filtered_Data : Data_Vector;
            Current_String : Unbounded_Wide_Wide_String;
            Current_Selection : Positive;
        end record;

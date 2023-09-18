@@ -1,6 +1,6 @@
---  console.adb ---
+--  console-sgr.adb ---
 
---  Copyright 2019 cnngimenez
+--  Copyright 2023 cnngimenez
 --
 --  Author: cnngimenez
 
@@ -22,12 +22,10 @@
 with Ada.Strings.Fixed;
 use Ada.Strings.Fixed;
 use Ada.Strings;
-with Ada.Characters.Latin_1;
-use Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
-package body Console is
+package body Console.SGR is
 
     procedure Alternative_Font (Font_Number : Alt_Font_Type) is
         Param_Number : Positive := 10;
@@ -37,16 +35,6 @@ package body Console is
                Trim (Param_Number'Image, Both)
                & "m");
     end Alternative_Font;
-
-    procedure Aux_Port_Off is
-    begin
-        Put (ESC & "[4i");
-    end Aux_Port_Off;
-
-    procedure Aux_Port_On is
-    begin
-        Put (ESC & "[5i");
-    end Aux_Port_On;
 
     function Bg_Colour_To_Ansi (C : Colour_Type) return String is
     begin
@@ -174,64 +162,6 @@ package body Console is
         Put (ESC & "[29m");
     end Crossed_Out_Off;
 
-    procedure Cursor_Back (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "D");
-    end Cursor_Back;
-
-    procedure Cursor_Down (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "B");
-    end Cursor_Down;
-
-    procedure Cursor_Forward (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "C");
-    end Cursor_Forward;
-
-    procedure Cursor_Horizontal (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "G");
-    end Cursor_Horizontal;
-
-    procedure Cursor_Next_Line (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "E");
-    end Cursor_Next_Line;
-
-    procedure Cursor_Position (Row, Column : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Row'Image, Both)
-               & ";" &
-               Trim (Column'Image, Both)
-               & "H");
-    end Cursor_Position;
-
-    procedure Cursor_Previous_Line (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "F");
-    end Cursor_Previous_Line;
-
-    procedure Cursor_Up (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "A");
-    end Cursor_Up;
-
     procedure Default_Background is
     begin
         Put (ESC & "[49m");
@@ -242,11 +172,6 @@ package body Console is
         Put (ESC & "[39m");
     end Default_Colour;
 
-    procedure Device_Status_Report is
-    begin
-        Put (ESC & "[6n");
-    end Device_Status_Report;
-
     procedure Doubly_Underline is
     begin
         Put (ESC & "[21m");
@@ -256,32 +181,6 @@ package body Console is
     begin
         Put (ESC & "[52m");
     end Encircled;
-
-    procedure Erase_Display (What : Erase_Display_Type) is
-    begin
-        case What is
-        when From_Cursor_To_End =>
-            Put (ESC & "[0J");
-        when From_Cursor_To_Beginning =>
-            Put (ESC & "[1J");
-        when Entire_Screen =>
-            Put (ESC & "[2J");
-        when Entire_Screen_And_Scrollback =>
-            Put (ESC & "[3J");
-        end case;
-    end Erase_Display;
-
-    procedure Erase_Line (What : Erase_Line_Type) is
-    begin
-        case What is
-        when From_Cursor_To_End =>
-            Put (ESC & "[0K");
-        when From_Cursor_To_Beginning =>
-            Put (ESC & "[1K");
-        when Entire_Line =>
-            Put (ESC & "[2K");
-        end case;
-    end Erase_Line;
 
     procedure Faint is
     begin
@@ -380,11 +279,6 @@ package body Console is
         Put (ESC & "[0m");
     end Reset_All;
 
-    procedure Restore_Cursor_Position is
-    begin
-        Put (ESC & "[u");
-    end Restore_Cursor_Position;
-
     procedure Reveal is
     begin
         Put (ESC & "[28m");
@@ -399,25 +293,6 @@ package body Console is
     begin
         Put (ESC & "[27m");
     end Reverse_Video_Off;
-
-    procedure Save_Cursor_Position is
-    begin
-        Put (ESC & "[s");
-    end Save_Cursor_Position;
-
-    procedure Scroll_Down (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "T");
-    end Scroll_Down;
-
-    procedure Scroll_Up (Steps : Natural := 1) is
-    begin
-        Put (ESC & "[" &
-               Trim (Steps'Image, Both)
-               & "S");
-    end Scroll_Up;
 
     procedure Set_8bit_Background (Num : Colour_8bit_Type) is
     begin
@@ -461,7 +336,7 @@ package body Console is
         end if;
     end Set_Colour;
 
-    procedure Set_RGB_Background (R, G, B : RGB_Type) is
+    procedure Set_RGB_Background (R, G, B : RGB_Number_Type) is
     begin
         Put (ESC & "[48;2;"
                & Trim (R'Image, Both) & ";"
@@ -469,12 +344,22 @@ package body Console is
                & Trim (B'Image, Both) & "m");
     end Set_RGB_Background;
 
-    procedure Set_RGB_Colour (R, G, B : RGB_Type) is
+    procedure Set_RGB_Background (Colour : RGB_Colour_Type) is
+    begin
+        Set_RGB_Background (Colour.Red, Colour.Green, Colour.Blue);
+    end Set_RGB_Background;
+
+    procedure Set_RGB_Colour (R, G, B : RGB_Number_Type) is
     begin
         Put (ESC & "[38;2;"
                & Trim (R'Image, Both) & ";"
                & Trim (G'Image, Both) & ";"
                & Trim (B'Image, Both) & "m");
+    end Set_RGB_Colour;
+
+    procedure Set_RGB_Colour (Colour : RGB_Colour_Type) is
+    begin
+        Set_RGB_Colour (Colour.Red, Colour.Green, Colour.Blue);
     end Set_RGB_Colour;
 
     procedure Underline is
@@ -487,4 +372,4 @@ package body Console is
         Put (ESC & "[24m");
     end Underline_Off;
 
-end Console;
+end Console.SGR;

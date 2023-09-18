@@ -31,7 +31,7 @@ with Widgets.Countdowns;
 use Widgets.Countdowns;
 with Widgets.Times;
 use Widgets.Times;
-with Console;
+with Console.CSI_Codes;
 
 procedure Countdown is
     Totime : Time;
@@ -51,7 +51,7 @@ begin
     Totime_Widget.Set_Time (Totime);
     Time_Widget.Initialize ("Current: ", 5, 10);
 
-    Console.Erase_Display (Console.Entire_Screen);
+    Console.CSI_Codes.Erase_Display (Console.CSI_Codes.Entire_Screen);
     loop
         Totime_Widget.Draw;
         Time_Widget.Draw;

@@ -29,13 +29,15 @@ with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
-with Console;
-use Console;
+with Console.CSI_Codes;
+use Console.CSI_Codes;
 
+with Widgets;
 with Widgets.Selectors;
 
 procedure Selector is
     procedure Selected_Callback (Current_String : Wide_Wide_String);
+    procedure Show_Help;
 
     End_Program : Boolean := False;
 
@@ -45,20 +47,38 @@ procedure Selector is
         End_Program := True;
     end Selected_Callback;
 
+    procedure Show_Help is
+    begin
+        Put_Line ("selector: Show several options for the user to choose.");
+        New_Line;
+        Put_Line ("Synopsis:");
+        New_Line;
+        Put_Line ("    selector FILE_WITH_OPTIONS");
+    end Show_Help;
+
     package Myselector is new Widgets.Selectors
       (On_Selected_Callback => Selected_Callback);
 
     use Myselector;
 
+    Widget_Config : constant Widgets.Widget_Config_Type := (
+        Draw_Border => Widgets.Border_Simple,
+        Border_Foreground_Colour => Widgets.Default_Border_Foreground_Colour,
+        Border_Background_Colour => Widgets.Default_Border_Background_Colour,
+        Background_Colour => Widgets.Default_Background_Colour,
+        Foreground_Colour => Widgets.Default_Foreground_Colour
+    );
     Selector : Selector_Type;
     File : File_Type;
     Key : Character;
 begin
     if Argument_Count = 0 then
+        Show_Help;
         return;
     end if;
 
     Selector.Initialize (0, 0);
+    Widgets.Widget_Type (Selector).Set_Config (Widget_Config);
 
     Open (File, In_File, Argument (1));
     while not End_Of_File (File) loop
@@ -74,6 +94,6 @@ begin
     end loop;
 
     Put_Line ("Result:");
-    Put_Line (Selector.Get_Current_String);
+    Put_Line (Selector.Get_Selected_String);
 
 end Selector;

@@ -15,10 +15,12 @@
 --  GNU General Public License for more details.
 
 --  You should have received a copy of the GNU General Public License
---  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--  along with this program.  If not, see <http://www.gnu.org/Licenses/>.
 
 -------------------------------------------------------------------------
 
+--  Subprograms to process Mouse Events.
+--
 package Mouse is
     type Mouse_Event_Type is record
         Button_1_Pressed : Boolean;
@@ -29,12 +31,16 @@ package Mouse is
         Control_Pressed : Boolean;
         Meta_Pressed : Boolean;
 
-        X : Positive;
-        Y : Positive;
+        X : Natural;
+        Y : Natural;
+
+        Invalid : Boolean;
     end record;
 
+    type Byte is mod 256;
+
     type Code_Type is record
-        B : Natural;
+        B : Byte;
         X : Natural;
         Y : Natural;
         M : Character;
@@ -42,18 +48,44 @@ package Mouse is
     end record;
 
     function String_To_Code (Str : String) return Code_Type;
-    --  function Codes_To_Event (Code : Code_Type) return Mouse_Event_Type;
+    --  function Code_To_String (Code : Code_Type) return String;
+
+    function Codes_To_Event (Code : Code_Type) return Mouse_Event_Type;
     --  function Event_To_Codes (Mouse_Event : Mouse_Event_Type) return String;
 
+    function String_To_Event (Str : String) return Mouse_Event_Type
+        is (Codes_To_Event (String_To_Code (Str)));
+
     procedure Enable_Mouse;
+    --  Tell the terminal to enable Mouse events.
+    --  It can be captured with Ada.Text_IO.Get_Immediate repeatedly.
+
     procedure Disable_Mouse;
+    --  Tell the terminal to disable Mouse Events.
+    --
+    --  Disable the Mouse movement Report.
+
+    Invalid_Mouse_Event : constant Mouse_Event_Type :=
+        (Button_1_Pressed => False,
+         Button_2_Pressed => False,
+         Button_3_Pressed => False,
+         Release => False,
+         Shift_Pressed => False,
+         Control_Pressed => False,
+         Meta_Pressed => False,
+         X => 0,
+         Y => 0,
+         Invalid => True);
 
 private
 
-    type String_Array_Index is range 1 .. 3;
-    type String_Array is array (String_Array_Index) of String (1 .. 6);
+    type String_Array_Index is range 1 .. 4;
+    type String_Array is array (String_Array_Index) of String (1 .. 5);
 
     function Split (Codes : String) return String_Array;
     --  Split the string "^[[<bb;xx;yym into strings ("bb", "xx", "yym").
+    --
+    --  bb, xx and yy is a string representing a number from 0 to 100.
+    --  m is the character 'm' or 'M'. ^[ is ESC.
 
 end Mouse;

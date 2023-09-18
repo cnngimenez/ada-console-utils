@@ -22,19 +22,17 @@
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
-with Console;
-use Console;
+--  with Console;
+--  use Console;
 
 package body Widgets.Labels is
 
     overriding procedure Draw (Label : in out Label_Type) is
     begin
-        Cursor_Position (Label.Row, Label.Column);
+        Widgets.Draw (Widget_Type (Label));
+        --  Cursor_Position (Label.Row, Label.Column);
 
-        Set_RGB_Background (255, 255, 255);
-        Set_Colour (Black);
         Put_Line (To_Wide_Wide_String (Label.Text));
-        Reset_All;
     end Draw;
 
     function Get_Text (Label : Label_Type) return Unbounded_Wide_Wide_String is

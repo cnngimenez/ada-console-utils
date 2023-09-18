@@ -1,0 +1,271 @@
+This is console.info, produced by makeinfo version 6.8 from
+console.texi.
+
+INFO-DIR-SECTION A category
+START-INFO-DIR-ENTRY
+* Console subprograms: (console). One line description.
+END-INFO-DIR-ENTRY
+
+
+File: console.info,  Node: Top,  Next: Control Characters,  Up: (dir)
+
+Console subprograms
+*******************
+
+This manual explains Ada Console Utils, which are libraries to provide
+an data structures and subprograms to control the terminal features.
+They are implemented in the Ada programming language and ready to be
+installed and included in any project by using the GPRBuild project.
+
+   The current implemented features are:
+
+   • Manipulate TTY terminal colours, cursor, regions, and several
+     control characters.
+   • Control mouse move, and clicking/taping.
+   • Provide a framework to create widgets and other Terminal User
+     Interface (TUI).
+
+* Menu:
+
+* Control Characters::
+* Mouse::
+* Problems when clicking?::
+* License::
+* References::
+
+— The Detailed Node Listing —
+
+Mouse
+
+* Enable and disable codes::
+* Result codes::
+
+
+
+File: console.info,  Node: Control Characters,  Next: Mouse,  Prev: Top,  Up: Top
+
+1 Control Characters
+********************
+
+The Table *note Table 1.1: tabcontrol-sequence. list the acronym and the
+control characters it represents at the DEC VT100 and similar terminal
+emulators Moy [*note 2005: citeproc_bib_item_2.].  Only the control
+sequence used in this work are listed in the table.  Consider lowercase
+letters as the character itself, and uppercase letters as a parameter to
+be replaced.
+
+Acronym   Control sequence name         Characters   Parameters
+------------------------------------------------------------------
+CSI       Control Sequence Introducer   ESC [
+DECSET    DEC Private Mode Set          CSI ?  P h   P: number
+DECRST    DEC Private Mode Reset        CSI ?  P l   P: number
+
+
+Table 1.1: Control sequence used in this work.
+
+
+File: console.info,  Node: Mouse,  Next: Problems when clicking?,  Prev: Control Characters,  Up: Top
+
+2 Mouse
+*******
+
+This section describes the terminal input and output codes to enable and
+retrieve mouse events.  The ‘mouse.adb’ and ‘console.adb’ package bodies
+implement and use the elemnts explained here.  The ‘mouse.ads’ package
+usage is not explained here.  See ‘mouse_test.adb’ file for an usage
+example.
+
+   Mouse events are reported by the terminal in specific codes.  These
+codes are in form of characters and can be captured by any read command,
+as it were user input characters.  In Ada, the
+‘Ada.Text_IO.Get_Immediate’ procedure should be used.  If not captured,
+the default behaviour is to be printed on the terminal, depending on its
+configuration.
+
+   By default, the mouse events, like movement or clicking, are not
+reported.  It must be enabled by sending specific codes with any print
+command.  In Ada, the ‘Ada.Text_IO.Put’ and ‘Put_Line’ can be used to
+send them, along with ‘Ada.Characters.Latin_1’ to use control
+characters.
+
+   The folowing section explains how to enable and disable the mouse
+event reporting.  The next section you can read how to interpret and
+process the result codes provided by the terminal.
+
+* Menu:
+
+* Enable and disable codes::
+* Result codes::
+
+
+File: console.info,  Node: Enable and disable codes,  Next: Result codes,  Up: Mouse
+
+2.1 Enable and disable codes
+============================
+
+According to iani et al.  [*note 2011: citeproc_bib_item_1.], the
+terminal emulators can receive the following DECSET codes by using print
+or echo commands:
+
+     9 -> X10 mouse reporting, for compatibility with X10's xterm, reports on button press.
+     1000 -> X11 mouse reporting, reports on button press and release.
+     1001 -> highlight reporting, useful for reporting mouse highlights.
+     1002 -> button movement reporting, reports movement when a button is pressed.
+     1003 -> all movement reporting, reports all movements.
+
+     1006 -> report back as decimal values (xterm, many other terminal emulators, but not urxvt)
+     1015 -> report back as decimal values (urxvt, xterm, other terminal emulators, some applications find it complex to parse)
+     1005 -> report back encoded as utf-8 (xterm, urxvt, broken in several ways)
+
+   Therefore, to enable the XTerm mouse reporting press and release, the
+following should be used:
+
+     echo -e "\e[?1000h"
+
+   To report all the movement too, use the following DECSET:
+
+     echo -e "\e[?1003h"
+
+   To disable all, use the corresponding DECRST:
+
+     echo -e "\e?1003l\e[?1000l"
+
+   In Ada, the same behaviour can be achieved by the following code:
+
+     with Ada.Text_IO;
+     use Ada.Text_IO;
+     with Ada.Characters.Latin_1;
+     use Ada.Characters.Latin_1;
+
+     procedure Enable_Disable_Codes is
+     begin
+         --  Enable mouse press and release reports:
+         Put (ESC & "?1000h");
+         --  Enable mouse move reports:
+         Put (ESC & "?1003h");
+
+         --  Disable all
+         Put (ESC & "?1003l" & ESC & "?1000l");
+     end Enable_Disable_Codes;
+
+
+File: console.info,  Node: Result codes,  Prev: Enable and disable codes,  Up: Mouse
+
+2.2 Result codes
+================
+
+XTerm, Konsole, Tmux, Kitty, and similar terminals return the following
+codes when the user clicks or moves the mouse.  These codes can be red
+with the usual standard input commands (in Ada, the
+‘Ada.Text_IO.Get_Immediate’ subprograms).  The terminal output usually
+prints ‘^[’ as the escape character (ASCII number 27), and the CSI as
+‘^[[’.
+
+   When the user move the mouse through coordinates 1,2 (column 1, row
+2, or the first character from left to right, and the second from top to
+bottom) without clicking, its output is:
+
+     ^[[<35;1;2M
+
+   When clicking with the first button, the terminal outputs the press
+and release codes:
+
+     ^[[<0;1;2m
+     ^[[<0;1;2M
+
+   Therefore, the code syntax is:
+
+     ESC[<B;X;Y;M
+
+   Where B can be 0, 1, 2, or 35.  X and Y are the column and row
+coordinates, X characters from left to right and Y from to to bottom.  M
+can be the character ’m’ when the button is pressed or ’M’ when
+released.
+
+   Some manuals states that the codes are ‘ESC[Mbxy’, where the lower
+two bits of ‘b’ encode the button, the upper two the modifier key
+(shift, control or meta/alt) [*note man-pages project 2017:
+citeproc_bib_item_3.; *note Moy 2005: citeproc_bib_item_2.].
+
+   However, this is not seems to be the case when using the
+‘mouse_test.adb’ program on the mentioned terminal emulators.  The
+output format is not as the manual indicates, instead is: ‘ESC[<B;X;YM’
+where B indicates the button pressed, X and Y the coordinates, and M the
+released or pressed state (as the examples shown).
+
+
+File: console.info,  Node: Problems when clicking?,  Next: License,  Prev: Mouse,  Up: Top
+
+3 Problems when clicking?
+*************************
+
+Termux does not recognise taps or clicks, not until the user press
+enter.  To fix it, run the following before executing any of the Ada
+Console Utils programs:
+
+     stty -icanon -echo min 1
+
+   The stty command configures the terminal input and output.  The
+‘-icanon’ parameter disables the erase, kill, and similar characters.
+The ‘-echo’ disables the echo input characters.  And ‘min 1’ is the
+minimun characters to satisfy a read, but ‘-icanon’ must be used.
+
+   The *note coreutils#stty invocation: (coreutils)stty invocation. info
+manual has more information about the stty command and how to use it.
+
+
+File: console.info,  Node: License,  Next: References,  Prev: Problems when clicking?,  Up: Top
+
+4 License
+*********
+
+This project is under the GNU General Public License version 3 (GPLv3)
+license except were stated.
+
+   Christian Gimenez, 2019.
+
+   The test/emoji-test.txt file has been downloaded from unicode.org,
+which it has its own copyright notices and state as follow:
+
+     © 2019 Unicode®, Inc.
+     Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+     For terms of use, see http://www.unicode.org/terms_of_use.html
+
+
+File: console.info,  Node: References,  Prev: License,  Up: Top
+
+5 References
+************
+
+IANI, DICKEY, T., AND NINJALJ.  2011.  The stackoverflow question “how
+to get mousemove and mouseclick in bash?’’.
+<https://stackoverflow.com/a/5970472>.
+
+   MOY, E.  2005.  Xterm control sequence - the ctlseqs manpage.
+<https://www.xfree86.org/current/ctlseqs.html>.
+
+   MAN-PAGES PROJECT, L., ED.  2017.  Console\_codes(4) manpage.
+<http://man.he.net/man4/console_codes>.
+
+
+
+Tag Table:
+Node: Top200
+Node: Control Characters1057
+Ref: tabcontrol-sequence1556
+Node: Mouse1909
+Node: Enable and disable codes3241
+Node: Result codes5025
+Node: Problems when clicking?6706
+Node: License7477
+Node: References8065
+Ref: citeproc_bib_item_18159
+Ref: citeproc_bib_item_28320
+Ref: citeproc_bib_item_38434
+
+End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:

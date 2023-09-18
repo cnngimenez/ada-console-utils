@@ -28,8 +28,9 @@ use Ada.Wide_Wide_Characters.Handling;
 with Ada.Strings.Wide_Wide_Fixed;
 use Ada.Strings.Wide_Wide_Fixed;
 
-with Console;
-use Console;
+with Console.CSI_Codes;
+use Console.CSI_Codes;
+with Console.SGR;
 
 package body Widgets.Selectors is
 
@@ -122,14 +123,24 @@ package body Widgets.Selectors is
     end Delete_Character;
 
     overriding procedure Draw (Selector : in out Selector_Type) is
+
     begin
-        Cursor_Position (Selector.Row, Selector.Column);
+        Widgets.Draw (Widget_Type (Selector));
+        Selector.Update_Filtered_Data;
         Selector.Put_Data;
 
-        Set_RGB_Background (100, 200, 100);
-        Set_Colour (Black);
+        Console.SGR.Set_RGB_Background (100, 200, 100);
+        Console.SGR.Set_Colour (Console.SGR.Black);
         Put_Line ("⌨ " & To_Wide_Wide_String (Selector.Current_String));
-        Reset_All;
+        Put_Line ("Selection number "
+            & To_Wide_Wide_String (Selector.Current_Selection'Image)
+            & " of "
+            & To_Wide_Wide_String
+                (Data_Vectors.Length (Selector.Filtered_Data)'Image)
+            & " (total: "
+            & To_Wide_Wide_String (Data_Vectors.Length (Selector.Data)'Image)
+            & ").");
+        Console.SGR.Reset_All;
     end Draw;
 
     procedure Execute (Selector : in out Selector_Type) is
@@ -156,10 +167,11 @@ package body Widgets.Selectors is
         Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
 
         while not Accepted loop
-            Erase_Display (Entire_Screen);
-            Selector.Put_Data;
+            Console.CSI_Codes.Erase_Display (Console.CSI_Codes.Entire_Screen);
+            Selector.Draw;
+            --  Selector.Put_Data;
 
-            Put_Line (To_Wide_Wide_String (Selector.Current_String));
+            --  Put_Line (To_Wide_Wide_String (Selector.Current_String));
 
             --  Put_Line (Positive'Image (Wide_Wide_Character'Pos (Key)));
             Ada.Text_IO.Get_Immediate (Key);
@@ -254,7 +266,9 @@ package body Widgets.Selectors is
     procedure Initialize (Selector : in out Selector_Type;
                           Row, Column : Natural) is
     begin
-        Widgets.Initialize (Widget_Type (Selector), Row, Column, 20, 10);
+        Widgets.Initialize (Widget_Type (Selector),
+                            Row, Column,
+                            Default_Width, Default_Height);
         Selector.Current_Selection := 1;
         Selector.Current_String := To_Unbounded_Wide_Wide_String ("");
     end Initialize;
@@ -322,16 +336,22 @@ package body Widgets.Selectors is
     end Previous_Selection;
 
     procedure Put_Data (Selector : Selector_Type) is
-        Filtered_Data : Data_Vector;
+        use Console.SGR;
         A_String : Unbounded_Wide_Wide_String;
-    begin
-        Filtered_Data := Selector.Filter_Data (Selector.Current_String);
+        Entry_Amount : constant Natural :=
+            --  Add 2 lines for the top+bottom border if present.
+            (if Selector.Config.Draw_Border = Widgets.Border_None then
+                 Default_Height
+             else
+                 Default_Height - 2);
 
-        for I in Selector.Current_Selection .. Selector.Current_Selection + 10
+    begin
+        for I in Selector.Current_Selection ..
+                 Selector.Current_Selection + Entry_Amount
         loop
             A_String := To_Unbounded_Wide_Wide_String ("");
-            if I <= Integer (Filtered_Data.Length) then
-                A_String := Filtered_Data (I);
+            if I <= Integer (Selector.Filtered_Data.Length) then
+                A_String := Selector.Filtered_Data (I);
             end if;
 
             if I = Selector.Current_Selection then
@@ -344,7 +364,12 @@ package body Widgets.Selectors is
                 Blink_Off;
             end if;
 
-            Put_Line (To_Wide_Wide_String (A_String));
+            if Selector.Config.Draw_Border /= Widgets.Border_None then
+                Console.CSI_Codes.Cursor_Forward;
+            end if;
+            Put (To_Wide_Wide_String (A_String));
+            Console.CSI_Codes.Cursor_Down;
+            Console.CSI_Codes.Cursor_Horizontal (Selector.Row);
         end loop;
     end Put_Data;
 
@@ -362,6 +387,29 @@ package body Widgets.Selectors is
         Selector.Data := Data;
         Sort (Selector.Data);
     end Set_Data;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Wide_Wide_String)
+    is
+    begin
+        Update_Filtered_Data (Selector,
+                              To_Unbounded_Wide_Wide_String (Substring));
+    end Update_Filtered_Data;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type;
+                                    Substring : Unbounded_Wide_Wide_String)
+    is
+    begin
+        Selector.Current_String := Substring;
+        Selector.Filtered_Data := Selector.Filter_Data (Substring);
+    end Update_Filtered_Data;
+
+    procedure Update_Filtered_Data (Selector : in out Selector_Type)
+    is
+    begin
+        Selector.Filtered_Data :=
+            Selector.Filter_Data (Selector.Current_String);
+    end Update_Filtered_Data;
 
     function User_Selected (Selector : in out Selector_Type) return Boolean is
         Enter_Key : constant Character := Character'Val (13);
