@@ -44,7 +44,8 @@ library project Console_Utils is
                         "src/libraries",
                         "src/libraries/console",
                         "src/libraries/unicode",
-                        "src/libraries/widgets"
+                        "src/libraries/widgets",
+                        "src/libraries/processes"
                        );
    --  for Source_Files use ("this-file.adb", "this-other.adb");
    case Compilation is
