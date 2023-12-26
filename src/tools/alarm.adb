@@ -3,6 +3,7 @@ use Ada.Text_IO;
 with Ada.Calendar;
 with Ada.Calendar.Formatting;
 with GNAT.OS_Lib;
+with Console.CSI_Codes;
 
 procedure Alarm is
     procedure Play_Alarm;
@@ -11,9 +12,10 @@ procedure Alarm is
         return Ada.Calendar.Time;
     procedure Show_Next_Alarm (Message : String;
                                Next_Alarm : Ada.Calendar.Time);
+    procedure Wait_Process (Waiting_Minutes : Natural);
 
-    Alarm_Minutes : constant Integer := 50;
-    Break_Minutes : constant Integer := 10;
+    Alarm_Minutes : constant Natural := 50;
+    Break_Minutes : constant Natural := 10;
 
     function Next_Alarm (Start_Time : Ada.Calendar.Time;
                          Minutes : Integer)
@@ -52,11 +54,37 @@ procedure Alarm is
         Put_Line (Local_Image (Next_Alarm));
     end Show_Next_Alarm;
 
+    procedure Wait_Process (Waiting_Minutes : Natural) is
+        type Seconds_Type is range 0 .. 60;
+        Rest_Minutes, Minutes_Elapsed : Natural := 0;
+        Rest_Seconds : Seconds_Type := 60;
+    begin
+        Put_Line ("Time to next step: ");
+        while Minutes_Elapsed <= Waiting_Minutes  loop
+            Rest_Minutes := Waiting_Minutes - Minutes_Elapsed;
+            Put (Rest_Minutes'Image & " minutes "
+                & Rest_Seconds'Image & " seconds...");
+
+            delay 1.0;
+
+            Console.CSI_Codes.Erase_Line (Console.CSI_Codes.Entire_Line);
+            Console.CSI_Codes.Cursor_Previous_Line;
+            Console.CSI_Codes.Cursor_Next_Line;
+
+            Rest_Seconds := Rest_Seconds - 1;
+
+            if Rest_Seconds = 0 then
+                Minutes_Elapsed := Minutes_Elapsed + 1;
+                Rest_Seconds := 60;
+            end if;
+        end loop;
+    end Wait_Process;
+
     Start_Time, End_Time : Ada.Calendar.Time;
     Key : Character;
 begin
     loop
-        Put_Line ("Press a key to start.");
+        Put_Line ("Press a key to start the alarm.");
         Get_Immediate (Key);
 
         Start_Time := Ada.Calendar.Clock;
@@ -65,7 +93,8 @@ begin
         Put_Line ("💻 Keep working!");
         Show_Next_Alarm ("Next alarm: ", End_Time);
 
-        delay Duration (Alarm_Minutes * 60);
+        Wait_Process (Alarm_Minutes);
+        --  delay Duration (Alarm_Minutes * 60);
 
         Play_Alarm;
 
@@ -76,7 +105,8 @@ begin
         End_Time := Next_Alarm (Ada.Calendar.Clock, Break_Minutes);
         Show_Next_Alarm ("Come back at ", End_Time);
 
-        delay Duration (Break_Minutes * 60);
+        Wait_Process (Break_Minutes);
+        --  delay Duration (Break_Minutes * 60);
 
         Put_Line ("Break done!");
     end loop;
