@@ -4,6 +4,7 @@ with Ada.Calendar;
 with Ada.Calendar.Formatting;
 with GNAT.OS_Lib;
 with Console.CSI_Codes;
+with Processes;
 
 procedure Alarm is
     procedure Play_Alarm;
@@ -13,6 +14,7 @@ procedure Alarm is
     procedure Show_Next_Alarm (Message : String;
                                Next_Alarm : Ada.Calendar.Time);
     procedure Wait_Process (Waiting_Minutes : Natural);
+    function Screenlocker_Detected return Boolean;
 
     Alarm_Minutes : constant Natural := 50;
     Break_Minutes : constant Natural := 10;
@@ -45,6 +47,15 @@ procedure Alarm is
         Spawn ("/usr/bin/mpv", Args.all, Success);
     end Play_Alarm;
 
+    function Screenlocker_Detected return Boolean is
+        use Processes;
+
+        Stat : Process_Type;
+    begin
+        Stat := Find_Process ("screenlock");
+        return Stat /= Invalid_Process;
+    end Screenlocker_Detected;
+
     procedure Show_Next_Alarm (Message : String;
                                Next_Alarm : Ada.Calendar.Time)
     is
@@ -71,11 +82,13 @@ procedure Alarm is
             Console.CSI_Codes.Cursor_Previous_Line;
             Console.CSI_Codes.Cursor_Next_Line;
 
-            Rest_Seconds := Rest_Seconds - 1;
+            if not Screenlocker_Detected then
+                Rest_Seconds := Rest_Seconds - 1;
 
-            if Rest_Seconds = 0 then
-                Minutes_Elapsed := Minutes_Elapsed + 1;
-                Rest_Seconds := 60;
+                if Rest_Seconds = 0 then
+                    Minutes_Elapsed := Minutes_Elapsed + 1;
+                    Rest_Seconds := 60;
+                end if;
             end if;
         end loop;
     end Wait_Process;

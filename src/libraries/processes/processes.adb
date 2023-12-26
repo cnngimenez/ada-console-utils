@@ -55,9 +55,22 @@ package body Processes is
         while not Found and then More_Entries (Proc_Search) loop
             Get_Next_Entry (Proc_Search, Directory_Entry);
 
-            Stat := Process_Stat (Full_Name (Directory_Entry) & "/stat");
-
-            Found := Has_Substring (Name_Substring, Stat.Command);
+            if Kind (Directory_Entry) = Directory
+                and then Simple_Name (Directory_Entry) /= "."
+                and then Simple_Name (Directory_Entry) /= ".."
+                and then Exists (Full_Name (Directory_Entry) & "/stat")
+                and then Kind (Full_Name (Directory_Entry) & "/stat") =
+                         Ordinary_File
+            then
+                begin
+                    Stat := Process_Stat (
+                        Full_Name (Directory_Entry) & "/stat");
+                    Found := Has_Substring (Name_Substring, Stat.Command);
+                exception
+                    when others =>
+                        null;
+                end;
+            end if;
         end loop;
 
         End_Search (Proc_Search);
