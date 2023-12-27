@@ -1,4 +1,4 @@
---  files.ads ---
+--  file_test.adb ---
 
 --  Copyright 2023 cnngimenez
 --
@@ -19,28 +19,27 @@
 
 -------------------------------------------------------------------------
 
-with Ada.Calendar;
+with Ada.Text_IO;
+use Ada.Text_IO;
+with Ada.Command_Line;
+use Ada.Command_Line;
+with Ada.Calendar.Formatting;
 
-package Files is
+with Files;
 
-    type File_Status_Type is record
-        --  Device_ID :
-        --  INode_Number :
-        --  File_Type_Mode :
-        --  Hard_Link_Count :
-        User_ID : Positive;
-        Group_ID : Positive;
-        --  Size_Bytes :
-        --  Block_Size :
-        --  Block_512B_Allocated :
-        Last_Access_Time : Ada.Calendar.Time;
-        Last_Modification_Time : Ada.Calendar.Time;
-        Last_Status_Change_Time : Ada.Calendar.Time;
-    end record;
+procedure File_Test is
+    File_Status : Files.File_Status_Type;
+begin
+    File_Status := Files.Get_File_Status (Argument (1));
 
-    function Get_File_Status (Path : String) return File_Status_Type;
-    --  Return file Information.
-    --
-    --  It also works for Directories!
+    Put_Line ("File: " & Argument (1));
+    Put_Line ("User ID: " & File_Status.User_ID'Image);
+    Put_Line ("Group ID: " & File_Status.Group_ID'Image);
 
-end Files;
+    Put_Line ("Access time: "
+        & Ada.Calendar.Formatting.Image (File_Status.Last_Access_Time));
+    Put_Line ("Modification time: "
+        & Ada.Calendar.Formatting.Image (File_Status.Last_Modification_Time));
+    Put_Line ("Status Change time: "
+        & Ada.Calendar.Formatting.Image (File_Status.Last_Status_Change_Time));
+end File_Test;

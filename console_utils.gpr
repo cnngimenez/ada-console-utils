@@ -26,7 +26,8 @@
 --  with "matreshka_league.gpr";
 --  with "gtkada.gpr";
 
-library project Console_Utils is
+library project
+Console_Utils is
    type Compilation_Type is ("relocatable", "dynamic", "static-pic", "static");
    type Optimisation_Type is ("debug", "production");
 
@@ -56,6 +57,8 @@ library project Console_Utils is
       when "static-pic" =>
          for Object_Dir use ".objs/library/static-pic";
    end case;
+
+   for Languages use ("ada", "c");
 
    package Compiler is
       for Default_Switches ("Ada") use

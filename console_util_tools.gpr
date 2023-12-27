@@ -51,8 +51,11 @@ project Console_Util_Tools is
               "countdown.adb",
               "label.adb",
               "alarm.adb",
-              "my_ps.adb"
+              "my_ps.adb",
+              "file_test.adb"
              );
+
+   --  for languages use ("ada", "c");
 
    package Compiler is
       for Default_Switches ("ada") use
