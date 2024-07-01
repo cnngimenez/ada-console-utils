@@ -52,7 +52,8 @@ project Console_Util_Tools is
               "label.adb",
               "alarm.adb",
               "my_ps.adb",
-              "file_test.adb"
+              "file_test.adb",
+              "idle_time.adb"
              );
 
    --  for languages use ("ada", "c");
@@ -95,13 +96,14 @@ project Console_Util_Tools is
       end case;
    end Binder;
 
-    package Linker is
+   package Linker is
        case Linking is
            when "shared" =>
-               null;
+               for Default_Switches ("Ada") use Linker'Default_Switches ("Ada")
+                   & ("-lX11", "-lXss");
            when "static" =>
                for Default_Switches ("Ada") use Linker'Default_Switches ("Ada")
-                   & ("-static", "-Bstatic");
+                   & ("-static", "-Bstatic", "-lX11", "-lXss");
                    --   "-static-libgcc");
        end case;
     end Linker;

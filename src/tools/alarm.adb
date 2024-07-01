@@ -3,21 +3,53 @@ use Ada.Text_IO;
 with Ada.Calendar;
 with Ada.Calendar.Formatting;
 with GNAT.OS_Lib;
+with Interfaces.C;
+use Interfaces.C;
 with Console.CSI_Codes;
 with Processes;
+with X11_Info;
 
 procedure Alarm is
-    procedure Play_Alarm;
+    procedure Play_Alarm (Sound_File : String);
+    --  Play the alarm sound.
+
     function Next_Alarm (Start_Time : Ada.Calendar.Time;
                          Minutes : Integer)
         return Ada.Calendar.Time;
+    --  Return the next date-time when the alarm should start.
+
     procedure Show_Next_Alarm (Message : String;
                                Next_Alarm : Ada.Calendar.Time);
+    --  Print the alarm time.
+
     procedure Wait_Process (Waiting_Minutes : Natural);
+    --  Waiting Subprogram.
+    --
+    --  Wait the given minutes.
+
     function Screenlocker_Detected return Boolean;
+    --  Is the screen saver Running?
+
+    function Is_Idle_More_Than (Seconds : Natural) return Boolean;
+    --  Is the computer idle for more than the given seconds
 
     Alarm_Minutes : constant Natural := 50;
+    --  How many work time minutes do you have.
     Break_Minutes : constant Natural := 10;
+    --  Minutes of break time!
+    IDLE_Tolerance : constant Natural := 60;
+    --  If the computer is IDLE from IDLE_Tolerance seconds, then stop The
+    --  countdouwn.
+
+    Alarm_Sound_Path : constant String
+        := "/usr/share/sounds/freedesktop/stereo/complete.oga";
+    Break_Done_Sound_Path : constant String
+        := "/usr/share/sounds/freedesktop/stereo/message.Oga";
+
+    function Is_Idle_More_Than (Seconds : Natural) return Boolean is
+    begin
+        return X11_Info.Idle_Time_Default >= unsigned_long (Seconds * 1000);
+    end Is_Idle_More_Than;
 
     function Next_Alarm (Start_Time : Ada.Calendar.Time;
                          Minutes : Integer)
@@ -31,15 +63,12 @@ procedure Alarm is
         return Start_Time + Next_Alarm_Duration;
     end Next_Alarm;
 
-    procedure Play_Alarm is
+    procedure Play_Alarm (Sound_File : String) is
         use GNAT.OS_Lib;
 
         Success : Boolean;
         Args : constant Argument_List_Access :=
-            Argument_String_To_List (
-                "--no-terminal " &
-                "/usr/share/sounds/freedesktop/stereo/complete.oga"
-                );
+            Argument_String_To_List ("--no-terminal " & Sound_File);
     begin
         Put (Character'Val (7));
         Put_Line ("🔔 ¡Alarm!");
@@ -82,7 +111,10 @@ procedure Alarm is
             Console.CSI_Codes.Cursor_Previous_Line;
             Console.CSI_Codes.Cursor_Next_Line;
 
-            if not Screenlocker_Detected then
+            if not (Screenlocker_Detected
+                    or else Is_Idle_More_Than (IDLE_Tolerance))
+            then
+                --  if not Screenlocker_Detected then
                 Rest_Seconds := Rest_Seconds - 1;
 
                 if Rest_Seconds = 0 then
@@ -109,7 +141,7 @@ begin
         Wait_Process (Alarm_Minutes);
         --  delay Duration (Alarm_Minutes * 60);
 
-        Play_Alarm;
+        Play_Alarm (Alarm_Sound_Path);
 
         Put_Line ("🧘 Take a break: "
             & Break_Minutes'Image
@@ -120,6 +152,8 @@ begin
 
         Wait_Process (Break_Minutes);
         --  delay Duration (Break_Minutes * 60);
+
+        Play_Alarm (Break_Done_Sound_Path);
 
         Put_Line ("Break done!");
     end loop;
