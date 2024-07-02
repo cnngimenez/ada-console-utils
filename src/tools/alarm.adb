@@ -22,7 +22,8 @@ procedure Alarm is
                                Next_Alarm : Ada.Calendar.Time);
     --  Print the alarm time.
 
-    procedure Wait_Process (Waiting_Minutes : Natural);
+    procedure Wait_Process (Waiting_Minutes : Natural;
+                            Stop_When_Idle : Boolean := True);
     --  Waiting Subprogram.
     --
     --  Wait the given minutes.
@@ -94,7 +95,8 @@ procedure Alarm is
         Put_Line (Local_Image (Next_Alarm));
     end Show_Next_Alarm;
 
-    procedure Wait_Process (Waiting_Minutes : Natural) is
+    procedure Wait_Process (Waiting_Minutes : Natural;
+                            Stop_When_Idle : Boolean := True) is
         type Seconds_Type is range 0 .. 60;
         Rest_Minutes, Minutes_Elapsed : Natural := 0;
         Rest_Seconds : Seconds_Type := 60;
@@ -111,8 +113,9 @@ procedure Alarm is
             Console.CSI_Codes.Cursor_Previous_Line;
             Console.CSI_Codes.Cursor_Next_Line;
 
-            if not (Screenlocker_Detected
-                    or else Is_Idle_More_Than (IDLE_Tolerance))
+            if not (Stop_When_Idle
+                    and then (Screenlocker_Detected
+                              or else Is_Idle_More_Than (IDLE_Tolerance)))
             then
                 --  if not Screenlocker_Detected then
                 Rest_Seconds := Rest_Seconds - 1;
@@ -138,7 +141,7 @@ begin
         Put_Line ("💻 Keep working!");
         Show_Next_Alarm ("Next alarm: ", End_Time);
 
-        Wait_Process (Alarm_Minutes);
+        Wait_Process (Alarm_Minutes, True);
         --  delay Duration (Alarm_Minutes * 60);
 
         Play_Alarm (Alarm_Sound_Path);
@@ -150,7 +153,7 @@ begin
         End_Time := Next_Alarm (Ada.Calendar.Clock, Break_Minutes);
         Show_Next_Alarm ("Come back at ", End_Time);
 
-        Wait_Process (Break_Minutes);
+        Wait_Process (Break_Minutes, False);
         --  delay Duration (Break_Minutes * 60);
 
         Play_Alarm (Break_Done_Sound_Path);
