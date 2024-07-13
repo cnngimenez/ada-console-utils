@@ -26,6 +26,7 @@ use Ada.Command_Line;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
+with Console.Geometry;
 with Emojis;
 with Tests.SGR;
 
@@ -101,4 +102,10 @@ begin
     Put_Line ("-> /= != >= <= <> == === ;; <- -< >- || && //");
     Put_Line ("Testing emojis:");
     Test_Emoji;
+
+    Put_Line ("Geometry:");
+    Put_Line ("Columns: "
+        & Console.Geometry.Get_Columns'Image);
+    Put_Line ("Lines: "
+        & Console.Geometry.Get_Lines'Image);
 end Console_Test;
