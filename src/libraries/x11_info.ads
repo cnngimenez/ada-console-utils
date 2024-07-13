@@ -24,6 +24,9 @@ use Interfaces.C;
 
 package X11_Info is
 
+    pragma Linker_Options ("-lX11");
+    pragma Linker_Options ("-lXss");
+
     type Screensaver_Info_Type is record
         Invalid : Boolean;
         State : Integer;
