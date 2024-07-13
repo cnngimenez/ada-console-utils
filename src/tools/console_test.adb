@@ -27,6 +27,7 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 
 with Console.Geometry;
+with Console.TTY;
 with Emojis;
 with Tests.SGR;
 
@@ -108,4 +109,12 @@ begin
         & Console.Geometry.Get_Columns'Image);
     Put_Line ("Lines: "
         & Console.Geometry.Get_Lines'Image);
+
+    Put_Line ("TTY device file:");
+    Put_Line ("TTY Name stdin (0):"
+        & Console.TTY.TTY_Name (Console.TTY.Standard_Input_Fd));
+    Put_Line ("TTY Name stdout (1):"
+        & Console.TTY.TTY_Name (Console.TTY.Standard_Output_Fd));
+    Put_Line ("TTY Name stderr (2):"
+        & Console.TTY.TTY_Name (Console.TTY.Standard_Error_Fd));
 end Console_Test;
