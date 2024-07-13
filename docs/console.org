@@ -98,6 +98,14 @@ Some manuals states that the codes are =ESC[Mbxy=, where the lower two bits of =
 However, this is not seems to be the case when using the =mouse_test.adb= program on the mentioned terminal emulators. The output format is not as the manual indicates, instead is: =ESC[<B;X;YM= where B indicates the button pressed, X and Y the coordinates, and M the released or pressed state (as the examples shown).
 
 
+* Terminal information
+
+** Geometry
+The size of the terminal is provided by environment variables =COLUMNS= and =LINES= [cite:@ieee17:_posix]. It is relevant to know that non-POSIX compliant shells may not set this variable.
+
+The Xterm terminal emulator can provide information about the size of the window by using control characters. It supports specific CSI codes to retrieve lines and columns, and width and height in pixels [cite/text:@moy05:_xterm_contr_sequen]. When these codes are printed, Xterm sent the code answer through standard input, which can be red by a =Get= or =Get_Line= procedure. The library =Console.Xterm= provides procedures to print the codes, and functions to parse the Xterm answers. These control codes, may not work on other terminal emulators.
+
+
 * Problems when clicking?
 Termux does not recognise taps or clicks, not until the user press enter. To fix it, run the following before executing any of the Ada Console Utils programs:
 
