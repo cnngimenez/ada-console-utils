@@ -53,7 +53,8 @@ project Console_Util_Tools is
               "alarm.adb",
               "my_ps.adb",
               "file_test.adb",
-              "idle_time.adb"
+              "idle_time.adb",
+              "apager.adb"
              );
 
    --  for languages use ("ada", "c");
