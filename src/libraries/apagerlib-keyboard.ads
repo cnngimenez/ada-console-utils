@@ -19,6 +19,9 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings.Unbounded;
+use Ada.Strings.Unbounded;
+
 --
 --  Manage the APager keyboard.
 --
@@ -28,6 +31,23 @@ package Apagerlib.Keyboard is
     --  Find and open the TTY or PTS file associated with the keyboard.
 
     function Wait_For_Key return Character;
+
+    function Wait_For_Strkey return Unbounded_String;
+    --  Read keys and return a more human-readable characters.
+
+    function CSI_To_Key (Chars : String) return String;
+
+    function To_Strkey (Chars : String) return String;
+    --  Convert a keyboard chars to human-readable Characters.
+    --
+    --  Example, convert ^[A characters into "<up>".
+
+    function To_Strkey (Chars : Unbounded_String) return Unbounded_String is
+        (Ada.Strings.Unbounded.To_Unbounded_String
+            (To_Strkey (Ada.Strings.Unbounded.To_String (Chars))));
+
+    function To_Strkey (Chars : Unbounded_String) return String is
+        (To_Strkey (Ada.Strings.Unbounded.To_String (Chars)));
 
     procedure Close_Keyboard;
 

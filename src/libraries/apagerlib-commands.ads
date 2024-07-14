@@ -20,12 +20,17 @@
 -------------------------------------------------------------------------
 
 with Ada.Containers.Hashed_Maps;
+with Ada.Strings.Unbounded.Hash;
 with Ada.Strings.Unbounded;
+use Ada.Strings.Unbounded;
 
 --
 --  Manage keyboard and commands mappings.
 --
 package Apagerlib.Commands is
+
+    Unknown_Command_String : constant Unbounded_String :=
+        Ada.Strings.Unbounded.To_Unbounded_String ("unknown-command");
 
     package Command_Hashes is new Ada.Containers.Hashed_Maps
         (Key_Type => Unbounded_String,
@@ -35,6 +40,11 @@ package Apagerlib.Commands is
     subtype Command_Map is Command_Hashes.Map;
 
     function Default_Maps return Command_Map;
-    --  procedure load_maps
+    --  procedure Load_Maps
+
+    function Keys_To_Command (Map : Command_Map; Keys : Unbounded_String)
+        return Unbounded_String;
+
+    function Wait_For_Command (Map : Command_Map) return Unbounded_String;
 
 end Apagerlib.Commands;

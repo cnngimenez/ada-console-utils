@@ -21,6 +21,9 @@
 
 with Ada.Text_IO;
 use Ada.Text_IO;
+with Ada.Characters.Latin_1;
+use Ada.Characters.Latin_1;
+
 with Console.TTY;
 use Console.TTY;
 
@@ -38,11 +41,49 @@ package body Apagerlib.Keyboard is
         Open (Keyboard_File, In_File, TTY_Name (Standard_Error_Fd));
     end Open_Keyboard;
 
+    function CSI_To_Key (Chars : String) return String is
+        (if Chars (Chars'First .. Chars'First + 1) = ESC & "[" then
+            (case Chars (Chars'First + 2) is
+                when 'A' => "<up>",
+                when 'B' => "<down>",
+                when 'C' => "<right>",
+                when 'D' => "<left>",
+                when others => Chars)
+        else Chars);
+
+    function To_Strkey (Chars : String) return String is
+        (case Chars'Length is
+            when 3 => CSI_To_Key (Chars),
+            when 2 => "M-" & Chars (Chars'First + 1),
+            when others => Chars);
+
     function Wait_For_Key return Character is
         C : Character;
     begin
         Get_Immediate (Keyboard_File, C);
         return C;
     end Wait_For_Key;
+
+    function Wait_For_Strkey return Unbounded_String is
+        Key : Unbounded_String;
+        C : Character;
+    begin
+        C := Wait_For_Key;
+        Append (Key, C);
+
+        if C = ESC then
+            --  It is a Meta or arrow key. "ESC ..."
+            C := Wait_For_Key;
+            Append (Key, C);
+
+            if C = '[' then
+                --  Arrow key: "ESC [ ..."
+                C := Wait_For_Key;
+                Append (Key, C);
+            end if;
+        end if;
+
+        return To_Strkey (Key);
+    end Wait_For_Strkey;
 
 end Apagerlib.Keyboard;
