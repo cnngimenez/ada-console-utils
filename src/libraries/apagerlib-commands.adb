@@ -1,4 +1,4 @@
---  apager-keyboard.ads ---
+--  apagerlib-commands.adb ---
 
 --  Copyright 2024 cnngimenez
 --
@@ -19,16 +19,23 @@
 
 -------------------------------------------------------------------------
 
---
---  Manage the APager keyboard.
---
-package Apagerlib.Keyboard is
+package body Apagerlib.Commands is
 
-    procedure Open_Keyboard;
-    --  Find and open the TTY or PTS file associated with the keyboard.
+    function Tou (Str : String) return Unbounded_String is
+     (To_Unbounded_String (Str));
 
-    function Wait_For_Key return Character;
+    function Default_Maps return Command_Map is
+        Map : Command_Map;
+    begin
+        Map.Insert (Tou ("C-x C-c"), Tou ("quit");
+        Map.Insert (Tou ("M-x"), Tou ("execute-extended-Command"));
+        --  Navigation
+        Map.Insert (Tou ("h") , Tou ("previous-line"));
+        Map.Insert (Tou ("j") , Tou ("previous-line"));
+        Map.Insert (Tou ("k") , Tou ("previous-line"));
+        Map.Insert (Tou ("l") , Tou ("previous-Line"));
 
-    procedure Close_Keyboard;
+        Map.Insert (Tou ("M-g g") , Tou ("goto-line"));
+    end Default_Maps;
 
-end Apagerlib.Keyboard;
+end Apagerlib.Commands;

@@ -1,4 +1,4 @@
---  apager-keyboard.ads ---
+--  apagerlib-commands.ads ---
 
 --  Copyright 2024 cnngimenez
 --
@@ -19,16 +19,22 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Containers.Hashed_Maps;
+with Ada.Strings.Unbounded;
+
 --
---  Manage the APager keyboard.
+--  Manage keyboard and commands mappings.
 --
-package Apagerlib.Keyboard is
+package Apagerlib.Commands is
 
-    procedure Open_Keyboard;
-    --  Find and open the TTY or PTS file associated with the keyboard.
+    package Command_Hashes is new Ada.Containers.Hashed_Maps
+        (Key_Type => Unbounded_String,
+         Element_Type => Unbounded_String,
+         Hash => Ada.Strings.Unbounded.Hash,
+         Equivalent_Keys => "=");
+    subtype Command_Map is Command_Hashes.Map;
 
-    function Wait_For_Key return Character;
+    function Default_Maps return Command_Map;
+    --  procedure load_maps
 
-    procedure Close_Keyboard;
-
-end Apagerlib.Keyboard;
+end Apagerlib.Commands;
