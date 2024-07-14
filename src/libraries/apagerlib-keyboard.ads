@@ -33,7 +33,9 @@ package Apagerlib.Keyboard is
     function Wait_For_Key return Character;
 
     function Wait_For_Strkey return Unbounded_String;
-    --  Read keys and return a more human-readable characters.
+    --  Read keys and return a more human-readable Characters.
+
+    function Get_Line return Unbounded_String;
 
     function CSI_To_Key (Chars : String) return String;
 

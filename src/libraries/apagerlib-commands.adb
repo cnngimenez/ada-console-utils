@@ -30,7 +30,7 @@ package body Apagerlib.Commands is
         Map : Command_Map;
     begin
         Map.Insert (Tou ("C-x C-c"), Tou ("quit"));
-        Map.Insert (Tou ("M-x"), Tou ("execute-extended-Command"));
+        Map.Insert (Tou ("M-x"), Tou ("execute-extended-command"));
 
         --  Navigation
         Map.Insert (Tou ("<up>"), Tou ("previous-line"));

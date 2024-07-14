@@ -10,6 +10,9 @@ with Apagerlib.Commands;
 
 procedure Apager is
 
+    function To_U (Item : String) return Unbounded_String
+        renames To_Unbounded_String;
+
     procedure Read_Keyboard_Command;
 
     Buffer : Apagerlib.Pages.Page_Type;
@@ -46,6 +49,13 @@ begin
         New_Line;
         Put_Line ("--  Page  --");
         Read_Keyboard_Command;
+
+        if Command = To_U ("execute-extended-command") then
+            Put ("M-x ");
+            Command := Apagerlib.Keyboard.Get_Line;
+        end if;
+
+        Exit_Program := Command = To_U ("quit");
 
     end loop;
 

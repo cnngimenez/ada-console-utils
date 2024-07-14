@@ -36,11 +36,6 @@ package body Apagerlib.Keyboard is
         Close (Keyboard_File);
     end Close_Keyboard;
 
-    procedure Open_Keyboard is
-    begin
-        Open (Keyboard_File, In_File, TTY_Name (Standard_Error_Fd));
-    end Open_Keyboard;
-
     function CSI_To_Key (Chars : String) return String is
         (if Chars (Chars'First .. Chars'First + 1) = ESC & "[" then
             (case Chars (Chars'First + 2) is
@@ -50,6 +45,16 @@ package body Apagerlib.Keyboard is
                 when 'D' => "<left>",
                 when others => Chars)
         else Chars);
+
+    function Get_Line return Unbounded_String is
+    begin
+        return To_Unbounded_String (Get_Line (Keyboard_File));
+    end Get_Line;
+
+    procedure Open_Keyboard is
+    begin
+        Open (Keyboard_File, In_File, TTY_Name (Standard_Error_Fd));
+    end Open_Keyboard;
 
     function To_Strkey (Chars : String) return String is
         (case Chars'Length is
