@@ -20,6 +20,8 @@
 -------------------------------------------------------------------------
 
 with Ada.Characters.Handling;
+with Ada.Characters.Latin_1;
+use Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
 with Console.CSI_Codes;
@@ -43,6 +45,11 @@ package body Apagerlib.Display is
     begin
         while I <= Char_Limit and then I <= Page_Limit loop
             C := Page (I);
+
+            if C = LF or else C = CR then
+                New_Line;
+            end if;
+
             if Ada.Characters.Handling.Is_Graphic (C) then
                 Put (C);
             else

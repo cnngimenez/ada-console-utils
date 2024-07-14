@@ -27,7 +27,7 @@ package body Apagerlib.Pages is
         I : Integer := 1;
     begin
         while not End_Of_File and then I < Page_Limit loop
-            Get (Page (I));
+            Get_Immediate (Page (I));
             I := I + 1;
         end loop;
     end Get_Page;
