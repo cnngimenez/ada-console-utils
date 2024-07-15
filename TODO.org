@@ -8,8 +8,16 @@ M 77 [ 91 < 60 3 51 5 53 ; 59 2 50 0 48 2 50 ; 59 1 49 8 56 Invalid code.
 M 77 [ 91 < 60 3 51 5 53 ; 59 2 50 0 48 3 51 ; 59 1 49 8 56 Invalid code.    
 #+END_SRC
 
+** TODO Check bibliography of keyboard input code
+
+Are there any bibliographies and explanations about the keyboard input codes?
+
+Why =ESC [ A= is the up key when reading with =Ada.Text_IO.Get_Immediate=?
 
 
+*** TODO Move Apager.Keyboard.CSI_To_Key to Console.TTY or other library
+
+After finding the explanation abouth the input key sequence, it is possible that it belongs to Console.TTY or other library child of Console.
 * Meta     :noexport:
 
 # ----------------------------------------------------------------------

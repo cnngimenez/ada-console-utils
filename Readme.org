@@ -1,5 +1,9 @@
 Miscelaneous Ada libraries and tools.
 
+Complete manual and documentation at [[docs/console.org][docs/console.org]] file.
+
+TODO tasks at [[file:TODO.org][TODO.org]] file.
+
 * Requirements
 Only Ada and GNAT libraries. gprbuild to build the sources easily.
 

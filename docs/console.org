@@ -115,6 +115,11 @@ The stty command configures the terminal input and output. The =-icanon= paramet
 
 The [[info:coreutils#stty invocation][coreutils#stty invocation]] info manual has more information about the stty command and how to use it.
 
+* Apager tool
+
+** Page memory
+Memory is divided un pages. A page is a limited buffer with portion of the input data.
+
 * License
 This project is under the GNU General Public License version 3 (GPLv3) license except were stated.
 
