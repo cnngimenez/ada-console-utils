@@ -18,19 +18,23 @@
 --  along with this program.  If not, see <http://www.gnu.org/Licenses/>.
 
 -------------------------------------------------------------------------
+with Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
 package body Apagerlib.Pages is
 
-    function Data (Page : Page_Type; Index : Page_Index) return Positive
-        is Page.Data (Index);
+    procedure Get_Page (Page : out Page_Type; Line_Start : Positive);
+    --  Get from standard input a new page.
 
-    function Get_Page (Memory : in out Page_Memory; Index : Positive)
-        return Page_Type is
+    function Data (Page : Page_Type; Index : Page_Index) return Character
+        is (Page.Data (Index));
 
+    function Get_Page (Memory : in out Page_Memory;
+                       Index : Positive)
+                       return Page_Type'Class is
         Page : Page_Type;
-        Line_Start : Positive := 0;
+        Line_Start : Positive := 1;
     begin
         if Index <= Memory.Last_Loaded_Page then
             --  Page is already loaded, just return it.
@@ -54,7 +58,9 @@ package body Apagerlib.Pages is
     end Get_Page;
 
     procedure Get_Page (Page : out Page_Type; Line_Start : Positive) is
-        I : Integer := 1;
+        use Ada.Characters.Latin_1;
+
+        I : Positive := 1;
         C : Character;
     begin
         Page.Line_Start := Line_Start;
@@ -62,9 +68,9 @@ package body Apagerlib.Pages is
 
         while not End_Of_File and then I < Page_Limit loop
             Get_Immediate (C);
-            Page.Data (I) := C;
+            Page.Data (Page_Index (I)) := C;
 
-            if C = LR or else C = CR then
+            if C = LF or else C = CR then
                 Page.Line_End := Page.Line_End + 1;
             end if;
 
@@ -72,32 +78,47 @@ package body Apagerlib.Pages is
         end loop;
     end Get_Page;
 
-    function Get_Page_With_Line (Memory : in out Page_Memory;
-                                 Line_Num : Positive)
-                                 return Page_Type is
-    begin
-        return Get_Page (Memory, Page_Index_With_Line (Memory, Line_Num));
-    end Get_Page_With_Line;
-
     function Get_Page_With_Byte (Memory : in out Page_Memory;
                                  Byte_Num : Positive)
-                                 return Page_Type is
+                                 return Page_Type'Class is
     begin
         return Get_Page (Memory, Page_Index_With_Byte (Memory, Byte_Num));
     end Get_Page_With_Byte;
 
+    function Get_Page_With_Line (Memory : in out Page_Memory;
+                                 Line_Num : Positive)
+                                 return Page_Type'Class is
+    begin
+        return Get_Page (Memory, Page_Index_With_Line (Memory, Line_Num));
+    end Get_Page_With_Line;
+
+    function Last_Loaded_Page (Page : Page_Memory) return Positive
+        is (Page.Last_Loaded_Page);
+
     function Line_Start (Page : Page_Type) return Positive
-        is Page.Line_Start;
+        is (Page.Line_Start);
 
     function Line_End (Page : Page_Type) return Positive
-        is Page.Line_End;
+        is (Page.Line_End);
+
+    procedure Initialise (Pages : in out Page_Memory) is
+        Page : Page_Type;
+    begin
+        Pages.Last_Loaded_Page := 1;
+        Get_Page (Page, 1);
+        Pages.Pages.Append (Page);
+    end Initialise;
+
+    function Page_Index_With_Byte (Memory : Page_Memory; Byte_Num : Positive)
+        return Positive
+        is ((Byte_Num / Page_Limit) + 1);
 
     function Page_Index_With_Line (Memory : Page_Memory; Line_Num : Positive)
         return Positive is
-        I : Positive := 0;
+        I : Positive := 1;
     begin
         --  Search the given line number through pages
-        while I <= Memory.Last_Loaded_Page loop
+        while I <= Memory.Last_Loaded_Page
             and then Line_Num > Memory.Pages (I).Line_End
         loop
             I := I + 1;
@@ -111,17 +132,9 @@ package body Apagerlib.Pages is
             return I;
         else
             --  Not found!
-            return 0;
+            return 1;
         end if;
 
     end Page_Index_With_Line;
-
-    function Page_Index_With_Byte (Memory : Page_Memory; Byte_Num : Positive)
-        return Positive is
-        Index : Positive;
-    begin
-        Index :=  (Byte_Num / Page_Limit) + 1;
-        return (if Index <= Memory.Last_Loaded_Page then Index else 0);
-    end Page_Index_With_Byte;
 
 end Apagerlib.Pages;

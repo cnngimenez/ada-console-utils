@@ -36,17 +36,39 @@ package body Apagerlib.Display is
                              Start : Positive := 1;
                              Options : Display_Options);
 
+    procedure Print_Screen
+        (Memory : in out Page_Memory;
+         Top_Byte : Positive := 1;
+         Options : Display_Options := Default_Display_Options) is
+    begin
+        Erase_Display (Entire_Screen);
+        Cursor_Position (1, 1);
+        Show_No_Truncate (Page_Type (Get_Page_With_Byte (Memory, Top_Byte)),
+                          Top_Byte mod Apagerlib.Pages.Page_Limit,
+                          Options);
+    end Print_Screen;
+
     procedure Show_No_Truncate (Page : Page_Type;
                                 Start : Positive := 1;
                                 Options : Display_Options) is
         Char_Limit : constant Positive := Options.Columns * Options.Lines;
         I : Positive := Start;
+        Column, Line : Positive := 1;
         C : Character;
     begin
-        while I <= Char_Limit and then I <= Page_Limit loop
-            C := Page (I);
+        while Line <= Options.Lines and then Column <= Options.Columns
+              and then I <= Char_Limit and then I <= Page_Limit
+        loop
+            if Column = Options.Columns then
+                Column := 1;
+                Line := Line + 1;
+            end if;
+
+            C := Page.Data (Page_Index (I));
 
             if C = LF or else C = CR then
+                Column := 1;
+                Line := Line + 1;
                 New_Line;
             end if;
 
@@ -56,6 +78,7 @@ package body Apagerlib.Display is
                 Put (' ');
             end if;
             I := I + 1;
+            Column := Column + 1;
         end loop;
     end Show_No_Truncate;
 

@@ -38,13 +38,19 @@ package Apagerlib.Display is
     end record;
 
     Default_Display_Options : constant Display_Options := (
-      Columns => 64,
-      Lines => 170,
+      Columns => 60,
+      Lines => 60,
       Truncate => False,
       Only_Visible => True);
 
-    procedure Show_Page (Page : Page_Type;
-                         Start : Positive := 1;
-                         Options : Display_Options := Default_Display_Options);
+    procedure Print_Screen
+        (Memory : in out Page_Memory;
+         Top_Byte : Positive := 1;
+         Options : Display_Options := Default_Display_Options);
+
+    procedure Show_Page
+        (Page : Page_Type;
+         Start : Positive := 1;
+         Options : Display_Options := Default_Display_Options);
 
 end Apagerlib.Display;

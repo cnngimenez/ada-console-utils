@@ -25,7 +25,7 @@ package Apagerlib.Pages is
 
     Page_Limit : constant Natural := 6800;
 
-    type Page_Index is 1 .. Page_Limit;
+    type Page_Index is range 1 .. Page_Limit;
 
     --  type Byte is mod 2**8;
     type Page_Type is tagged private;
@@ -36,7 +36,7 @@ package Apagerlib.Pages is
     function Line_End (Page : Page_Type) return Positive;
     --  What line number ends in this page?
 
-    function Data (Page : Page_Type; Index : Page_Index) return Positive;
+    function Data (Page : Page_Type; Index : Page_Index) return Character;
 
     --
     --  Page Memory
@@ -47,10 +47,15 @@ package Apagerlib.Pages is
     --
     --  It is a lazy-loaded memory divided by pages. It gets the data from
     --  standard input. See the documentation manual at docs/console.org for
-    --  more information.
+    --  more Information.
 
-    function Get_Page (Memory : in out Page_Memory; Index : Positive)
-        return Page_Type;
+    procedure Initialise (Pages : in out Page_Memory);
+
+    function Last_Loaded_Page (Page : Page_Memory) return Positive;
+
+    function Get_Page (Memory : in out Page_Memory;
+                       Index : Positive)
+                       return Page_Type'Class;
     --  Get the memory page.
     --
     --  Load the pages if it is needed.
@@ -61,7 +66,7 @@ package Apagerlib.Pages is
 
     function Get_Page_With_Line (Memory : in out Page_Memory;
                                  Line_Num : Positive)
-                                 return Page_Type;
+                                 return Page_Type'Class;
     --  Search for the page with the given line number position.
     --
     --  Load the pages if it is necessary.
@@ -72,17 +77,18 @@ package Apagerlib.Pages is
 
     function Get_Page_With_Byte (Memory : in out Page_Memory;
                                  Byte_Num : Positive)
-                                 return Page_Type;
+                                 return Page_Type'Class;
     --  Search for the page with the given byte number position.
     --
     --  Load the pages if it is necessary.
 
 private
+    type Page_Array is array (Page_Index) of Character;
 
     type Page_Type is tagged
     record
         Line_Start, Line_End : Positive;
-        Data :  array (Page_Index) of Character;
+        Data :  Page_Array;
     end record;
 
     package Page_Vectors is new Ada.Containers.Vectors
@@ -92,12 +98,9 @@ private
 
     type Page_Memory is tagged
     record
-        Last_Loaded_Page : Positive;
+        Last_Loaded_Page : Positive := 1;
         Pages : Page_Vector;
     end record;
-
-    procedure Get_Page (Page : out Page_Type; Line_Start : Positive);
-    --  Get from standard input a new page.
 
     --  function Count_Lines (Page : Page_Type) return Positive;
     --  Count the line number in the page data.

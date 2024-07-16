@@ -3,6 +3,7 @@ use Ada.Text_IO;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
 
+with Console.SGR;
 with Apagerlib.Keyboard;
 with Apagerlib.Pages;
 with Apagerlib.Display;
@@ -15,10 +16,11 @@ procedure Apager is
 
     procedure Read_Keyboard_Command;
 
-    Buffer : Apagerlib.Pages.Page_Type;
+    Buffer : Apagerlib.Pages.Page_Memory;
     Commands : Apagerlib.Commands.Command_Map;
     Command : Unbounded_String;
     Exit_Program : Boolean := False;
+    Top_Byte : Positive := 1;
 
     procedure Read_Keyboard_Command is
         Keys : Unbounded_String;
@@ -38,16 +40,18 @@ procedure Apager is
     end Read_Keyboard_Command;
 
 begin
+    Buffer.Initialise;
     Apagerlib.Keyboard.Open_Keyboard;
     Commands := Apagerlib.Commands.Default_Maps;
 
     while not End_Of_File and then not Exit_Program
     loop
-        Apagerlib.Pages.Get_Page (Buffer);
-        Apagerlib.Display.Show_Page (Buffer);
+        Apagerlib.Display.Print_Screen (Buffer, Top_Byte);
 
         New_Line;
-        Put_Line ("--  Page  --");
+        Console.SGR.Reverse_Video;
+        Put_Line (Top_Byte'Image & " " & Buffer.Last_Loaded_Page'Image);
+        Console.SGR.Reset_All;
         Read_Keyboard_Command;
 
         if Command = To_U ("execute-extended-command") then
@@ -55,8 +59,9 @@ begin
             Command := Apagerlib.Keyboard.Get_Line;
         end if;
 
-        Exit_Program := Command = To_U ("quit");
+        Exit_Program := Command = To_U ("Quit");
 
+        Top_Byte := Top_Byte + 6800;
     end loop;
 
     Apagerlib.Keyboard.Close_Keyboard;
