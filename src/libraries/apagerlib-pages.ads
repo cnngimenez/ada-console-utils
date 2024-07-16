@@ -82,6 +82,16 @@ package Apagerlib.Pages is
     --
     --  Load the pages if it is necessary.
 
+    function Next_Line_Byte (Memory : in out Page_Memory;
+                             Start_Byte : Positive)
+                             return Positive;
+    --  Search the next line position starting from the given Byte.
+    --
+    --  Load the pages if it needed.
+    function Previous_Line_Byte (Memory : in out Page_Memory;
+                                 Start_Byte : Positive)
+                                 return Positive;
+
 private
     type Page_Array is array (Page_Index) of Character;
 
@@ -101,6 +111,11 @@ private
         Last_Loaded_Page : Positive := 1;
         Pages : Page_Vector;
     end record;
+
+    procedure Load_Next_Page (Memory : in out Page_Memory);
+    function Load_Next_Page (Memory : in out Page_Memory)
+                             return Page_Type'Class;
+    --  Load the next page from standard in.
 
     --  function Count_Lines (Page : Page_Type) return Positive;
     --  Count the line number in the page data.

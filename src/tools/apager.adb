@@ -3,6 +3,8 @@ use Ada.Text_IO;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
 
+with Console.CSI_Codes;
+use Console.CSI_Codes;
 with Console.SGR;
 with Apagerlib.Keyboard;
 with Apagerlib.Pages;
@@ -46,12 +48,15 @@ begin
 
     while not End_Of_File and then not Exit_Program
     loop
+        Erase_Display (Entire_Screen);
+        Cursor_Position (1, 1);
         Apagerlib.Display.Print_Screen (Buffer, Top_Byte);
 
         New_Line;
         Console.SGR.Reverse_Video;
         Put_Line (Top_Byte'Image & " " & Buffer.Last_Loaded_Page'Image);
         Console.SGR.Reset_All;
+        Put (To_String (Command));
         Read_Keyboard_Command;
 
         if Command = To_U ("execute-extended-command") then
@@ -61,7 +66,14 @@ begin
 
         Exit_Program := Command = To_U ("Quit");
 
-        Top_Byte := Top_Byte + 6800;
+        if Command = To_U ("previous-line") and then Top_Byte > 1 then
+            Top_Byte := Apagerlib.Pages.Previous_Line_Byte
+                (Buffer, Top_Byte - 1);
+        end if;
+
+        if Command = To_U ("next-line") then
+            Top_Byte := Apagerlib.Pages.Next_Line_Byte (Buffer, Top_Byte + 1);
+        end if;
     end loop;
 
     Apagerlib.Keyboard.Close_Keyboard;

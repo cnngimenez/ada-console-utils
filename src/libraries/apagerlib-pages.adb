@@ -92,6 +92,14 @@ package body Apagerlib.Pages is
         return Get_Page (Memory, Page_Index_With_Line (Memory, Line_Num));
     end Get_Page_With_Line;
 
+    procedure Initialise (Pages : in out Page_Memory) is
+        Page : Page_Type;
+    begin
+        Pages.Last_Loaded_Page := 1;
+        Get_Page (Page, 1);
+        Pages.Pages.Append (Page);
+    end Initialise;
+
     function Last_Loaded_Page (Page : Page_Memory) return Positive
         is (Page.Last_Loaded_Page);
 
@@ -101,13 +109,58 @@ package body Apagerlib.Pages is
     function Line_End (Page : Page_Type) return Positive
         is (Page.Line_End);
 
-    procedure Initialise (Pages : in out Page_Memory) is
+    procedure Load_Next_Page (Memory : in out Page_Memory) is
         Page : Page_Type;
     begin
-        Pages.Last_Loaded_Page := 1;
         Get_Page (Page, 1);
-        Pages.Pages.Append (Page);
-    end Initialise;
+        Memory.Pages.Append (Page);
+        Memory.Last_Loaded_Page := Memory.Last_Loaded_Page + 1;
+    end Load_Next_Page;
+
+    function Load_Next_Page (Memory : in out Page_Memory)
+                             return Page_Type'Class is
+    begin
+        Memory.Load_Next_Page;
+        return Memory.Pages.Last_Element;
+    end Load_Next_Page;
+
+    function Next_Line_Byte (Memory : in out Page_Memory;
+                             Start_Byte : Positive)
+                             return Positive is
+        use Ada.Characters.Latin_1;
+
+        Page : Page_Type;
+        Pindex : Positive;
+        C : Character;
+        I : Positive := 1;
+        Count : Positive := Start_Byte;
+    begin
+        Pindex := Page_Index_With_Byte (Memory, Start_Byte);
+        Page := Page_Type (Memory.Get_Page (Pindex));
+
+        I := Start_Byte mod Page_Limit;
+        C := Page.Data (Page_Index (I));
+        while not End_Of_File and then C /= LF and then C /= CR
+        loop
+            I := I + 1;
+            Count := Count + 1;
+
+            if I > Page_Limit then
+                Pindex := Pindex + 1;
+                Page := Page_Type (Memory.Get_Page (Pindex));
+                I := 1;
+            end if;
+
+            C := Page.Data (Page_Index (I));
+        end loop;
+
+        if C = LF or else C = CR then
+            return Count;
+        else
+            --  Not found!
+            return 1;
+        end if;
+    end Next_Line_Byte;
 
     function Page_Index_With_Byte (Memory : Page_Memory; Byte_Num : Positive)
         return Positive
@@ -136,5 +189,46 @@ package body Apagerlib.Pages is
         end if;
 
     end Page_Index_With_Line;
+
+    function Previous_Line_Byte (Memory : in out Page_Memory;
+                                 Start_Byte : Positive)
+                                 return Positive is
+        use Ada.Characters.Latin_1;
+
+        Page : Page_Type;
+        Pindex : Positive;
+        --  Page index
+        C : Character;
+        I : Natural := 1;
+        --  Index inside the page
+        Count : Positive := Start_Byte;
+        --  Overall index
+    begin
+        Pindex := Page_Index_With_Byte (Memory, Start_Byte);
+        Page := Page_Type (Memory.Get_Page (Pindex));
+
+        I := Start_Byte mod Page_Limit;
+        C := Page.Data (Page_Index (I));
+        while not (Count = 1) and then C /= LF and then C /= CR
+        loop
+            I := I - 1;
+            Count := Count - 1;
+
+            if I = 0 then
+                Pindex := Pindex - 1;
+                Page := Page_Type (Memory.Get_Page (Pindex));
+                I := 1;
+            end if;
+
+            C := Page.Data (Page_Index (I));
+        end loop;
+
+        if C = LF or else C = CR then
+            return Count;
+        else
+            --  Not found!
+            return 1;
+        end if;
+    end Previous_Line_Byte;
 
 end Apagerlib.Pages;
