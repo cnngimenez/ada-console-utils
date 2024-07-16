@@ -24,8 +24,6 @@ with Ada.Characters.Latin_1;
 use Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
-with Console.CSI_Codes;
-use Console.CSI_Codes;
 
 package body Apagerlib.Display is
 
@@ -41,8 +39,6 @@ package body Apagerlib.Display is
          Top_Byte : Positive := 1;
          Options : Display_Options := Default_Display_Options) is
     begin
-        Erase_Display (Entire_Screen);
-        Cursor_Position (1, 1);
         Show_No_Truncate (Page_Type (Get_Page_With_Byte (Memory, Top_Byte)),
                           Top_Byte mod Apagerlib.Pages.Page_Limit,
                           Options);
@@ -87,8 +83,6 @@ package body Apagerlib.Display is
                          Options : Display_Options := Default_Display_Options)
     is
     begin
-        Erase_Display (Entire_Screen);
-        Cursor_Position (1, 1);
         if Options.Truncate then
             Show_Truncate (Page, Start, Options);
         else
