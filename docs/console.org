@@ -105,6 +105,17 @@ The size of the terminal is provided by environment variables =COLUMNS= and =LIN
 
 The Xterm terminal emulator can provide information about the size of the window by using control characters. It supports specific CSI codes to retrieve lines and columns, and width and height in pixels [cite/text:@moy05:_xterm_contr_sequen]. When these codes are printed, Xterm sent the code answer through standard input, which can be red by a =Get= or =Get_Line= procedure. The library =Console.Xterm= provides procedures to print the codes, and functions to parse the Xterm answers. These control codes, may not work on other terminal emulators.
 
+** TTY asociated file
+Standard input, output, and error of a shell is associated to a specific device file. It can be a =/dev/ttyN= file or =/dev/pts/N= where N is a number. Usually, the GNU/Linux operative system uses the same number for one shell for all three input. 
+
+Also, file descriptors, which are represented as numbers associated to opened files, are initialised at program startup as 0, 1, and 2 to stdin, stdout, and stderr respectively (see [[man:stdin][stdin (3) man-page]]) [cite:@pages24:_linux] . This is also a GNU/Linux operative system feature, and these file descriptors can be opened as any other file in C language (and in Ada with specific GNAT subprograms). 
+
+The library =Ada.Console.TTY= defines the file descriptors as indicated before. Also, the function =Ada.Console.TTY.TTY_Name= returns the name of the TTY device file associated with a given file descriptor.
+
+** Input from keyboard
+Input sequence form keyboard are simple keys and special keys are the same control sequence as explained in [cite:@moy05:_xterm_contr_sequen]. It is useful to think as a screen or display device, but it has to be red instead of write.
+
+For instance, the CSI A (ESC [ A) characters is received when the up key is pressed. Similarly, the cursor moves up when CSI A is printed on screen.
 
 * Problems when clicking?
 Termux does not recognise taps or clicks, not until the user press enter. To fix it, run the following before executing any of the Ada Console Utils programs:
