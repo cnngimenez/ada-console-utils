@@ -53,6 +53,33 @@ package Apagerlib.Pages is
 
     function Last_Loaded_Page (Page : Page_Memory) return Positive;
 
+    function Current_BIP (Memory : Page_Memory) return Positive;
+
+    function Current_Page (Memory : Page_Memory) return Positive;
+
+    function Current_Byte (Memory : Page_Memory) return Positive;
+
+    procedure Set_Byte_Index (Memory : in out Page_Memory; Index : Positive);
+    --  Set the current index to the given One.
+    --
+    --  Calculate the current page number and the current byte in page. Set it
+    --  at the Memory. Load any page needed from standard in.
+
+    function Get_Byte (Memory : Page_Memory) return Character;
+    --  Return the current Byte.
+
+    function Next_Byte (Memory : in out Page_Memory) return Character;
+
+    function Previous_Byte (Memory : in out Page_Memory) return Character;
+
+    function Get_Byte (Memory : in out Page_Memory; Index : Positive)
+        return Character;
+    --  Return the byte at given Index.
+    --
+    --  Calculating the byte index is less eficient than Get_Byte Without
+    --  index. Therefore, use Next_Byte, Previous_Byte, and Get_Byte Whenever
+    --   possible.
+
     function Get_Page (Memory : in out Page_Memory;
                        Index : Positive)
                        return Page_Type'Class;
@@ -109,6 +136,9 @@ private
     type Page_Memory is tagged
     record
         Last_Loaded_Page : Positive := 1;
+        Current_Page : Positive := 1;
+        Current_BIP : Positive := 1;
+        --  Current Byte In Page (BIP)
         Pages : Page_Vector;
     end record;
 

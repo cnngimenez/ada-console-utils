@@ -39,7 +39,7 @@ package Apagerlib.Display is
 
     Default_Display_Options : constant Display_Options := (
       Columns => 60,
-      Lines => 60,
+      Lines => 20,
       Truncate => False,
       Only_Visible => True);
 

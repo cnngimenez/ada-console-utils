@@ -27,6 +27,9 @@ use Ada.Text_IO;
 
 package body Apagerlib.Display is
 
+    procedure Show_No_Truncate (Memory : in out Page_Memory;
+                                Start : Positive := 1;
+                                Options : Display_Options);
     procedure Show_No_Truncate (Page : Page_Type;
                                 Start : Positive := 1;
                                 Options : Display_Options);
@@ -39,10 +42,61 @@ package body Apagerlib.Display is
          Top_Byte : Positive := 1;
          Options : Display_Options := Default_Display_Options) is
     begin
-        Show_No_Truncate (Page_Type (Get_Page_With_Byte (Memory, Top_Byte)),
-                          Top_Byte mod Apagerlib.Pages.Page_Limit,
-                          Options);
+        --  if Options.Trucate then
+        --    Show_Truncate (...);
+        --  else
+        Show_No_Truncate (Memory, Top_Byte, Options);
+        --  end if;
     end Print_Screen;
+
+    procedure Show_No_Truncate (Memory : in out Page_Memory;
+                                Start : Positive := 1;
+                                Options : Display_Options) is
+        procedure Put_Char (C : Character);
+
+        procedure Put_Char (C : Character) is
+        begin
+            if C = LF or else C = CR then
+                New_Line;
+            elsif Ada.Characters.Handling.Is_Graphic (C) then
+                Put (C);
+            else
+                Put (' ');
+            end if;
+        end Put_Char;
+
+        Column, Line : Positive := 1;
+        C : Character;
+    begin
+        Memory.Set_Byte_Index (Start);
+
+        C := Memory.Get_Byte;
+        if C /= LF and then C /= CR then
+            Put_Char (C);
+        end if;
+        Column := Column + 1;
+
+        while Line <= Options.Lines
+        loop
+            if Column = Options.Columns then
+                Column := 1;
+                Line := Line + 1;
+                New_Line;
+            end if;
+
+            C := Memory.Next_Byte;
+
+            if C = LF or else C = CR then
+                Column := 1;
+                Line := Line + 1;
+            end if;
+
+            Put_Char (C);
+
+            Column := Column + 1;
+        end loop;
+
+    end Show_No_Truncate;
 
     procedure Show_No_Truncate (Page : Page_Type;
                                 Start : Positive := 1;

@@ -24,11 +24,34 @@ use Ada.Text_IO;
 
 package body Apagerlib.Pages is
 
+    function Current_BIP (Memory : Page_Memory) return Positive
+        is (Memory.Current_BIP);
+
+    function Current_Page (Memory : Page_Memory) return Positive
+        is (Memory.Current_Page);
+
+    function Current_Byte (Memory : Page_Memory) return Positive
+        is (Memory.Current_BIP * Memory.Current_Page);
+
     procedure Get_Page (Page : out Page_Type; Line_Start : Positive);
     --  Get from standard input a new page.
 
     function Data (Page : Page_Type; Index : Page_Index) return Character
         is (Page.Data (Index));
+
+    function Get_Byte (Memory : Page_Memory) return Character is
+    begin
+        return Memory.Pages
+            .Element (Memory.Current_Page)
+            .Data (Page_Index (Memory.Current_BIP));
+    end Get_Byte;
+
+    function Get_Byte (Memory : in out Page_Memory; Index : Positive)
+        return Character is
+    begin
+        return Memory.Get_Page_With_Byte (Index)
+            .Data (Page_Index (Index mod Page_Limit));
+    end Get_Byte;
 
     function Get_Page (Memory : in out Page_Memory;
                        Index : Positive)
@@ -96,6 +119,9 @@ package body Apagerlib.Pages is
         Page : Page_Type;
     begin
         Pages.Last_Loaded_Page := 1;
+        Pages.Current_Page := 1;
+        Pages.Current_BIP := 1;
+
         Get_Page (Page, 1);
         Pages.Pages.Append (Page);
     end Initialise;
@@ -123,6 +149,24 @@ package body Apagerlib.Pages is
         Memory.Load_Next_Page;
         return Memory.Pages.Last_Element;
     end Load_Next_Page;
+
+    function Next_Byte (Memory : in out Page_Memory) return Character is
+    begin
+        Memory.Current_BIP := Memory.Current_BIP + 1;
+
+        if Memory.Current_BIP > Page_Limit then
+            --  There is no more bytes in the page, use the next page.
+            Memory.Current_BIP := 1;
+            Memory.Current_Page := Memory.Current_Page + 1;
+
+            if Memory.Current_Page > Memory.Last_Loaded_Page then
+                --  No more pages, load a new one.
+                Memory.Load_Next_Page;
+            end if;
+        end if;
+
+        return Memory.Get_Byte;
+    end Next_Byte;
 
     function Next_Line_Byte (Memory : in out Page_Memory;
                              Start_Byte : Positive)
@@ -190,6 +234,22 @@ package body Apagerlib.Pages is
 
     end Page_Index_With_Line;
 
+    function Previous_Byte (Memory : in out Page_Memory) return Character is
+    begin
+
+        if Memory.Current_BIP > 1 then
+            Memory.Current_BIP := Memory.Current_BIP - 1;
+        else
+            --  No more bytes in page, use the previous one.
+            if Memory.Current_Page > 1 then
+                Memory.Current_Page := Memory.Current_Page - 1;
+                Memory.Current_BIP := Page_Limit;
+            end if;
+        end if;
+
+        return Memory.Get_Byte;
+    end Previous_Byte;
+
     function Previous_Line_Byte (Memory : in out Page_Memory;
                                  Start_Byte : Positive)
                                  return Positive is
@@ -231,4 +291,16 @@ package body Apagerlib.Pages is
         end if;
     end Previous_Line_Byte;
 
+    procedure Set_Byte_Index (Memory : in out Page_Memory; Index : Positive) is
+        New_Page_Index : Positive := Index / Page_Limit + 1;
+        New_BIP : Positive := Index mod Page_Limit;
+    begin
+        --  Load pages if needed
+        while New_Page_Index > Memory.Last_Loaded_Page loop
+            Load_Next_Page (Memory);
+        end loop;
+
+        Memory.Current_BIP := New_BIP;
+        Memory.Current_Page := New_Page_Index;
+    end Set_Byte_Index;
 end Apagerlib.Pages;
