@@ -26,6 +26,7 @@ procedure Apager is
     Exit_Program : Boolean := False;
     Top_Byte : Positive := 1;
     Options : Apagerlib.Display.Display_Options;
+    Fixed_Size : Boolean := False;
 
     procedure Read_Keyboard_Command is
     begin
@@ -72,12 +73,16 @@ begin
     Buffer.Initialise;
     Apagerlib.Keyboard.Open_Keyboard;
     Commands := Apagerlib.Commands.Default_Maps;
-    Options.Columns := Console.Geometry.Get_Columns;
-    Options.Lines := Console.Geometry.Get_Lines - 3;
 
     while not Exit_Program loop
+        if not Fixed_Size then
+            Options.Columns := Console.Geometry.Get_Columns;
+            Options.Lines := Console.Geometry.Get_Lines - 3;
+        end if;
+
         Erase_Display (Entire_Screen);
         Cursor_Position (1, 1);
+
         Apagerlib.Display.Print_Screen (Buffer, Top_Byte, Options);
 
         New_Line;
@@ -118,12 +123,14 @@ begin
             Put ("Column size?");
             Command := Apagerlib.Keyboard.Get_Line;
             Options.Columns := Integer'Value (To_String (Command));
+            Fixed_Size := True;
         end if;
 
         if Command = To_U ("change-lines") then
             Put ("Lines size?");
             Command := Apagerlib.Keyboard.Get_Line;
             Options.Lines := Integer'Value (To_String (Command));
+            Fixed_Size := True;
         end if;
 
         if Command = To_U ("truncate-mode") then
