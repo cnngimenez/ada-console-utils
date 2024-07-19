@@ -20,6 +20,7 @@
 -------------------------------------------------------------------------
 
 with Apagerlib.Keyboard;
+with Ada.Text_IO;
 
 package body Apagerlib.Commands is
 
@@ -30,7 +31,9 @@ package body Apagerlib.Commands is
         Map : Command_Map;
     begin
         Map.Insert (Tou ("C-x C-c"), Tou ("quit"));
+        Map.Insert (Tou ("q"), Tou ("quit"));
         Map.Insert (Tou ("M-x"), Tou ("execute-extended-command"));
+        Map.Insert (Tou ("C-x t"), Tou ("truncate-mode"));
 
         --  Navigation
         Map.Insert (Tou ("<up>"), Tou ("previous-line"));
@@ -69,7 +72,10 @@ package body Apagerlib.Commands is
         end if;
 
         Key := Current_Key;
+        Append (Key, " ");
+        Ada.Text_IO.Put (To_String (Key)); --  This may be not good...
         Current_Key := Apagerlib.Keyboard.Wait_For_Strkey;
+        Append (Key, Current_Key);
 
         if Map.Contains (Key) then
             return Map.Element (Key);
