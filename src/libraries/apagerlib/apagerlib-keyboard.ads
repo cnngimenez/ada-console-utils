@@ -42,7 +42,12 @@ package Apagerlib.Keyboard is
     function To_Strkey (Chars : String) return String;
     --  Convert a keyboard chars to human-readable Characters.
     --
-    --  Example, convert ^[A characters into "<up>".
+    --  Example, convert ^[A characters into "<Up>".
+
+    function Key_To_Graphical (Chars : String) return String;
+    --  Convert a single character key into a more graphical Notation.
+    --
+    --  For example: "^x " (24) to "C-x".
 
     function To_Strkey (Chars : Unbounded_String) return Unbounded_String is
         (Ada.Strings.Unbounded.To_Unbounded_String

@@ -56,8 +56,14 @@ package body Apagerlib.Keyboard is
         Open (Keyboard_File, In_File, TTY_Name (Standard_Error_Fd));
     end Open_Keyboard;
 
+    function Key_To_Graphical (Chars : String) return String is
+        (case Character'Pos (Chars (Chars'First)) is
+            when 24 => "C-x",
+            when others => Chars);
+
     function To_Strkey (Chars : String) return String is
         (case Chars'Length is
+            when 1 => Key_To_Graphical (Chars),
             when 3 => CSI_To_Key (Chars),
             when 2 => "M-" & Chars (Chars'First + 1),
             when others => Chars);
