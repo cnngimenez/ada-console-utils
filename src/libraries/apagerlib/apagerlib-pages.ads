@@ -72,6 +72,10 @@ package Apagerlib.Pages is
 
     function Previous_Byte (Memory : in out Page_Memory) return Character;
 
+    procedure Next_Line (Memory : in out Page_Memory);
+
+    procedure Previous_Line (Memory : in out Page_Memory);
+
     function Get_Byte (Memory : in out Page_Memory; Index : Positive)
         return Character;
     --  Return the byte at given Index.

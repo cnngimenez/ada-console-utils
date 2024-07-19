@@ -168,6 +168,11 @@ package body Apagerlib.Pages is
         return Memory.Get_Byte;
     end Next_Byte;
 
+    procedure Next_Line (Memory : in out Page_Memory) is
+    begin
+        Memory.Set_Byte_Index (Next_Line_Byte (Memory, Memory.Current_Byte));
+    end Next_Line;
+
     function Next_Line_Byte (Memory : in out Page_Memory;
                              Start_Byte : Positive)
                              return Positive is
@@ -250,6 +255,12 @@ package body Apagerlib.Pages is
         return Memory.Get_Byte;
     end Previous_Byte;
 
+    procedure Previous_Line (Memory : in out Page_Memory) is
+    begin
+        Memory.Set_Byte_Index
+            (Previous_Line_Byte (Memory, Memory.Current_Byte));
+    end Previous_Line;
+
     function Previous_Line_Byte (Memory : in out Page_Memory;
                                  Start_Byte : Positive)
                                  return Positive is
@@ -292,8 +303,8 @@ package body Apagerlib.Pages is
     end Previous_Line_Byte;
 
     procedure Set_Byte_Index (Memory : in out Page_Memory; Index : Positive) is
-        New_Page_Index : Positive := Index / Page_Limit + 1;
-        New_BIP : Positive := Index mod Page_Limit;
+        New_Page_Index : constant Positive := Index / Page_Limit + 1;
+        New_BIP : constant Positive := Index mod Page_Limit;
     begin
         --  Load pages if needed
         while New_Page_Index > Memory.Last_Loaded_Page loop
