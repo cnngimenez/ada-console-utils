@@ -18,6 +18,9 @@ Why =ESC [ A= is the up key when reading with =Ada.Text_IO.Get_Immediate=?
 *** TODO Move Apager.Keyboard.CSI_To_Key to Console.TTY or other library
 
 After finding the explanation abouth the input key sequence, it is possible that it belongs to Console.TTY or other library child of Console.
+
+** TODO Allow Apagerlibs to read from a file
+Apagerlib.Pages and other libraries read from stdin. But this only works when piping the file. It should be possible to read directly from a file (which also, the paging may not be necessary then).
 * Meta     :noexport:
 
 # ----------------------------------------------------------------------
