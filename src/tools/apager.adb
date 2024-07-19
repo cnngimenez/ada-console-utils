@@ -22,13 +22,12 @@ procedure Apager is
 
     Buffer : Apagerlib.Memories.Page_Memory;
     Commands : Apagerlib.Commands.Command_Map;
-    Command : Unbounded_String;
+    Keys, Command : Unbounded_String;
     Exit_Program : Boolean := False;
     Top_Byte : Positive := 1;
     Options : Apagerlib.Display.Display_Options;
 
     procedure Read_Keyboard_Command is
-        Keys : Unbounded_String;
     begin
         Keys := Apagerlib.Keyboard.Wait_For_Strkey;
         Command := Apagerlib.Commands.Keys_To_Command (Commands, Keys);
@@ -87,7 +86,7 @@ begin
             & Options.Columns'Image & "x" & Options.Lines'Image
             & (if Options.Truncate then "-T-" else "-\-"));
         Console.SGR.Reset_All;
-        Put (To_String (Command));
+        Put (To_String (Command) & "(" & To_String (Keys) & ")");
         Read_Keyboard_Command;
 
         if Command = To_U ("execute-extended-command") then
@@ -105,6 +104,14 @@ begin
         if Command = To_U ("next-line") then
             Top_Byte :=
                 Apagerlib.Memories.Next_Line_Byte (Buffer, Top_Byte + 1);
+        end if;
+
+        if Command = To_U ("end-of-buffer") then
+            Top_Byte := Buffer.End_Byte;
+        end if;
+
+        if Command = To_U ("beginning-of-buffer") then
+            Top_Byte := 1;
         end if;
 
         if Command = To_U ("change-columns") then

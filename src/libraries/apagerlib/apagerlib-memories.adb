@@ -33,6 +33,28 @@ package body Apagerlib.Memories is
     function Current_Byte (Memory : Page_Memory) return Positive
         is (Memory.Current_BIP * Memory.Current_Page);
 
+    procedure Beginning_Byte (Memory : in out Page_Memory) is
+    begin
+        Memory.Current_BIP := 1;
+        Memory.Current_Page := 1;
+    end Beginning_Byte;
+
+    procedure End_Byte (Memory : in out Page_Memory) is
+    begin
+        while not End_Of_File loop
+            Memory.Load_Next_Page;
+        end loop;
+
+        Memory.Current_Page := Memory.Last_Loaded_Page;
+        Memory.Current_BIP := Page_Limit - 1;
+    end End_Byte;
+
+    function End_Byte (Memory : in out Page_Memory) return Positive is
+    begin
+        Memory.End_Byte;
+        return Memory.Current_Byte;
+    end End_Byte;
+
     function Get_Byte (Memory : Page_Memory) return Character is
     begin
         return Memory.Pages

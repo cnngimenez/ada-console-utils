@@ -43,6 +43,8 @@ package body Apagerlib.Keyboard is
                 when 'B' => "<down>",
                 when 'C' => "<right>",
                 when 'D' => "<left>",
+                when 'F' => "<end>",
+                when 'H' => "<home>",
                 when others => Chars)
         else Chars);
 

@@ -78,6 +78,10 @@ package Apagerlib.Memories is
                                  Start_Byte : Positive)
                                  return Positive;
 
+    procedure Beginning_Byte (Memory : in out Page_Memory);
+    procedure End_Byte (Memory : in out Page_Memory);
+    function End_Byte (Memory : in out Page_Memory) return Positive;
+
     --
     --  Page manipulation
     --
