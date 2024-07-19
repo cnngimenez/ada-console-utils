@@ -39,6 +39,15 @@ package body Apagerlib.Pages is
     function Data (Page : Page_Type; Index : Page_Index) return Character
         is (Page.Data (Index));
 
+    procedure Clear_Page (Page : in out Page_Type) is
+    begin
+        for I in Page_Index'Range loop
+            Page.Data (I) := Character'Val (0);
+        end loop;
+        Page.Line_Start := 1;
+        Page.Line_End := 1;
+    end Clear_Page;
+
     function Get_Byte (Memory : Page_Memory) return Character is
     begin
         return Memory.Pages
@@ -86,6 +95,7 @@ package body Apagerlib.Pages is
         I : Positive := 1;
         C : Character;
     begin
+        Page.Clear_Page;
         Page.Line_Start := Line_Start;
         Page.Line_End := Line_Start;
 

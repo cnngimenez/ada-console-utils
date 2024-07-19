@@ -132,6 +132,8 @@ private
         Data :  Page_Array;
     end record;
 
+    procedure Clear_Page (Page : in out Page_Type);
+
     package Page_Vectors is new Ada.Containers.Vectors
       (Element_Type => Page_Type,
        Index_Type => Positive);
@@ -154,6 +156,6 @@ private
     --  function Count_Lines (Page : Page_Type) return Positive;
     --  Count the line number in the page data.
     --
-    --  Used to set the Page.Line_End attribute.
+    --  Used to set the Page.Line_End Attribute.
 
 end Apagerlib.Pages;
