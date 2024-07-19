@@ -8,7 +8,7 @@ use Console.CSI_Codes;
 with Console.SGR;
 with Console.Geometry;
 with Apagerlib.Keyboard;
-with Apagerlib.Pages;
+with Apagerlib.Memories;
 with Apagerlib.Display;
 with Apagerlib.Commands;
 
@@ -20,7 +20,7 @@ procedure Apager is
     procedure Read_Keyboard_Command;
     procedure Show_Help;
 
-    Buffer : Apagerlib.Pages.Page_Memory;
+    Buffer : Apagerlib.Memories.Page_Memory;
     Commands : Apagerlib.Commands.Command_Map;
     Command : Unbounded_String;
     Exit_Program : Boolean := False;
@@ -98,12 +98,13 @@ begin
         Exit_Program := Command = To_U ("quit");
 
         if Command = To_U ("previous-line") and then Top_Byte > 1 then
-            Top_Byte := Apagerlib.Pages.Previous_Line_Byte
+            Top_Byte := Apagerlib.Memories.Previous_Line_Byte
                 (Buffer, Top_Byte - 1);
         end if;
 
         if Command = To_U ("next-line") then
-            Top_Byte := Apagerlib.Pages.Next_Line_Byte (Buffer, Top_Byte + 1);
+            Top_Byte :=
+                Apagerlib.Memories.Next_Line_Byte (Buffer, Top_Byte + 1);
         end if;
 
         if Command = To_U ("change-columns") then

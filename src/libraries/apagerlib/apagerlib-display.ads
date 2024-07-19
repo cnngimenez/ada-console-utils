@@ -19,8 +19,8 @@
 
 -------------------------------------------------------------------------
 
-with Apagerlib.Pages;
-use Apagerlib.Pages;
+with Apagerlib.Memories;
+use Apagerlib.Memories;
 
 package Apagerlib.Display is
 
@@ -48,9 +48,9 @@ package Apagerlib.Display is
          Top_Byte : Positive := 1;
          Options : Display_Options := Default_Display_Options);
 
-    procedure Show_Page
-        (Page : Page_Type;
-         Start : Positive := 1;
-         Options : Display_Options := Default_Display_Options);
+    --  procedure Show_Page
+    --      (Page : Page_Type;
+    --       Start : Positive := 1;
+    --       Options : Display_Options := Default_Display_Options);
 
 end Apagerlib.Display;

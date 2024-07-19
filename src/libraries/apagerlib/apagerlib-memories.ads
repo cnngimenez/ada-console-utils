@@ -19,81 +19,117 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Containers.Vectors;
+with Apagerlib.Pages;
+use Apagerlib.Pages;
+
 package Apagerlib.Memories is
 
---      type Page_Memory is tagged private;
---      --  A Page Memory.
---      --
---      --  It is a lazy-loaded memory divided by pages. It gets the data from
---      --  standard input. See the documentation manual at docs/console.org for
---      --  more Information.
+    type Page_Memory is tagged private;
+    --  A Page Memory.
+    --
+    --  It is a lazy-loaded memory divided by pages. It gets the data from
+    --  standard input. See the documentation manual at docs/console.org for
+    --  more Information.
 
---      procedure Initialise (Pages : in out Page_Memory);
+    procedure Initialise (Pages : in out Page_Memory);
 
---      function Last_Loaded_Page (Page : Page_Memory) return Positive;
+    function Last_Loaded_Page (Page : Page_Memory) return Positive;
 
---      function Get_Byte (Memory : in out Page_Memory; Index : Positive)
---          return Character;
+    function Current_BIP (Memory : Page_Memory) return Positive;
 
---      function Get_Page (Memory : in out Page_Memory;
---                         Index : Positive)
---                         return Page_Type'Class;
---      --  Get the memory page.
---      --
---      --  Load the pages if it is needed.
+    function Current_Page (Memory : Page_Memory) return Positive;
 
---      function Page_Index_With_Line (Memory : Page_Memory; Line_Num : Positive)
---          return Positive;
---      --  Return the page index where the given line number is.
+    function Current_Byte (Memory : Page_Memory) return Positive;
 
---      function Get_Page_With_Line (Memory : in out Page_Memory;
---                                   Line_Num : Positive)
---                                   return Page_Type'Class;
---      --  Search for the page with the given line number position.
---      --
---      --  Load the pages if it is necessary.
+    procedure Set_Byte_Index (Memory : in out Page_Memory; Index : Positive);
+    --  Set the current index to the given One.
+    --
+    --  Calculate the current page number and the current byte in page. Set it
+    --  at the Memory. Load any page needed from standard in.
 
---      function Page_Index_With_Byte (Memory : Page_Memory; Byte_Num : Positive)
---          return Positive;
---      --  Return the page index where the given byte num is.
+    function Get_Byte (Memory : Page_Memory) return Character;
+    --  Return the current Byte.
 
---      function Get_Page_With_Byte (Memory : in out Page_Memory;
---                                   Byte_Num : Positive)
---                                   return Page_Type'Class;
---      --  Search for the page with the given byte number position.
---      --
---      --  Load the pages if it is necessary.
+    function Next_Byte (Memory : in out Page_Memory) return Character;
 
---      function Next_Line_Byte (Memory : in out Page_Memory;
---                               Start_Byte : Positive)
---                               return Positive;
---      --  Search the next line position starting from the given Byte.
---      --
---      --  Load the pages if it needed.
---      function Previous_Line_Byte (Memory : in out Page_Memory;
---                                   Start_Byte : Positive)
---                                   return Positive;
+    function Previous_Byte (Memory : in out Page_Memory) return Character;
 
---  private
---      package Page_Vectors is new Ada.Containers.Vectors
---        (Element_Type => Page_Type,
---         Index_Type => Positive);
---      subtype Page_Vector is Page_Vectors.Vector;
+    procedure Next_Line (Memory : in out Page_Memory);
 
---      type Page_Memory is tagged
---      record
---          Last_Loaded_Page : Positive := 1;
---          Pages : Page_Vector;
---      end record;
+    procedure Previous_Line (Memory : in out Page_Memory);
 
---      procedure Load_Next_Page (Memory : in out Page_Memory);
---      function Load_Next_Page (Memory : in out Page_Memory)
---                               return Page_Type'Class;
---      --  Load the next page from standard in.
+    function Get_Byte (Memory : in out Page_Memory; Index : Positive)
+        return Character;
+    --  Return the byte at given Index.
+    --
+    --  Calculating the byte index is less eficient than Get_Byte without
+    --  index. Therefore, use Next_Byte, Previous_Byte, and Get_Byte whenever
+    --  possible.
 
---      --  function Count_Lines (Page : Page_Type) return Positive;
---      --  Count the line number in the page data.
---      --
---      --  Used to set the Page.Line_End attribute.
+    function Next_Line_Byte (Memory : in out Page_Memory;
+                             Start_Byte : Positive)
+                             return Positive;
+    --  Search the next line position starting from the given Byte.
+    --
+    --  Load the pages if it needed.
+
+    function Previous_Line_Byte (Memory : in out Page_Memory;
+                                 Start_Byte : Positive)
+                                 return Positive;
+
+    --
+    --  Page manipulation
+    --
+
+    function Get_Page (Memory : in out Page_Memory;
+                       Index : Positive)
+                       return Page_Type'Class;
+    --  Get the memory page.
+    --
+    --  Load the pages if it is needed.
+
+    function Page_Index_With_Line (Memory : Page_Memory; Line_Num : Positive)
+        return Positive;
+    --  Return the page index where the given line number is.
+
+    function Get_Page_With_Line (Memory : in out Page_Memory;
+                                 Line_Num : Positive)
+                                 return Page_Type'Class;
+    --  Search for the page with the given line number position.
+    --
+    --  Load the pages if it is necessary.
+
+    function Page_Index_With_Byte (Memory : Page_Memory; Byte_Num : Positive)
+        return Positive;
+    --  Return the page index where the given byte num is.
+
+    function Get_Page_With_Byte (Memory : in out Page_Memory;
+                                 Byte_Num : Positive)
+                                 return Page_Type'Class;
+    --  Search for the page with the given byte number position.
+    --
+    --  Load the pages if it is necessary.
+
+private
+
+    package Page_Vectors is new Ada.Containers.Vectors
+      (Element_Type => Page_Type,
+       Index_Type => Positive);
+    subtype Page_Vector is Page_Vectors.Vector;
+
+    type Page_Memory is tagged
+    record
+        Last_Loaded_Page : Positive := 1;
+        Current_Page : Positive := 1;
+        Current_BIP : Positive := 1;
+        --  Current Byte In Page (BIP)
+        Pages : Page_Vector;
+    end record;
+
+    procedure Load_Next_Page (Memory : in out Page_Memory);
+    function Load_Next_Page (Memory : in out Page_Memory)
+                             return Page_Type'Class;
+    --  Load the next page from standard in.
 
 end Apagerlib.Memories;

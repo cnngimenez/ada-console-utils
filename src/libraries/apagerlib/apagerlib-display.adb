@@ -34,12 +34,12 @@ package body Apagerlib.Display is
     procedure Show_Truncate (Memory : in out Page_Memory;
                              Start : Positive := 1;
                              Options : Display_Options);
-    procedure Show_No_Truncate (Page : Page_Type;
-                                Start : Positive := 1;
-                                Options : Display_Options);
-    procedure Show_Truncate (Page : Page_Type;
-                             Start : Positive := 1;
-                             Options : Display_Options);
+    --  procedure Show_No_Truncate (Page : Page_Type;
+    --                              Start : Positive := 1;
+    --                              Options : Display_Options);
+    --  procedure Show_Truncate (Page : Page_Type;
+    --                           Start : Positive := 1;
+    --                           Options : Display_Options);
 
     procedure Print_Screen
         (Memory : in out Page_Memory;
@@ -101,59 +101,60 @@ package body Apagerlib.Display is
 
     end Show_No_Truncate;
 
-    procedure Show_No_Truncate (Page : Page_Type;
-                                Start : Positive := 1;
-                                Options : Display_Options) is
-        Char_Limit : constant Positive := Options.Columns * Options.Lines;
-        I : Positive := Start;
-        Column, Line : Positive := 1;
-        C : Character;
-    begin
-        while Line <= Options.Lines and then Column <= Options.Columns
-              and then I <= Char_Limit and then I <= Page_Limit
-        loop
-            if Column = Options.Columns then
-                Column := 1;
-                Line := Line + 1;
-            end if;
+    --  procedure Show_No_Truncate (Page : Page_Type;
+    --                              Start : Positive := 1;
+    --                              Options : Display_Options) is
+    --      Char_Limit : constant Positive := Options.Columns * Options.Lines;
+    --      I : Positive := Start;
+    --      Column, Line : Positive := 1;
+    --      C : Character;
+    --  begin
+    --      while Line <= Options.Lines and then Column <= Options.Columns
+    --            and then I <= Char_Limit and then I <= Page_Limit
+    --      loop
+    --          if Column = Options.Columns then
+    --              Column := 1;
+    --              Line := Line + 1;
+    --          end if;
 
-            C := Page.Data (Page_Index (I));
+    --          C := Page.Data (Page_Index (I));
 
-            if C = LF or else C = CR then
-                Column := 1;
-                Line := Line + 1;
-                New_Line;
-            end if;
+    --          if C = LF or else C = CR then
+    --              Column := 1;
+    --              Line := Line + 1;
+    --              New_Line;
+    --          end if;
 
-            if Ada.Characters.Handling.Is_Graphic (C) then
-                Put (C);
-            else
-                Put (' ');
-            end if;
-            I := I + 1;
-            Column := Column + 1;
-        end loop;
-    end Show_No_Truncate;
+    --          if Ada.Characters.Handling.Is_Graphic (C) then
+    --              Put (C);
+    --          else
+    --              Put (' ');
+    --          end if;
+    --          I := I + 1;
+    --          Column := Column + 1;
+    --      end loop;
+    --  end Show_No_Truncate;
 
-    procedure Show_Page (Page : Page_Type;
-                         Start : Positive := 1;
-                         Options : Display_Options := Default_Display_Options)
-    is
-    begin
-        if Options.Truncate then
-            Show_Truncate (Page, Start, Options);
-        else
-            Show_No_Truncate (Page, Start, Options);
-        end if;
-    end Show_Page;
+    --  procedure Show_Page (Page : Page_Type;
+    --                       Start : Positive := 1;
+    --                       Options : Display_Options :=
+    --                           Default_Display_Options)
+    --  is
+    --  begin
+    --      if Options.Truncate then
+    --          Show_Truncate (Page, Start, Options);
+    --      else
+    --          Show_No_Truncate (Page, Start, Options);
+    --      end if;
+    --  end Show_Page;
 
-    procedure Show_Truncate (Page : Page_Type;
-                             Start : Positive := 1;
-                             Options : Display_Options) is
-    begin
-        --  To be implemented.
-        return;
-    end Show_Truncate;
+    --  procedure Show_Truncate (Page : Page_Type;
+    --                           Start : Positive := 1;
+    --                           Options : Display_Options) is
+    --  begin
+    --      --  To be implemented.
+    --      return;
+    --  end Show_Truncate;
 
     procedure Show_Truncate (Memory : in out Page_Memory;
                              Start : Positive := 1;
