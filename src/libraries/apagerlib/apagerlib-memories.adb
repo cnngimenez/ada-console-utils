@@ -188,7 +188,7 @@ package body Apagerlib.Memories is
             return Result;
         else
             --  Not found!
-            return 1;
+            return No_Line_Found;
         end if;
     end Next_Line_Byte;
 
@@ -215,7 +215,7 @@ package body Apagerlib.Memories is
             return I;
         else
             --  Not found!
-            return 1;
+            return No_Page_Found;
         end if;
 
     end Page_Index_With_Line;
@@ -271,7 +271,7 @@ package body Apagerlib.Memories is
             return Result;
         else
             --  Not found!
-            return 1;
+            return No_Line_Found;
         end if;
     end Previous_Line_Byte;
 
