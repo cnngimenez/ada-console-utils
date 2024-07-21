@@ -44,6 +44,8 @@ procedure Apager is
     procedure Quit_Handler;
     procedure Show_Help;
     procedure Run_Epilogue;
+    procedure Do_Page_Up;
+    procedure Do_Page_Down;
 
     Buffer : Apagerlib.Memories.Page_Memory;
     Commands : Apagerlib.Commands.Command_Map;
@@ -54,6 +56,29 @@ procedure Apager is
     Fixed_Size : Boolean := False;
 
     End_Program_Exception : exception;
+
+    procedure Do_Page_Down is
+        Bottom : constant Positive := Options.Lines - 2;
+    begin
+        for I in 1 .. Bottom loop
+            Top_Byte := Apagerlib.Memories.Next_Line_Byte
+                (Buffer, Top_Byte + 1);
+        end loop;
+    end Do_Page_Down;
+
+    procedure Do_Page_Up is
+        I : Positive := 2;
+    begin
+        while I < Options.Lines and then Top_Byte > 1 loop
+            Top_Byte := Apagerlib.Memories.Previous_Line_Byte
+                (Buffer, Top_Byte - 1);
+            I := I + 1;
+        end loop;
+
+        exception
+            when Apagerlib.Memories.No_Byte_Found =>
+                Top_Byte := 1;
+    end Do_Page_Up;
 
     procedure Quit_Handler is
     begin
@@ -159,6 +184,14 @@ begin
         if Command = To_U ("next-line") then
             Top_Byte :=
                 Apagerlib.Memories.Next_Line_Byte (Buffer, Top_Byte + 1);
+        end if;
+
+        if Command = To_U ("scroll-up-command") then
+            Do_Page_Down;
+        end if;
+
+        if Command = To_U ("scroll-down-command") then
+            Do_Page_Up;
         end if;
 
         if Command = To_U ("end-of-buffer") then
