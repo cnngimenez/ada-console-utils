@@ -5,6 +5,8 @@ use Ada.Strings.Unbounded;
 
 with Console.CSI_Codes;
 use Console.CSI_Codes;
+with Console.CSI_Private;
+use Console.CSI_Private;
 with Console.SGR;
 with Console.Geometry;
 with Apagerlib.Keyboard;
@@ -80,8 +82,9 @@ begin
             Options.Lines := Console.Geometry.Get_Lines - 3;
         end if;
 
-        Erase_Display (Entire_Screen);
-        Cursor_Position (1, 1);
+        Hide_Cursor;
+        --  Go to the end of the screen... this creates a new space.
+        Cursor_Position (Options.Lines, 1);
 
         Apagerlib.Display.Print_Screen (Buffer, Top_Byte, Options);
 
@@ -93,6 +96,7 @@ begin
             & (if Options.Truncate then " -T-" else " -\-"));
         Console.SGR.Reset_All;
         Put (To_String (Command) & "(" & To_String (Keys) & ")");
+        Show_Cursor;
         Read_Keyboard_Command;
 
         if Command = To_U ("execute-extended-command") then
@@ -152,4 +156,6 @@ begin
     end loop;
 
     Apagerlib.Keyboard.Close_Keyboard;
+    Erase_Display (Entire_Screen);
+    --  Need to do a scroll page up but, Scroll_Up does not work!
 end Apager;
