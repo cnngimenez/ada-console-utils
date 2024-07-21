@@ -18,7 +18,7 @@
 --  along with this program.  If not, see <http://www.gnu.org/Licenses/>.
 
 -------------------------------------------------------------------------
-
+with GNAT.Ctrl_C;
 with Ada.Text_IO;
 use Ada.Text_IO;
 with Ada.Strings.Unbounded;
@@ -41,7 +41,9 @@ procedure Apager is
         renames To_Unbounded_String;
 
     procedure Read_Keyboard_Command;
+    procedure Quit_Handler;
     procedure Show_Help;
+    procedure Run_Epilogue;
 
     Buffer : Apagerlib.Memories.Page_Memory;
     Commands : Apagerlib.Commands.Command_Map;
@@ -50,6 +52,14 @@ procedure Apager is
     Top_Byte : Positive := 1;
     Options : Apagerlib.Display.Display_Options;
     Fixed_Size : Boolean := False;
+
+    End_Program_Exception : exception;
+
+    procedure Quit_Handler is
+    begin
+        Run_Epilogue;
+        raise End_Program_Exception;
+    end Quit_Handler;
 
     procedure Read_Keyboard_Command is
     begin
@@ -68,6 +78,13 @@ procedure Apager is
             (Keys, Apagerlib.Keyboard.Wait_For_Strkey);
         Command := Apagerlib.Commands.Keys_To_Command (Commands, Keys);
     end Read_Keyboard_Command;
+
+    procedure Run_Epilogue is
+    begin
+        Apagerlib.Keyboard.Close_Keyboard;
+        Erase_Display (Entire_Screen);
+        --  Need to do a scroll page up but, Scroll_Up does not work!
+    end Run_Epilogue;
 
     procedure Show_Help is
         use Apagerlib.Commands.Command_Hashes;
@@ -97,6 +114,8 @@ begin
     Apagerlib.Keyboard.Open_Keyboard;
     Commands := Apagerlib.Commands.Default_Maps;
 
+    GNAT.Ctrl_C.Install_Handler (Quit_Handler'Unrestricted_Access);
+
     while not Exit_Program loop
         if not Fixed_Size then
             Options.Columns := Console.Geometry.Get_Columns;
@@ -125,7 +144,7 @@ begin
             Command := Apagerlib.Keyboard.Get_Line;
         end if;
 
-        Exit_Program := Command = To_U ("quit");
+        Exit_Program := Exit_Program or else Command = To_U ("quit");
 
         if Command = To_U ("previous-line") and then Top_Byte > 1 then
             begin
@@ -176,7 +195,9 @@ begin
 
     end loop;
 
-    Apagerlib.Keyboard.Close_Keyboard;
-    Erase_Display (Entire_Screen);
-    --  Need to do a scroll page up but, Scroll_Up does not work!
+    Run_Epilogue;
+
+    exception
+        when End_Program_Exception =>
+            null;
 end Apager;
