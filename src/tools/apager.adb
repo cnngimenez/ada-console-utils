@@ -87,9 +87,10 @@ begin
 
         New_Line;
         Console.SGR.Reverse_Video;
-        Put_Line (Top_Byte'Image & " " & Buffer.Last_Loaded_Page'Image & " "
+        Put_Line (Top_Byte'Image & " "
+            & Buffer.Last_Loaded_Page'Image & " "
             & Options.Columns'Image & "x" & Options.Lines'Image
-            & (if Options.Truncate then "-T-" else "-\-"));
+            & (if Options.Truncate then " -T-" else " -\-"));
         Console.SGR.Reset_All;
         Put (To_String (Command) & "(" & To_String (Keys) & ")");
         Read_Keyboard_Command;
@@ -102,8 +103,13 @@ begin
         Exit_Program := Command = To_U ("quit");
 
         if Command = To_U ("previous-line") and then Top_Byte > 1 then
-            Top_Byte := Apagerlib.Memories.Previous_Line_Byte
-                (Buffer, Top_Byte - 1);
+            begin
+                Top_Byte := Apagerlib.Memories.Previous_Line_Byte
+                    (Buffer, Top_Byte - 1);
+            exception
+            when Apagerlib.Memories.No_Byte_Found =>
+                Top_Byte := 1;
+            end;
         end if;
 
         if Command = To_U ("next-line") then
