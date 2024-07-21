@@ -167,33 +167,25 @@ package body Apagerlib.Memories is
                              return Positive is
         use Ada.Characters.Latin_1;
 
-        Page : Page_Type;
-        Pindex : Positive;
+        Result, Last_BIP, Last_Page : Positive;
         C : Character;
-        I : Positive := 1;
-        Count : Positive := Start_Byte;
     begin
-        Pindex := Page_Index_With_Byte (Memory, Start_Byte);
-        Page := Page_Type (Memory.Get_Page (Pindex));
+        Last_BIP := Memory.Current_BIP;
+        Last_Page := Memory.Current_Page;
 
-        I := Start_Byte mod Page_Limit;
-        C := Page.Data (Page_Index (I));
-        while not End_Of_File and then C /= LF and then C /= CR
+        Memory.Set_Byte_Index (Start_Byte);
+        C := Memory.Next_Byte;
+        while C /= LF and then C /= CR
         loop
-            I := I + 1;
-            Count := Count + 1;
-
-            if I > Page_Limit then
-                Pindex := Pindex + 1;
-                Page := Page_Type (Memory.Get_Page (Pindex));
-                I := 1;
-            end if;
-
-            C := Page.Data (Page_Index (I));
+            C := Memory.Next_Byte;
         end loop;
 
+        Result := Memory.Current_Byte;
+        Memory.Current_BIP := Last_BIP;
+        Memory.Current_Page := Last_Page;
+
         if C = LF or else C = CR then
-            return Count;
+            return Result;
         else
             --  Not found!
             return 1;
@@ -238,6 +230,9 @@ package body Apagerlib.Memories is
             if Memory.Current_Page > 1 then
                 Memory.Current_Page := Memory.Current_Page - 1;
                 Memory.Current_BIP := Page_Limit;
+            else
+                --  No previous page!
+                raise No_Byte_Found;
             end if;
         end if;
 
@@ -255,36 +250,25 @@ package body Apagerlib.Memories is
                                  return Positive is
         use Ada.Characters.Latin_1;
 
-        Page : Page_Type;
-        Pindex : Positive;
-        --  Page index
+        Last_BIP, Last_Page, Result : Positive;
         C : Character;
-        I : Natural := 1;
-        --  Index inside the page
-        Count : Positive := Start_Byte;
-        --  Overall index
     begin
-        Pindex := Page_Index_With_Byte (Memory, Start_Byte);
-        Page := Page_Type (Memory.Get_Page (Pindex));
+        Last_BIP := Memory.Current_BIP;
+        Last_Page := Memory.Current_Page;
 
-        I := Start_Byte mod Page_Limit;
-        C := Page.Data (Page_Index (I));
-        while not (Count = 1) and then C /= LF and then C /= CR
+        Memory.Set_Byte_Index (Start_Byte);
+        C := Memory.Previous_Byte;
+        while C /= LF and then C /= CR
         loop
-            I := I - 1;
-            Count := Count - 1;
-
-            if I = 0 then
-                Pindex := Pindex - 1;
-                Page := Page_Type (Memory.Get_Page (Pindex));
-                I := 1;
-            end if;
-
-            C := Page.Data (Page_Index (I));
+            C := Memory.Previous_Byte;
         end loop;
 
+        Result := Memory.Current_Byte;
+        Memory.Current_BIP := Last_BIP;
+        Memory.Current_Page := Last_Page;
+
         if C = LF or else C = CR then
-            return Count;
+            return Result;
         else
             --  Not found!
             return 1;

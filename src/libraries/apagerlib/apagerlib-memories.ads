@@ -113,7 +113,10 @@ package Apagerlib.Memories is
                                  return Page_Type'Class;
     --  Search for the page with the given byte number position.
     --
-    --  Load the pages if it is necessary.
+    --  Load the pages if it is Necessary.
+
+    No_Byte_Found : exception;
+    --  No (previous/next) more bytes found.
 
 private
 
