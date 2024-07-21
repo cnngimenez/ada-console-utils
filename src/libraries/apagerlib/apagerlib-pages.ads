@@ -32,12 +32,23 @@ package Apagerlib.Pages is
     --  What line number starts in this page?
 
     function Line_End (Page : Page_Type) return Positive;
-    --  What line number ends in this page?
+    --  What line number ends in this Page?
+
+    function Length (Page : Page_Type) return Natural;
+    --  The amount of data loaded in the page.
 
     function Data (Page : Page_Type; Index : Page_Index) return Character;
 
     procedure Get_Page (Page : out Page_Type; Line_Start : Positive);
     --  Get from standard input a new Page.
+    --
+    --  The No_Page_Loaded is raised when the end of file (EOF) has Been
+    --  reached already. If the EOF is reached while reading, no exception is
+    --  raised, just zero characters are used to fill the rest of the page and
+    --  Line_End and Length is set accordingly.
+
+    No_Page_Loaded : exception;
+    --  The page could not be Loaded.
 
 private
     type Page_Array is array (Page_Index) of Character;
@@ -45,6 +56,7 @@ private
     type Page_Type is tagged
     record
         Line_Start, Line_End : Positive;
+        Length : Natural;
         Data :  Page_Array;
     end record;
 
@@ -58,5 +70,8 @@ private
 
     function Line_Start (Page : Page_Type) return Positive
         is (Page.Line_Start);
+
+    function Length (Page : Page_Type) return Natural
+        is (Page.Length);
 
 end Apagerlib.Pages;

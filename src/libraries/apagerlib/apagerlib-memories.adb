@@ -130,6 +130,10 @@ package body Apagerlib.Memories is
         Get_Page (Page, 1);
         Memory.Pages.Append (Page);
         Memory.Last_Loaded_Page := Memory.Last_Loaded_Page + 1;
+
+        exception
+            when Apagerlib.Pages.No_Page_Loaded =>
+                raise No_Next_Page;
     end Load_Next_Page;
 
     function Load_Next_Page (Memory : in out Page_Memory)
@@ -155,11 +159,27 @@ package body Apagerlib.Memories is
         end if;
 
         return Memory.Get_Byte;
+
+        exception
+            when No_Page_Loaded =>
+                raise No_Byte_Found;
     end Next_Byte;
 
     procedure Next_Line (Memory : in out Page_Memory) is
+        use Ada.Characters.Latin_1;
+
+        C : Character := ' ';
     begin
-        Memory.Set_Byte_Index (Next_Line_Byte (Memory, Memory.Current_Byte));
+        C := Memory.Next_Byte;
+        while C /= LF and then C /= CR
+        loop
+            C := Memory.Next_Byte;
+            --  Throws exception when there is no next byte!
+        end loop;
+
+        exception
+            when No_Byte_Found =>
+                raise No_Line_Found;
     end Next_Line;
 
     function Next_Line_Byte (Memory : in out Page_Memory;
@@ -174,13 +194,10 @@ package body Apagerlib.Memories is
         Last_Page := Memory.Current_Page;
 
         Memory.Set_Byte_Index (Start_Byte);
-        C := Memory.Next_Byte;
-        while C /= LF and then C /= CR
-        loop
-            C := Memory.Next_Byte;
-        end loop;
-
+        Memory.Next_Line;
         Result := Memory.Current_Byte;
+        C := Memory.Get_Byte;
+
         Memory.Current_BIP := Last_BIP;
         Memory.Current_Page := Last_Page;
 
@@ -188,7 +205,7 @@ package body Apagerlib.Memories is
             return Result;
         else
             --  Not found!
-            return No_Line_Found;
+            raise No_Line_Found;
         end if;
     end Next_Line_Byte;
 
@@ -215,7 +232,7 @@ package body Apagerlib.Memories is
             return I;
         else
             --  Not found!
-            return No_Page_Found;
+            raise No_Page_Found;
         end if;
 
     end Page_Index_With_Line;
@@ -271,7 +288,7 @@ package body Apagerlib.Memories is
             return Result;
         else
             --  Not found!
-            return No_Line_Found;
+            raise No_Line_Found;
         end if;
     end Previous_Line_Byte;
 

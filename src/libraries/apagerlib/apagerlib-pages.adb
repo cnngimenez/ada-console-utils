@@ -29,6 +29,7 @@ package body Apagerlib.Pages is
         for I in Page_Index'Range loop
             Page.Data (I) := Character'Val (0);
         end loop;
+        Page.Length := 0;
         Page.Line_Start := 1;
         Page.Line_End := 1;
     end Clear_Page;
@@ -36,22 +37,26 @@ package body Apagerlib.Pages is
     procedure Get_Page (Page : out Page_Type; Line_Start : Positive) is
         use Ada.Characters.Latin_1;
 
-        I : Positive := 1;
         C : Character;
     begin
         Page.Clear_Page;
         Page.Line_Start := Line_Start;
         Page.Line_End := Line_Start;
 
-        while not End_Of_File and then I < Page_Limit loop
+        if End_Of_File then
+            raise No_Page_Loaded;
+        end if;
+
+        Page.Length := 0;
+        while not End_Of_File and then Page.Length < Page_Limit loop
             Get_Immediate (C);
-            Page.Data (Page_Index (I)) := C;
+
+            Page.Length := Page.Length + 1;
+            Page.Data (Page_Index (Page.Length)) := C;
 
             if C = LF or else C = CR then
                 Page.Line_End := Page.Line_End + 1;
             end if;
-
-            I := I + 1;
         end loop;
     end Get_Page;
 

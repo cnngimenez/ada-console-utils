@@ -52,6 +52,9 @@ package Apagerlib.Memories is
     --  Return the current Byte.
 
     function Next_Byte (Memory : in out Page_Memory) return Character;
+    --  Move the current position to the next Byte.
+    --
+    --  Raise the No_Byte_Found exception if there is no next byte.
 
     function Previous_Byte (Memory : in out Page_Memory) return Character;
 
@@ -108,6 +111,11 @@ package Apagerlib.Memories is
     function Page_Index_With_Line (Memory : Page_Memory; Line_Num : Positive)
         return Positive;
     --  Return the page index where the given line number is.
+    --
+    --  Raise No_Page_Found if the line number is not present in the pages
+    --  already loaded.
+    --
+    --  TODO: Load new pages if needed.
 
     function Get_Page_With_Line (Memory : in out Page_Memory;
                                  Line_Num : Positive)
@@ -128,10 +136,16 @@ package Apagerlib.Memories is
     --  Load the pages if it is Necessary.
 
     No_Byte_Found : exception;
-    --  No (previous/next) more bytes found.
-    No_Page_Found : exception;
-    --
+    --  There is no previous/next byte.
+
+    No_Next_Page : exception;
+    --  The next page could not be loaded or not found.
+
     No_Line_Found : exception;
+    --  There is no previous/next Line.
+
+    No_Page_Found : exception;
+    --  There is no page, or it cannot be loaded.
 
 private
 
