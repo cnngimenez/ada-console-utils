@@ -44,6 +44,8 @@ procedure Apager is
     procedure Quit_Handler;
     procedure Show_Help;
     procedure Run_Epilogue;
+    procedure Do_Next_Line;
+    procedure Do_Previous_Line;
     procedure Do_Page_Up;
     procedure Do_Page_Down;
 
@@ -57,12 +59,21 @@ procedure Apager is
 
     End_Program_Exception : exception;
 
+    procedure Do_Next_Line is
+    begin
+        Top_Byte := Apagerlib.Memories.Next_Line_Byte
+            (Buffer, Top_Byte + 1);
+
+    exception
+        when Apagerlib.Memories.No_Byte_Found => null;
+        when Apagerlib.Memories.No_Line_Found => null;
+    end Do_Next_Line;
+
     procedure Do_Page_Down is
         Bottom : constant Positive := Options.Lines - 2;
     begin
         for I in 1 .. Bottom loop
-            Top_Byte := Apagerlib.Memories.Next_Line_Byte
-                (Buffer, Top_Byte + 1);
+            Do_Next_Line;
         end loop;
     end Do_Page_Down;
 
@@ -76,9 +87,18 @@ procedure Apager is
         end loop;
 
         exception
-            when Apagerlib.Memories.No_Byte_Found =>
+            when Apagerlib.Memories.No_Line_Found =>
                 Top_Byte := 1;
     end Do_Page_Up;
+
+    procedure Do_Previous_Line is
+    begin
+        Top_Byte := Apagerlib.Memories.Previous_Line_Byte
+            (Buffer, Top_Byte - 1);
+    exception
+        when Apagerlib.Memories.No_Line_Found =>
+            Top_Byte := 1;
+    end Do_Previous_Line;
 
     procedure Quit_Handler is
     begin
@@ -172,18 +192,11 @@ begin
         Exit_Program := Exit_Program or else Command = To_U ("quit");
 
         if Command = To_U ("previous-line") and then Top_Byte > 1 then
-            begin
-                Top_Byte := Apagerlib.Memories.Previous_Line_Byte
-                    (Buffer, Top_Byte - 1);
-            exception
-            when Apagerlib.Memories.No_Byte_Found =>
-                Top_Byte := 1;
-            end;
+            Do_Previous_Line;
         end if;
 
         if Command = To_U ("next-line") then
-            Top_Byte :=
-                Apagerlib.Memories.Next_Line_Byte (Buffer, Top_Byte + 1);
+            Do_Next_Line;
         end if;
 
         if Command = To_U ("scroll-up-command") then

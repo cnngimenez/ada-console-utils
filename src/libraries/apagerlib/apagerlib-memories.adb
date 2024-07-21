@@ -60,6 +60,9 @@ package body Apagerlib.Memories is
         return Memory.Pages
             .Element (Memory.Current_Page)
             .Data (Page_Index (Memory.Current_BIP));
+        exception
+        when Constraint_Error =>
+            raise No_Page_Found;
     end Get_Byte;
 
     function Get_Byte (Memory : in out Page_Memory; Index : Positive)
@@ -132,8 +135,7 @@ package body Apagerlib.Memories is
         Memory.Last_Loaded_Page := Memory.Last_Loaded_Page + 1;
 
         exception
-            when Apagerlib.Pages.No_Page_Loaded =>
-                raise No_Next_Page;
+            when Apagerlib.Pages.No_Page_Loaded => raise No_Next_Page;
     end Load_Next_Page;
 
     function Load_Next_Page (Memory : in out Page_Memory)
@@ -144,7 +146,11 @@ package body Apagerlib.Memories is
     end Load_Next_Page;
 
     function Next_Byte (Memory : in out Page_Memory) return Character is
+        Last_BIP, Last_Page : Positive;
     begin
+        Last_BIP := Memory.Current_BIP;
+        Last_Page := Memory.Current_Page;
+
         Memory.Current_BIP := Memory.Current_BIP + 1;
 
         if Memory.Current_BIP > Page_Limit then
@@ -161,7 +167,9 @@ package body Apagerlib.Memories is
         return Memory.Get_Byte;
 
         exception
-            when No_Page_Loaded =>
+            when No_Next_Page =>
+                Memory.Current_BIP := Last_BIP;
+                Memory.Current_Page := Last_Page;
                 raise No_Byte_Found;
     end Next_Byte;
 
@@ -178,8 +186,7 @@ package body Apagerlib.Memories is
         end loop;
 
         exception
-            when No_Byte_Found =>
-                raise No_Line_Found;
+            when No_Byte_Found => raise No_Line_Found;
     end Next_Line;
 
     function Next_Line_Byte (Memory : in out Page_Memory;
@@ -207,6 +214,19 @@ package body Apagerlib.Memories is
             --  Not found!
             raise No_Line_Found;
         end if;
+
+        exception
+            when No_Line_Found =>
+                Memory.Current_BIP := Last_BIP;
+                Memory.Current_Page := Last_Page;
+
+                raise No_Line_Found;
+
+            when No_Byte_Found =>
+                Memory.Current_BIP := Last_BIP;
+                Memory.Current_Page := Last_Page;
+
+                raise No_Line_Found;
     end Next_Line_Byte;
 
     function Page_Index_With_Byte (Memory : Page_Memory; Byte_Num : Positive)
@@ -290,6 +310,10 @@ package body Apagerlib.Memories is
             --  Not found!
             raise No_Line_Found;
         end if;
+
+        exception
+            when No_Byte_Found =>
+                raise No_Line_Found;
     end Previous_Line_Byte;
 
     procedure Set_Byte_Index (Memory : in out Page_Memory; Index : Positive) is

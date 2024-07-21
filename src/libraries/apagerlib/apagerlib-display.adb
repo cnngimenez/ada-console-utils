@@ -72,7 +72,12 @@ package body Apagerlib.Display is
     begin
         Memory.Set_Byte_Index (Start);
 
-        C := Memory.Get_Byte;
+        begin
+            C := Memory.Get_Byte;
+        exception
+        when Apagerlib.Memories.No_Byte_Found =>
+            C := LF;
+        end;
 
         if C /= LF and then C /= CR then
             Put_Char (C);
@@ -87,7 +92,12 @@ package body Apagerlib.Display is
                 New_Line;
             end if;
 
-            C := Memory.Next_Byte;
+            begin
+                C := Memory.Next_Byte;
+            exception
+            when Apagerlib.Memories.No_Byte_Found =>
+                C := LF;
+            end;
 
             if C = LF or else C = CR then
                 Column := 1;
@@ -164,7 +174,12 @@ package body Apagerlib.Display is
     begin
         Memory.Set_Byte_Index (Start);
 
-        C := Memory.Get_Byte;
+        begin
+            C := Memory.Get_Byte;
+        exception
+        when Apagerlib.Memories.No_Byte_Found =>
+            C := LF;
+        end;
 
         if C /= LF and then C /= CR then
             Put_Char (C);
@@ -179,7 +194,12 @@ package body Apagerlib.Display is
                 New_Line;
             end if;
 
-            C := Memory.Next_Byte;
+            begin
+                C := Memory.Next_Byte;
+            exception
+            when Apagerlib.Memories.No_Byte_Found =>
+                C := LF;
+            end;
 
             if C = LF or else C = CR then
                 Column := 1;
