@@ -176,6 +176,7 @@ begin
         New_Line;
         Console.SGR.Reverse_Video;
         Put_Line (Top_Byte'Image & " "
+            & Buffer.Current_Page'Image & "/"
             & Buffer.Last_Loaded_Page'Image & " "
             & Options.Columns'Image & "x" & Options.Lines'Image
             & (if Options.Truncate then " -T-" else " -\-"));

@@ -45,8 +45,14 @@ package body Apagerlib.Memories is
             Memory.Load_Next_Page;
         end loop;
 
-        Memory.Current_Page := Memory.Last_Loaded_Page;
-        Memory.Current_BIP := Page_Limit - 1;
+        Memory.Current_Page := Positive (Memory.Pages.Length);
+        Memory.Current_BIP := Memory.Pages.Last_Element.Length;
+
+        exception
+        when No_Next_Page =>
+            Memory.Current_Page := Positive (Memory.Pages.Length);
+            Memory.Current_BIP := Memory.Pages.Last_Element.Length;
+            return;
     end End_Byte;
 
     function End_Byte (Memory : in out Page_Memory) return Positive is
@@ -132,7 +138,7 @@ package body Apagerlib.Memories is
     begin
         Get_Page (Page, 1);
         Memory.Pages.Append (Page);
-        Memory.Last_Loaded_Page := Memory.Last_Loaded_Page + 1;
+        Memory.Last_Loaded_Page := Positive (Memory.Pages.Length);
 
         exception
             when Apagerlib.Pages.No_Page_Loaded => raise No_Next_Page;
@@ -146,10 +152,9 @@ package body Apagerlib.Memories is
     end Load_Next_Page;
 
     function Next_Byte (Memory : in out Page_Memory) return Character is
-        Last_BIP, Last_Page : Positive;
+        Last_BIP : Positive;
     begin
         Last_BIP := Memory.Current_BIP;
-        Last_Page := Memory.Current_Page;
 
         Memory.Current_BIP := Memory.Current_BIP + 1;
 
@@ -169,7 +174,8 @@ package body Apagerlib.Memories is
         exception
             when No_Next_Page =>
                 Memory.Current_BIP := Last_BIP;
-                Memory.Current_Page := Last_Page;
+                Memory.Current_Page := Positive (Memory.Pages.Length);
+                Memory.Last_Loaded_Page := Positive (Memory.Pages.Length);
                 raise No_Byte_Found;
     end Next_Byte;
 

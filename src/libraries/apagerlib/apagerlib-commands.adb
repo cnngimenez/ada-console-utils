@@ -44,12 +44,12 @@ package body Apagerlib.Commands is
         Map.Insert (Tou ("h"), Tou ("left-char"));
         Map.Insert (Tou ("j"), Tou ("next-line"));
         Map.Insert (Tou ("k"), Tou ("previous-line"));
-        Map.Insert (Tou ("l"), Tou ("right-Char"));
+        Map.Insert (Tou ("l"), Tou ("right-char"));
 
         Map.Insert (Tou ("C-<home>"), Tou ("beginning-of-buffer"));
         Map.Insert (Tou ("C-<end>"), Tou ("end-of-buffer"));
         Map.Insert (Tou ("<home>"), Tou ("beginning-of-buffer"));
-        Map.Insert (Tou ("<end>"), Tou ("end-of-Buffer"));
+        Map.Insert (Tou ("<end>"), Tou ("end-of-buffer"));
 
         Map.Insert (Tou ("<next>"), Tou ("scroll-up-command"));
         Map.Insert (Tou ("C-v"), Tou ("scroll-up-command"));
