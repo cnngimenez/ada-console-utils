@@ -20,57 +20,42 @@
 -------------------------------------------------------------------------
 
 with Ada.Containers.Vectors;
+
+with Apagerlib.Backend;
+use Apagerlib.Backend;
 with Apagerlib.Pages;
 use Apagerlib.Pages;
 
 package Apagerlib.Memories is
 
-    type Page_Memory is tagged private;
+    type Page_Memory is new Backend_Stream with private;
     --  A Page Memory.
     --
     --  It is a lazy-loaded memory divided by pages. It gets the data from
     --  standard input. See the documentation manual at docs/console.org for
     --  more Information.
 
-    procedure Initialise (Pages : in out Page_Memory);
+    overriding
+    procedure Open (Memory : in out Page_Memory);
 
-    function Last_Loaded_Page (Page : Page_Memory) return Positive;
+    overriding
+    function End_Of_File (Memory : Page_Memory) return Boolean;
 
-    function Current_BIP (Memory : Page_Memory) return Positive;
+    overriding
+    function Current_Position (Memory : Page_Memory) return Positive;
 
-    function Current_Page (Memory : Page_Memory) return Positive;
-
-    function Current_Byte (Memory : Page_Memory) return Positive;
-
-    procedure Set_Byte_Index (Memory : in out Page_Memory; Index : Positive);
+    overriding
+    procedure Set_Position (Memory : in out Page_Memory; Position : Positive);
     --  Set the current index to the given One.
     --
     --  Calculate the current page number and the current byte in page. Set it
     --  at the Memory. Load any page needed from standard in.
 
-    function Get_Byte (Memory : Page_Memory) return Character;
+    overriding
+    function Get_Char (Memory : in out Page_Memory) return Character;
     --  Return the current Byte.
 
-    function Next_Byte (Memory : in out Page_Memory) return Character;
-    --  Move the current position to the next Byte.
-    --
-    --  Raise the No_Byte_Found exception if there is no next byte.
-
-    function Previous_Byte (Memory : in out Page_Memory) return Character;
-
-    procedure Next_Line (Memory : in out Page_Memory);
-    --  Move the current position to the next Line.
-    --
-    --  Load any needed pages.
-    --  No_Line_Found exception is raised when there is no next line.
-
-    procedure Previous_Line (Memory : in out Page_Memory);
-    --  Move the current position to the next Line.
-    --
-    --  Load any needed pages.
-    --  No_Line_Found exception is raised when there is no previous line.
-
-    function Get_Byte (Memory : in out Page_Memory; Index : Positive)
+    function Get_Char (Memory : in out Page_Memory; Index : Positive)
         return Character;
     --  Return the byte at given Index.
     --
@@ -78,24 +63,63 @@ package Apagerlib.Memories is
     --  index. Therefore, use Next_Byte, Previous_Byte, and Get_Byte whenever
     --  possible.
 
-    function Next_Line_Byte (Memory : in out Page_Memory;
-                             Start_Byte : Positive)
-                             return Positive;
+    overriding
+    procedure Previous_Char (Memory : in out Page_Memory);
+
+    overriding
+    function Previous_Line_Position (Memory : in out Page_Memory;
+                                     Start_Position : Positive)
+                                     return Positive;
+    --  Return the previous line byte position from Start_Byte.
+    --
+    --  No_Line_Found exception is raised when there is no previous line.
+
+    overriding
+    procedure Next_Char (Memory : in out Page_Memory);
+    --  Move the current position to the next Byte.
+    --
+    --  Raise the No_Byte_Found exception if there is no next byte.
+
+    overriding
+    function Next_Line_Position (Memory : in out Page_Memory;
+                                 Start_Position : Positive)
+                                 return Positive;
     --  Search the next line position starting from the given Byte.
     --
     --  Load the pages if it needed.
     --  No_Line_Found exception is raised when there is no next line.
 
-    function Previous_Line_Byte (Memory : in out Page_Memory;
-                                 Start_Byte : Positive)
-                                 return Positive;
-    --  Return the previous line byte position from Start_Byte.
+    overriding
+    procedure Next_Line (Memory : in out Page_Memory);
+    --  Move the current position to the next Line.
     --
+    --  Load any needed pages.
+    --  No_Line_Found exception is raised when there is no next line.
+
+    overriding
+    procedure Previous_Line (Memory : in out Page_Memory);
+    --  Move the current position to the next Line.
+    --
+    --  Load any needed pages.
     --  No_Line_Found exception is raised when there is no previous line.
 
-    procedure Beginning_Byte (Memory : in out Page_Memory);
-    procedure End_Byte (Memory : in out Page_Memory);
-    function End_Byte (Memory : in out Page_Memory) return Positive;
+    overriding
+    procedure Beginning_Position (Memory : in out Page_Memory);
+
+    overriding
+    procedure End_Position (Memory : in out Page_Memory);
+
+    overriding
+    function End_Position (Memory : in out Page_Memory) return Positive;
+
+    overriding
+    procedure Close (Memory : in out Page_Memory);
+
+    function Last_Loaded_Page (Page : Page_Memory) return Positive;
+
+    function Current_BIP (Memory : Page_Memory) return Positive;
+
+    function Current_Page (Memory : Page_Memory) return Positive;
 
     --
     --  Page manipulation
@@ -154,7 +178,7 @@ private
        Index_Type => Positive);
     subtype Page_Vector is Page_Vectors.Vector;
 
-    type Page_Memory is tagged
+    type Page_Memory is new Backend_Stream with
     record
         Last_Loaded_Page : Positive := 1;
         Current_Page : Positive := 1;

@@ -61,7 +61,7 @@ procedure Apager is
 
     procedure Do_Next_Line is
     begin
-        Top_Byte := Apagerlib.Memories.Next_Line_Byte
+        Top_Byte := Apagerlib.Memories.Next_Line_Position
             (Buffer, Top_Byte + 1);
 
     exception
@@ -81,7 +81,7 @@ procedure Apager is
         I : Positive := 2;
     begin
         while I < Options.Lines and then Top_Byte > 1 loop
-            Top_Byte := Apagerlib.Memories.Previous_Line_Byte
+            Top_Byte := Apagerlib.Memories.Previous_Line_Position
                 (Buffer, Top_Byte - 1);
             I := I + 1;
         end loop;
@@ -93,7 +93,7 @@ procedure Apager is
 
     procedure Do_Previous_Line is
     begin
-        Top_Byte := Apagerlib.Memories.Previous_Line_Byte
+        Top_Byte := Apagerlib.Memories.Previous_Line_Position
             (Buffer, Top_Byte - 1);
     exception
         when Apagerlib.Memories.No_Line_Found =>
@@ -155,7 +155,7 @@ procedure Apager is
     end Show_Help;
 
 begin
-    Buffer.Initialise;
+    Buffer.Open;
     Apagerlib.Keyboard.Open_Keyboard;
     Commands := Apagerlib.Commands.Default_Maps;
 
@@ -209,7 +209,7 @@ begin
         end if;
 
         if Command = To_U ("end-of-buffer") then
-            Top_Byte := Buffer.End_Byte;
+            Top_Byte := Buffer.End_Position;
         end if;
 
         if Command = To_U ("beginning-of-buffer") then

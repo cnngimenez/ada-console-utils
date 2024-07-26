@@ -24,22 +24,34 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 
 package body Apagerlib.Memories is
+
+    overriding
+    procedure Close (Memory : in out Page_Memory)
+        is null;
+
     function Current_BIP (Memory : Page_Memory) return Positive
         is (Memory.Current_BIP);
 
     function Current_Page (Memory : Page_Memory) return Positive
         is (Memory.Current_Page);
 
-    function Current_Byte (Memory : Page_Memory) return Positive
+    overriding
+    function Current_Position (Memory : Page_Memory) return Positive
         is (Memory.Current_BIP * Memory.Current_Page);
 
-    procedure Beginning_Byte (Memory : in out Page_Memory) is
+    overriding
+    procedure Beginning_Position (Memory : in out Page_Memory) is
     begin
         Memory.Current_BIP := 1;
         Memory.Current_Page := 1;
-    end Beginning_Byte;
+    end Beginning_Position;
 
-    procedure End_Byte (Memory : in out Page_Memory) is
+    overriding
+    function End_Of_File (Memory : Page_Memory) return Boolean
+        is (Ada.Text_IO.End_Of_File);
+
+    overriding
+    procedure End_Position (Memory : in out Page_Memory) is
     begin
         while not End_Of_File loop
             Memory.Load_Next_Page;
@@ -53,15 +65,17 @@ package body Apagerlib.Memories is
             Memory.Current_Page := Positive (Memory.Pages.Length);
             Memory.Current_BIP := Memory.Pages.Last_Element.Length;
             return;
-    end End_Byte;
+    end End_Position;
 
-    function End_Byte (Memory : in out Page_Memory) return Positive is
+    overriding
+    function End_Position (Memory : in out Page_Memory) return Positive is
     begin
-        Memory.End_Byte;
-        return Memory.Current_Byte;
-    end End_Byte;
+        Memory.End_Position;
+        return Memory.Current_Position;
+    end End_Position;
 
-    function Get_Byte (Memory : Page_Memory) return Character is
+    overriding
+    function Get_Char (Memory : in out Page_Memory) return Character is
     begin
         return Memory.Pages
             .Element (Memory.Current_Page)
@@ -69,14 +83,14 @@ package body Apagerlib.Memories is
         exception
         when Constraint_Error =>
             raise No_Page_Found;
-    end Get_Byte;
+    end Get_Char;
 
-    function Get_Byte (Memory : in out Page_Memory; Index : Positive)
+    function Get_Char (Memory : in out Page_Memory; Index : Positive)
         return Character is
     begin
         return Memory.Get_Page_With_Byte (Index)
             .Data (Page_Index (Index mod Page_Limit));
-    end Get_Byte;
+    end Get_Char;
 
     function Get_Page (Memory : in out Page_Memory;
                        Index : Positive)
@@ -119,17 +133,6 @@ package body Apagerlib.Memories is
         return Get_Page (Memory, Page_Index_With_Line (Memory, Line_Num));
     end Get_Page_With_Line;
 
-    procedure Initialise (Pages : in out Page_Memory) is
-        Page : Page_Type;
-    begin
-        Pages.Last_Loaded_Page := 1;
-        Pages.Current_Page := 1;
-        Pages.Current_BIP := 1;
-
-        Get_Page (Page, 1);
-        Pages.Pages.Append (Page);
-    end Initialise;
-
     function Last_Loaded_Page (Page : Page_Memory) return Positive
         is (Page.Last_Loaded_Page);
 
@@ -151,7 +154,8 @@ package body Apagerlib.Memories is
         return Memory.Pages.Last_Element;
     end Load_Next_Page;
 
-    function Next_Byte (Memory : in out Page_Memory) return Character is
+    overriding
+    procedure Next_Char (Memory : in out Page_Memory) is
         Last_BIP : Positive;
     begin
         Last_BIP := Memory.Current_BIP;
@@ -169,25 +173,25 @@ package body Apagerlib.Memories is
             end if;
         end if;
 
-        return Memory.Get_Byte;
-
         exception
             when No_Next_Page =>
                 Memory.Current_BIP := Last_BIP;
                 Memory.Current_Page := Positive (Memory.Pages.Length);
                 Memory.Last_Loaded_Page := Positive (Memory.Pages.Length);
                 raise No_Byte_Found;
-    end Next_Byte;
 
+    end Next_Char;
+
+    overriding
     procedure Next_Line (Memory : in out Page_Memory) is
         use Ada.Characters.Latin_1;
 
         C : Character := ' ';
     begin
-        C := Memory.Next_Byte;
+        C := Memory.Next_Char;
         while C /= LF and then C /= CR
         loop
-            C := Memory.Next_Byte;
+            C := Memory.Next_Char;
             --  Throws exception when there is no next byte!
         end loop;
 
@@ -195,9 +199,10 @@ package body Apagerlib.Memories is
             when No_Byte_Found => raise No_Line_Found;
     end Next_Line;
 
-    function Next_Line_Byte (Memory : in out Page_Memory;
-                             Start_Byte : Positive)
-                             return Positive is
+    overriding
+    function Next_Line_Position (Memory : in out Page_Memory;
+                                 Start_Position : Positive)
+                                 return Positive is
         use Ada.Characters.Latin_1;
 
         Result, Last_BIP, Last_Page : Positive;
@@ -206,10 +211,10 @@ package body Apagerlib.Memories is
         Last_BIP := Memory.Current_BIP;
         Last_Page := Memory.Current_Page;
 
-        Memory.Set_Byte_Index (Start_Byte);
+        Memory.Set_Position (Start_Position);
         Memory.Next_Line;
-        Result := Memory.Current_Byte;
-        C := Memory.Get_Byte;
+        Result := Memory.Current_Position;
+        C := Memory.Get_Char;
 
         Memory.Current_BIP := Last_BIP;
         Memory.Current_Page := Last_Page;
@@ -233,7 +238,19 @@ package body Apagerlib.Memories is
                 Memory.Current_Page := Last_Page;
 
                 raise No_Line_Found;
-    end Next_Line_Byte;
+    end Next_Line_Position;
+
+    overriding
+    procedure Open (Memory : in out Page_Memory) is
+        Page : Page_Type;
+    begin
+        Memory.Last_Loaded_Page := 1;
+        Memory.Current_Page := 1;
+        Memory.Current_BIP := 1;
+
+        Get_Page (Page, 1);
+        Memory.Pages.Append (Page);
+    end Open;
 
     function Page_Index_With_Byte (Memory : Page_Memory; Byte_Num : Positive)
         return Positive
@@ -263,9 +280,9 @@ package body Apagerlib.Memories is
 
     end Page_Index_With_Line;
 
-    function Previous_Byte (Memory : in out Page_Memory) return Character is
+    overriding
+    procedure Previous_Char (Memory : in out Page_Memory) is
     begin
-
         if Memory.Current_BIP > 1 then
             Memory.Current_BIP := Memory.Current_BIP - 1;
         else
@@ -278,19 +295,19 @@ package body Apagerlib.Memories is
                 raise No_Byte_Found;
             end if;
         end if;
+    end Previous_Char;
 
-        return Memory.Get_Byte;
-    end Previous_Byte;
-
+    overriding
     procedure Previous_Line (Memory : in out Page_Memory) is
     begin
-        Memory.Set_Byte_Index
-            (Previous_Line_Byte (Memory, Memory.Current_Byte));
+        Memory.Set_Position
+            (Previous_Line_Position (Memory, Memory.Current_Position));
     end Previous_Line;
 
-    function Previous_Line_Byte (Memory : in out Page_Memory;
-                                 Start_Byte : Positive)
-                                 return Positive is
+    overriding
+    function Previous_Line_Position (Memory : in out Page_Memory;
+                                     Start_Position : Positive)
+                                     return Positive is
         use Ada.Characters.Latin_1;
 
         Last_BIP, Last_Page, Result : Positive;
@@ -299,14 +316,14 @@ package body Apagerlib.Memories is
         Last_BIP := Memory.Current_BIP;
         Last_Page := Memory.Current_Page;
 
-        Memory.Set_Byte_Index (Start_Byte);
-        C := Memory.Previous_Byte;
+        Memory.Set_Position (Start_Position);
+        C := Memory.Previous_Char;
         while C /= LF and then C /= CR
         loop
-            C := Memory.Previous_Byte;
+            C := Memory.Previous_Char;
         end loop;
 
-        Result := Memory.Current_Byte;
+        Result := Memory.Current_Position;
         Memory.Current_BIP := Last_BIP;
         Memory.Current_Page := Last_Page;
 
@@ -320,19 +337,21 @@ package body Apagerlib.Memories is
         exception
             when No_Byte_Found =>
                 raise No_Line_Found;
-    end Previous_Line_Byte;
+    end Previous_Line_Position;
 
-    procedure Set_Byte_Index (Memory : in out Page_Memory; Index : Positive) is
-        New_Page_Index : constant Positive := Index / Page_Limit + 1;
-        New_BIP : constant Positive := Index mod Page_Limit;
+    overriding
+    procedure Set_Position (Memory : in out Page_Memory; Position : Positive)
+    is
+        New_Page_Position : constant Positive := Position / Page_Limit + 1;
+        New_BIP : constant Positive := Position mod Page_Limit;
     begin
         --  Load pages if needed
-        while New_Page_Index > Memory.Last_Loaded_Page loop
+        while New_Page_Position > Memory.Last_Loaded_Page loop
             Load_Next_Page (Memory);
         end loop;
 
         Memory.Current_BIP := New_BIP;
-        Memory.Current_Page := New_Page_Index;
-    end Set_Byte_Index;
+        Memory.Current_Page := New_Page_Position;
+    end Set_Position;
 
 end Apagerlib.Memories;

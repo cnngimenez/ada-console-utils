@@ -70,10 +70,10 @@ package body Apagerlib.Display is
         Column, Line : Positive := 1;
         C : Character;
     begin
-        Memory.Set_Byte_Index (Start);
+        Memory.Set_Position (Start);
 
         begin
-            C := Memory.Get_Byte;
+            C := Memory.Get_Char;
         exception
         when Apagerlib.Memories.No_Byte_Found =>
             C := LF;
@@ -93,7 +93,7 @@ package body Apagerlib.Display is
             end if;
 
             begin
-                C := Memory.Next_Byte;
+                C := Memory.Next_Char;
             exception
             when Apagerlib.Memories.No_Byte_Found =>
                 C := LF;
@@ -172,10 +172,10 @@ package body Apagerlib.Display is
         Column, Line : Positive := 1;
         C : Character;
     begin
-        Memory.Set_Byte_Index (Start);
+        Memory.Set_Position (Start);
 
         begin
-            C := Memory.Get_Byte;
+            C := Memory.Get_Char;
         exception
         when Apagerlib.Memories.No_Byte_Found =>
             C := LF;
@@ -195,7 +195,7 @@ package body Apagerlib.Display is
             end if;
 
             begin
-                C := Memory.Next_Byte;
+                C := Memory.Next_Char;
             exception
             when Apagerlib.Memories.No_Byte_Found =>
                 C := LF;
