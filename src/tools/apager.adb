@@ -23,6 +23,7 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
+with Ada.Command_Line;
 
 with Console.CSI_Codes;
 use Console.CSI_Codes;
@@ -31,7 +32,9 @@ use Console.CSI_Private;
 with Console.SGR;
 with Console.Geometry;
 with Apagerlib.Keyboard;
+with Apagerlib.Backend;
 with Apagerlib.Memories;
+with Apagerlib.File_Backend;
 with Apagerlib.Display;
 with Apagerlib.Commands;
 
@@ -40,6 +43,7 @@ procedure Apager is
     function To_U (Item : String) return Unbounded_String
         renames To_Unbounded_String;
 
+    procedure Assign_Input;
     procedure Read_Keyboard_Command;
     procedure Quit_Handler;
     procedure Show_Help;
@@ -49,7 +53,10 @@ procedure Apager is
     procedure Do_Page_Up;
     procedure Do_Page_Down;
 
-    Buffer : Apagerlib.Memories.Page_Memory;
+    Buffer : access Apagerlib.Backend.Backend_Stream'Class;
+    File_Buffer : aliased Apagerlib.File_Backend.File_Backend;
+    Paged_Buffer : aliased Apagerlib.Memories.Page_Memory;
+
     Commands : Apagerlib.Commands.Command_Map;
     Keys, Command : Unbounded_String;
     Exit_Program : Boolean := False;
@@ -59,10 +66,21 @@ procedure Apager is
 
     End_Program_Exception : exception;
 
+    procedure Assign_Input is
+        use Ada.Command_Line;
+        use Apagerlib.File_Backend;
+    begin
+        if Argument_Count > 0 then
+            Buffer := File_Buffer'Access;
+            File_Buffer.Set_Filename (Argument (1));
+        else
+            Buffer := Paged_Buffer'Access;
+        end if;
+    end Assign_Input;
+
     procedure Do_Next_Line is
     begin
-        Top_Byte := Apagerlib.Memories.Next_Line_Position
-            (Buffer, Top_Byte + 1);
+        Top_Byte := Buffer.Next_Line_Position (Top_Byte + 1);
 
     exception
         when Apagerlib.Memories.No_Byte_Found => null;
@@ -81,8 +99,7 @@ procedure Apager is
         I : Positive := 2;
     begin
         while I < Options.Lines and then Top_Byte > 1 loop
-            Top_Byte := Apagerlib.Memories.Previous_Line_Position
-                (Buffer, Top_Byte - 1);
+            Top_Byte := Buffer.Previous_Line_Position (Top_Byte - 1);
             I := I + 1;
         end loop;
 
@@ -93,8 +110,7 @@ procedure Apager is
 
     procedure Do_Previous_Line is
     begin
-        Top_Byte := Apagerlib.Memories.Previous_Line_Position
-            (Buffer, Top_Byte - 1);
+        Top_Byte := Buffer.Previous_Line_Position (Top_Byte - 1);
     exception
         when Apagerlib.Memories.No_Line_Found =>
             Top_Byte := 1;
@@ -126,6 +142,7 @@ procedure Apager is
 
     procedure Run_Epilogue is
     begin
+        Buffer.Close;
         Apagerlib.Keyboard.Close_Keyboard;
         Erase_Display (Entire_Screen);
         --  Need to do a scroll page up but, Scroll_Up does not work!
@@ -155,6 +172,8 @@ procedure Apager is
     end Show_Help;
 
 begin
+    Assign_Input;
+
     Buffer.Open;
     Apagerlib.Keyboard.Open_Keyboard;
     Commands := Apagerlib.Commands.Default_Maps;
@@ -171,13 +190,13 @@ begin
         --  Go to the end of the screen... this creates a new space.
         Cursor_Position (Options.Lines, 1);
 
-        Apagerlib.Display.Print_Screen (Buffer, Top_Byte, Options);
+        Apagerlib.Display.Print_Screen (Buffer.all, Top_Byte, Options);
 
         New_Line;
         Console.SGR.Reverse_Video;
         Put_Line (Top_Byte'Image & " "
-            & Buffer.Current_Page'Image & "/"
-            & Buffer.Last_Loaded_Page'Image & " "
+            --  & Buffer.Current_Page'Image & "/"
+            --  & Buffer.Last_Loaded_Page'Image & " "
             & Options.Columns'Image & "x" & Options.Lines'Image
             & (if Options.Truncate then " -T-" else " -\-"));
         Console.SGR.Reset_All;

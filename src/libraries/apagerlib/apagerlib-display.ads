@@ -19,8 +19,8 @@
 
 -------------------------------------------------------------------------
 
-with Apagerlib.Memories;
-use Apagerlib.Memories;
+with Apagerlib.Backend;
+use Apagerlib.Backend;
 
 package Apagerlib.Display is
 
@@ -44,7 +44,7 @@ package Apagerlib.Display is
       Only_Visible => True);
 
     procedure Print_Screen
-        (Memory : in out Page_Memory;
+        (Memory : in out Backend_Stream'Class;
          Top_Byte : Positive := 1;
          Options : Display_Options := Default_Display_Options);
 

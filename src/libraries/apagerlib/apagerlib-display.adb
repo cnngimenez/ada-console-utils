@@ -24,14 +24,15 @@ with Ada.Characters.Latin_1;
 use Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
+with Apagerlib.Memories;
 
 package body Apagerlib.Display is
 
     procedure Put_Char (C : Character);
-    procedure Show_No_Truncate (Memory : in out Page_Memory;
+    procedure Show_No_Truncate (Memory : in out Backend_Stream'Class;
                                 Start : Positive := 1;
                                 Options : Display_Options);
-    procedure Show_Truncate (Memory : in out Page_Memory;
+    procedure Show_Truncate (Memory : in out Backend_Stream'Class;
                              Start : Positive := 1;
                              Options : Display_Options);
     --  procedure Show_No_Truncate (Page : Page_Type;
@@ -42,7 +43,7 @@ package body Apagerlib.Display is
     --                           Options : Display_Options);
 
     procedure Print_Screen
-        (Memory : in out Page_Memory;
+        (Memory : in out Backend_Stream'Class;
          Top_Byte : Positive := 1;
          Options : Display_Options := Default_Display_Options) is
     begin
@@ -64,7 +65,7 @@ package body Apagerlib.Display is
         end if;
     end Put_Char;
 
-    procedure Show_No_Truncate (Memory : in out Page_Memory;
+    procedure Show_No_Truncate (Memory : in out Backend_Stream'Class;
                                 Start : Positive := 1;
                                 Options : Display_Options) is
         Column, Line : Positive := 1;
@@ -166,7 +167,7 @@ package body Apagerlib.Display is
     --      return;
     --  end Show_Truncate;
 
-    procedure Show_Truncate (Memory : in out Page_Memory;
+    procedure Show_Truncate (Memory : in out Backend_Stream'Class;
                              Start : Positive := 1;
                              Options : Display_Options) is
         Column, Line : Positive := 1;
