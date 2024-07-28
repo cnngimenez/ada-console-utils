@@ -21,8 +21,7 @@
 
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
-with Ada.Text_IO;
-use Ada.Text_IO;
+with Ada.Direct_IO;
 
 with Apagerlib.Backend;
 use Apagerlib.Backend;
@@ -40,6 +39,12 @@ package Apagerlib.File_Backend is
     function End_Of_File (Stream : File_Backend) return Boolean;
 
     overriding
+    function Current_Position (Stream : File_Backend) return Positive;
+
+    overriding
+    procedure Set_Position (Stream : in out File_Backend; Position : Positive);
+
+    overriding
     function Get_Char (Stream : in out File_Backend) return Character;
 
     overriding
@@ -49,11 +54,13 @@ package Apagerlib.File_Backend is
     procedure Close (Stream : in out File_Backend);
 
 private
+    package Char_IO is new Ada.Direct_IO (
+        Element_Type => Character);
 
     type File_Backend is new Backend_Stream with
     record
         Filename : Unbounded_String;
-        File : File_Type;
+        File : Char_IO.File_Type;
         Current_Character : Character;
     end record;
 

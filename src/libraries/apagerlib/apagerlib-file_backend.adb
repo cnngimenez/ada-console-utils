@@ -24,13 +24,17 @@ package body Apagerlib.File_Backend is
     overriding
     procedure Close (Stream : in out File_Backend) is
     begin
-        Ada.Text_IO.Close (Stream.File);
+        Char_IO.Close (Stream.File);
     end Close;
+
+    overriding
+    function Current_Position (Stream : File_Backend) return Positive
+        is (Positive (Char_IO.Index (Stream.File)));
 
     overriding
     function End_Of_File (Stream : File_Backend) return Boolean is
     begin
-        return Ada.Text_IO.End_Of_File (Stream.File);
+        return Char_IO.End_Of_File (Stream.File);
     end End_Of_File;
 
     overriding
@@ -41,11 +45,11 @@ package body Apagerlib.File_Backend is
     procedure Next_Char (Stream : in out File_Backend) is
         C : Character;
     begin
-        if Ada.Text_IO.End_Of_File (Stream.File) then
+        if Char_IO.End_Of_File (Stream.File) then
             Stream.Current_Character := Character'Val (0);
             raise Apagerlib.Backend.No_More_Char;
         else
-            Ada.Text_IO.Get_Immediate (Stream.File, C);
+            Char_IO.Read (Stream.File, C);
             Stream.Current_Character := C;
         end if;
     end Next_Char;
@@ -53,9 +57,9 @@ package body Apagerlib.File_Backend is
     overriding
     procedure Open (Stream : in out File_Backend) is
     begin
-        Ada.Text_IO.Open (Stream.File,
-                          Ada.Text_IO.In_File,
-                          To_String (Stream.Filename));
+        Char_IO.Open (Stream.File,
+                      Char_IO.In_File,
+                      To_String (Stream.Filename));
         Stream.Next_Char;
     end Open;
 
@@ -63,5 +67,12 @@ package body Apagerlib.File_Backend is
     begin
         Stream.Filename := To_Unbounded_String (Name);
     end Set_Filename;
+
+    overriding
+    procedure Set_Position (Stream : in out File_Backend; Position : Positive)
+    is
+    begin
+        Char_IO.Set_Index (Stream.File, Char_IO.Positive_Count (Position));
+    end Set_Position;
 
 end Apagerlib.File_Backend;

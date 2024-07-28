@@ -76,7 +76,8 @@ package body Apagerlib.Display is
         begin
             C := Memory.Get_Char;
         exception
-        when Apagerlib.Memories.No_Byte_Found =>
+        when Apagerlib.Memories.No_Byte_Found
+             | Apagerlib.Backend.No_More_Char =>
             C := LF;
         end;
 
@@ -96,7 +97,8 @@ package body Apagerlib.Display is
             begin
                 C := Memory.Next_Char;
             exception
-            when Apagerlib.Memories.No_Byte_Found =>
+            when Apagerlib.Memories.No_Byte_Found
+                 | Apagerlib.Backend.No_More_Char =>
                 C := LF;
             end;
 
@@ -178,7 +180,8 @@ package body Apagerlib.Display is
         begin
             C := Memory.Get_Char;
         exception
-        when Apagerlib.Memories.No_Byte_Found =>
+        when Apagerlib.Memories.No_Byte_Found
+             | Apagerlib.Backend.No_More_Char =>
             C := LF;
         end;
 
@@ -198,7 +201,8 @@ package body Apagerlib.Display is
             begin
                 C := Memory.Next_Char;
             exception
-            when Apagerlib.Memories.No_Byte_Found =>
+            when Apagerlib.Memories.No_Byte_Found
+                 | Apagerlib.Backend.No_More_Char =>
                 C := LF;
             end;
 
