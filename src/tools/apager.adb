@@ -43,6 +43,7 @@ procedure Apager is
     function To_U (Item : String) return Unbounded_String
         renames To_Unbounded_String;
 
+    procedure Assign_Console_Size;
     procedure Assign_Input;
     procedure Read_Keyboard_Command;
     procedure Quit_Handler;
@@ -65,6 +66,21 @@ procedure Apager is
     Fixed_Size : Boolean := False;
 
     End_Program_Exception : exception;
+
+    procedure Assign_Console_Size is
+    begin
+        if not Fixed_Size then
+            Options.Columns := Console.Geometry.Get_Columns;
+            Options.Lines := Console.Geometry.Get_Lines - 3;
+        end if;
+
+        exception
+            when Console.Geometry.No_Geometry_Information =>
+                Put_Line ("Cannot retrieve terminal total lines and columns");
+
+                Options.Columns := 80;
+                Options.Lines := 80;
+    end Assign_Console_Size;
 
     procedure Assign_Input is
         use Ada.Command_Line;
@@ -181,10 +197,7 @@ begin
     GNAT.Ctrl_C.Install_Handler (Quit_Handler'Unrestricted_Access);
 
     while not Exit_Program loop
-        if not Fixed_Size then
-            Options.Columns := Console.Geometry.Get_Columns;
-            Options.Lines := Console.Geometry.Get_Lines - 3;
-        end if;
+        Assign_Console_Size;
 
         Hide_Cursor;
         --  Go to the end of the screen... this creates a new space.

@@ -25,13 +25,21 @@ package body Console.Geometry is
 
     function Get_Columns return Positive is
     begin
-        return Integer'Value
-            (Ada.Environment_Variables.Value ("COLUMNS", "170"));
+        if Ada.Environment_Variables.Exists ("COLUMNS") then
+            return Integer'Value
+                (Ada.Environment_Variables.Value ("COLUMNS"));
+        else
+            raise No_Geometry_Information;
+        end if;
     end Get_Columns;
 
     function Get_Lines return Positive is
     begin
-        return Integer'Value (Ada.Environment_Variables.Value ("LINES", "48"));
+        if Ada.Environment_Variables.Exists ("LINES") then
+            return Integer'Value (Ada.Environment_Variables.Value ("LINES"));
+        else
+            raise No_Geometry_Information;
+        end if;
     end Get_Lines;
 
 end Console.Geometry;

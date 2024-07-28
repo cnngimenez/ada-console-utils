@@ -19,10 +19,16 @@
 
 -------------------------------------------------------------------------
 
+--  Retrieve information about the size of the terminal.
 package Console.Geometry is
 
     function Get_Lines return Positive;
 
     function Get_Columns return Positive;
+
+    No_Geometry_Information : exception;
+    --  There is no geometry information.
+    --
+    --  It cannot obtain from the terminal the line and column size.
 
 end Console.Geometry;
