@@ -48,7 +48,9 @@ package body Apagerlib.Memories is
 
     overriding
     function End_Of_File (Memory : Page_Memory) return Boolean
-        is (Ada.Text_IO.End_Of_File);
+        is (Ada.Text_IO.End_Of_File
+        and then Memory.Current_Page >= Memory.Last_Loaded_Page
+        and then Memory.Current_BIP >= Apagerlib.Pages.Page_Limit);
 
     overriding
     procedure End_Position (Memory : in out Page_Memory) is
@@ -139,7 +141,7 @@ package body Apagerlib.Memories is
     procedure Load_Next_Page (Memory : in out Page_Memory) is
         Page : Page_Type;
     begin
-        Get_Page (Page, 1);
+        Apagerlib.Pages.Get_Page (Page, 1);
         Memory.Pages.Append (Page);
         Memory.Last_Loaded_Page := Positive (Memory.Pages.Length);
 
