@@ -19,7 +19,6 @@
 
 -------------------------------------------------------------------------
 
-with Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -67,13 +66,6 @@ package body Apagerlib.Memories is
             Memory.Current_Page := Positive (Memory.Pages.Length);
             Memory.Current_BIP := Memory.Pages.Last_Element.Length;
             return;
-    end End_Position;
-
-    overriding
-    function End_Position (Memory : in out Page_Memory) return Positive is
-    begin
-        Memory.End_Position;
-        return Memory.Current_Position;
     end End_Position;
 
     overriding
@@ -185,64 +177,6 @@ package body Apagerlib.Memories is
     end Next_Char;
 
     overriding
-    procedure Next_Line (Memory : in out Page_Memory) is
-        use Ada.Characters.Latin_1;
-
-        C : Character := ' ';
-    begin
-        C := Memory.Next_Char;
-        while C /= LF and then C /= CR
-        loop
-            C := Memory.Next_Char;
-            --  Throws exception when there is no next byte!
-        end loop;
-
-        exception
-            when No_Byte_Found => raise No_Line_Found;
-    end Next_Line;
-
-    overriding
-    function Next_Line_Position (Memory : in out Page_Memory;
-                                 Start_Position : Positive)
-                                 return Positive is
-        use Ada.Characters.Latin_1;
-
-        Result, Last_BIP, Last_Page : Positive;
-        C : Character;
-    begin
-        Last_BIP := Memory.Current_BIP;
-        Last_Page := Memory.Current_Page;
-
-        Memory.Set_Position (Start_Position);
-        Memory.Next_Line;
-        Result := Memory.Current_Position;
-        C := Memory.Get_Char;
-
-        Memory.Current_BIP := Last_BIP;
-        Memory.Current_Page := Last_Page;
-
-        if C = LF or else C = CR then
-            return Result;
-        else
-            --  Not found!
-            raise No_Line_Found;
-        end if;
-
-        exception
-            when No_Line_Found =>
-                Memory.Current_BIP := Last_BIP;
-                Memory.Current_Page := Last_Page;
-
-                raise No_Line_Found;
-
-            when No_Byte_Found =>
-                Memory.Current_BIP := Last_BIP;
-                Memory.Current_Page := Last_Page;
-
-                raise No_Line_Found;
-    end Next_Line_Position;
-
-    overriding
     procedure Open (Memory : in out Page_Memory) is
         Page : Page_Type;
     begin
@@ -298,48 +232,6 @@ package body Apagerlib.Memories is
             end if;
         end if;
     end Previous_Char;
-
-    overriding
-    procedure Previous_Line (Memory : in out Page_Memory) is
-    begin
-        Memory.Set_Position
-            (Previous_Line_Position (Memory, Memory.Current_Position));
-    end Previous_Line;
-
-    overriding
-    function Previous_Line_Position (Memory : in out Page_Memory;
-                                     Start_Position : Positive)
-                                     return Positive is
-        use Ada.Characters.Latin_1;
-
-        Last_BIP, Last_Page, Result : Positive;
-        C : Character;
-    begin
-        Last_BIP := Memory.Current_BIP;
-        Last_Page := Memory.Current_Page;
-
-        Memory.Set_Position (Start_Position);
-        C := Memory.Previous_Char;
-        while C /= LF and then C /= CR
-        loop
-            C := Memory.Previous_Char;
-        end loop;
-
-        Result := Memory.Current_Position;
-        Memory.Current_BIP := Last_BIP;
-        Memory.Current_Page := Last_Page;
-
-        if C = LF or else C = CR then
-            return Result;
-        else
-            --  Not found!
-            raise No_Line_Found;
-        end if;
-
-        exception
-            when No_Byte_Found =>
-                raise No_Line_Found;
-    end Previous_Line_Position;
 
     overriding
     procedure Set_Position (Memory : in out Page_Memory; Position : Positive)

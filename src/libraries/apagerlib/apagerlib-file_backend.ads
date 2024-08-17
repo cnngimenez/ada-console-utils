@@ -48,15 +48,10 @@ package Apagerlib.File_Backend is
     function Get_Char (Stream : in out File_Backend) return Character;
 
     overriding
-    function Next_Line_Position (Stream : in out File_Backend;
-                                 Start_Position : Positive)
-                                 return Positive;
-
-    overriding
-    procedure Next_Line (Stream : in out File_Backend);
-
-    overriding
     procedure Next_Char (Stream : in out File_Backend);
+
+    overriding
+    procedure Previous_Char (Stream : in out File_Backend);
 
     overriding
     procedure Close (Stream : in out File_Backend);

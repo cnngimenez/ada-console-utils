@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Characters.Latin_1;
+
 package body Apagerlib.Backend is
 
     procedure Beginning_Position (Stream : in out Backend_Stream)
@@ -36,8 +38,11 @@ package body Apagerlib.Backend is
     procedure End_Position (Stream : in out Backend_Stream)
         is null;
 
-    function End_Position (Stream : in out Backend_Stream) return Positive
-        is (1);
+    function End_Position (Stream : in out Backend_Stream) return Positive is
+    begin
+        Stream.End_Position;
+        return Stream.Current_Position;
+    end End_Position;
 
     function Get_Char (Stream : in out Backend_Stream) return Character
         is (Character'Val (0));
@@ -52,13 +57,28 @@ package body Apagerlib.Backend is
     procedure Next_Char (Stream : in out Backend_Stream)
         is null;
 
-    procedure Next_Line (Stream : in out Backend_Stream)
-        is null;
+    procedure Next_Line (Stream : in out Backend_Stream) is
+        use Ada.Characters.Latin_1;
+
+        C : Character := ' ';
+    begin
+        while C /= LF and then C /= CR loop
+            C := Stream.Next_Char;
+        end loop;
+
+        exception
+        when No_More_Char => raise No_Line_Found;
+    end Next_Line;
 
     function Next_Line_Position (Stream : in out Backend_Stream;
                                  Start_Position : Positive)
-                                 return Positive
-        is (1);
+                                 return Positive is
+    begin
+        Stream.Set_Position (Start_Position);
+        Stream.Next_Line;
+
+        return Stream.Current_Position;
+    end Next_Line_Position;
 
     procedure Open (Stream : in out Backend_Stream)
         is null;
@@ -73,13 +93,28 @@ package body Apagerlib.Backend is
     procedure Previous_Char (Stream : in out Backend_Stream)
         is null;
 
-    procedure Previous_Line (Stream : in out Backend_Stream)
-        is null;
+    procedure Previous_Line (Stream : in out Backend_Stream) is
+        use Ada.Characters.Latin_1;
+
+        C : Character := ' ';
+    begin
+        while C /= LF and then C /= CR loop
+            C := Stream.Previous_Char;
+        end loop;
+
+        exception
+        when No_More_Char => raise No_Line_Found;
+    end Previous_Line;
 
     function Previous_Line_Position (Stream : in out Backend_Stream;
                                      Start_Position : Positive)
-                                     return Positive
-        is (1);
+                                     return Positive is
+    begin
+        Stream.Set_Position (Start_Position);
+        Stream.Previous_Line;
+
+        return Stream.Current_Position;
+    end Previous_Line_Position;
 
     procedure Set_Position (Stream : in out Backend_Stream;
                             Position : Positive)

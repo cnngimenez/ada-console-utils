@@ -24,46 +24,71 @@ package Apagerlib.Backend is
     type Backend_Stream is tagged limited private;
 
     procedure Open (Stream : in out Backend_Stream);
+    --  Open the stream and initialise it.
+    --
+    --  Requires override.
 
     function End_Of_File (Stream : Backend_Stream) return Boolean;
+    --  Return when the pointer is at end of file.
+    --
+    --  Requires override.
 
     function Current_Position (Stream : Backend_Stream) return Positive;
+    --  Return the current pointer position of the stream.
+    --
+    --  Requires override.
 
     procedure Set_Position (Stream : in out Backend_Stream;
                             Position : Positive);
+    --  Change the current position.
+    --
+    --  Requires override.
 
     function Get_Char (Stream : in out Backend_Stream) return Character;
     --  Return the current character.
     --
     --  Do not move the cursor.
+    --  Requires override.
 
     function Previous_Char (Stream : in out Backend_Stream'Class)
         return Character;
+    --  Move the pointer and return the previous character.
+    --
+    --  Override is optional.
 
     procedure Previous_Char (Stream : in out Backend_Stream);
-
-    function Previous_Line_Position (Stream : in out Backend_Stream;
-                                     Start_Position : Positive)
-                                     return Positive;
-    --  Return the previous line position.
-    --
-    --  Do not move the cursor.
+    --  Requires override.
 
     function Next_Char (Stream : in out Backend_Stream'Class)
         return Character;
+    --  Override is optional.
 
     procedure Next_Char (Stream : in out Backend_Stream);
+    --  Requires override.
 
     function Next_Line_Position (Stream : in out Backend_Stream;
                                  Start_Position : Positive)
                                  return Positive;
-    --  Return the next line position.
+    --  Move the cursor to the next line and return the position.
     --
-    --  Do not move the cursor.
+    --  No_Line_Found exception is raised when there is no next line.
+    --  Override is optional.
+
+    function Previous_Line_Position (Stream : in out Backend_Stream;
+                                     Start_Position : Positive)
+                                     return Positive;
+    --  Move the cursor to the previous line and return the position.
+    --
+    --  No_Line_Found exception is raised when there is no previous line.
+    --  Requires override.
 
     procedure Next_Line (Stream : in out Backend_Stream);
+    --  No_Line_Found exception is raised when there is no next line.
+    --  Override is optional.
 
     procedure Previous_Line (Stream : in out Backend_Stream);
+    --  No_Line_Found exception is raised when there is no previous line.
+    --  Override is optional.
 
     procedure Beginning_Position (Stream : in out Backend_Stream);
     --  Move the cursor to the first character position.
@@ -72,15 +97,18 @@ package Apagerlib.Backend is
     --  Move the cursor to the last character position.
     --
     --  It should not set End_Of_File to true.
+    --  Requires override.
 
     function End_Position (Stream : in out Backend_Stream) return Positive;
-    --  Return the end position, the last character position.
+    --  Move the cursor to the end of stream and return the position.
     --
-    --  It does not move the cursor. It should not set End_Of_File to true.
+    --  Override is optional.
 
     procedure Close (Stream : in out Backend_Stream);
+    --  Requires override.
 
     No_More_Char : exception;
+    No_Line_Found : exception;
 
 private
     type Backend_Stream is tagged limited

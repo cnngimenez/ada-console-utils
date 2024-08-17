@@ -67,50 +67,16 @@ package Apagerlib.Memories is
     procedure Previous_Char (Memory : in out Page_Memory);
 
     overriding
-    function Previous_Line_Position (Memory : in out Page_Memory;
-                                     Start_Position : Positive)
-                                     return Positive;
-    --  Return the previous line byte position from Start_Byte.
-    --
-    --  No_Line_Found exception is raised when there is no previous line.
-
-    overriding
     procedure Next_Char (Memory : in out Page_Memory);
     --  Move the current position to the next Byte.
     --
     --  Raise the No_Byte_Found exception if there is no next byte.
 
     overriding
-    function Next_Line_Position (Memory : in out Page_Memory;
-                                 Start_Position : Positive)
-                                 return Positive;
-    --  Search the next line position starting from the given Byte.
-    --
-    --  Load the pages if it needed.
-    --  No_Line_Found exception is raised when there is no next line.
-
-    overriding
-    procedure Next_Line (Memory : in out Page_Memory);
-    --  Move the current position to the next Line.
-    --
-    --  Load any needed pages.
-    --  No_Line_Found exception is raised when there is no next line.
-
-    overriding
-    procedure Previous_Line (Memory : in out Page_Memory);
-    --  Move the current position to the next Line.
-    --
-    --  Load any needed pages.
-    --  No_Line_Found exception is raised when there is no previous line.
-
-    overriding
     procedure Beginning_Position (Memory : in out Page_Memory);
 
     overriding
     procedure End_Position (Memory : in out Page_Memory);
-
-    overriding
-    function End_Position (Memory : in out Page_Memory) return Positive;
 
     overriding
     procedure Close (Memory : in out Page_Memory);
