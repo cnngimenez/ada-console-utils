@@ -39,6 +39,9 @@ package Apagerlib.File_Backend is
     function End_Of_File (Stream : File_Backend) return Boolean;
 
     overriding
+    procedure End_Position (Stream : in out File_Backend);
+
+    overriding
     function Current_Position (Stream : File_Backend) return Positive;
 
     overriding

@@ -57,6 +57,9 @@ package Apagerlib.Backend is
     --  Override is optional.
 
     procedure Previous_Char (Stream : in out Backend_Stream);
+    --  Move the pointer and current character to the previous one.
+    --
+    --  Raise No_More_Char if there is no previous char (position 1 reached).
     --  Requires override.
 
     function Next_Char (Stream : in out Backend_Stream'Class)
@@ -64,6 +67,9 @@ package Apagerlib.Backend is
     --  Override is optional.
 
     procedure Next_Char (Stream : in out Backend_Stream);
+    --  Move the pointer and current character to the next one.
+    --
+    --  Raise No_More_Char if there is no next char (End of file reached).
     --  Requires override.
 
     function Next_Line_Position (Stream : in out Backend_Stream'Class;
@@ -82,11 +88,11 @@ package Apagerlib.Backend is
     --  No_Line_Found exception is raised when there is no previous line.
     --  Requires override.
 
-    procedure Next_Line (Stream : in out Backend_Stream);
+    procedure Next_Line (Stream : in out Backend_Stream'Class);
     --  No_Line_Found exception is raised when there is no next line.
     --  Override is optional.
 
-    procedure Previous_Line (Stream : in out Backend_Stream);
+    procedure Previous_Line (Stream : in out Backend_Stream'Class);
     --  No_Line_Found exception is raised when there is no previous line.
     --  Override is optional.
 
@@ -99,7 +105,8 @@ package Apagerlib.Backend is
     --  It should not set End_Of_File to true.
     --  Requires override.
 
-    function End_Position (Stream : in out Backend_Stream) return Positive;
+    function End_Position (Stream : in out Backend_Stream'Class)
+        return Positive;
     --  Move the cursor to the end of stream and return the position.
     --
     --  Override is optional.

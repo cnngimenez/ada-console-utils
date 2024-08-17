@@ -38,7 +38,8 @@ package body Apagerlib.Backend is
     procedure End_Position (Stream : in out Backend_Stream)
         is null;
 
-    function End_Position (Stream : in out Backend_Stream) return Positive is
+    function End_Position (Stream : in out Backend_Stream'Class)
+        return Positive is
     begin
         Stream.End_Position;
         return Stream.Current_Position;
@@ -57,7 +58,7 @@ package body Apagerlib.Backend is
     procedure Next_Char (Stream : in out Backend_Stream)
         is null;
 
-    procedure Next_Line (Stream : in out Backend_Stream) is
+    procedure Next_Line (Stream : in out Backend_Stream'Class) is
         use Ada.Characters.Latin_1;
 
         C : Character := ' ';
@@ -93,17 +94,22 @@ package body Apagerlib.Backend is
     procedure Previous_Char (Stream : in out Backend_Stream)
         is null;
 
-    procedure Previous_Line (Stream : in out Backend_Stream) is
+    procedure Previous_Line (Stream : in out Backend_Stream'Class) is
         use Ada.Characters.Latin_1;
 
         C : Character := ' ';
     begin
-        while C /= LF and then C /= CR loop
+        if Stream.Current_Position = 1 then
+            raise No_Line_Found;
+        end if;
+
+        while Stream.Current_Position > 1 and then C /= LF and then C /= CR
+        loop
             C := Stream.Previous_Char;
         end loop;
 
         exception
-        when No_More_Char => raise No_Line_Found;
+        when No_More_Char => return;
     end Previous_Line;
 
     function Previous_Line_Position (Stream : in out Backend_Stream'Class;
