@@ -66,7 +66,7 @@ package Apagerlib.Backend is
     procedure Next_Char (Stream : in out Backend_Stream);
     --  Requires override.
 
-    function Next_Line_Position (Stream : in out Backend_Stream;
+    function Next_Line_Position (Stream : in out Backend_Stream'Class;
                                  Start_Position : Positive)
                                  return Positive;
     --  Move the cursor to the next line and return the position.
@@ -74,7 +74,7 @@ package Apagerlib.Backend is
     --  No_Line_Found exception is raised when there is no next line.
     --  Override is optional.
 
-    function Previous_Line_Position (Stream : in out Backend_Stream;
+    function Previous_Line_Position (Stream : in out Backend_Stream'Class;
                                      Start_Position : Positive)
                                      return Positive;
     --  Move the cursor to the previous line and return the position.

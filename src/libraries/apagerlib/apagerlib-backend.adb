@@ -70,7 +70,7 @@ package body Apagerlib.Backend is
         when No_More_Char => raise No_Line_Found;
     end Next_Line;
 
-    function Next_Line_Position (Stream : in out Backend_Stream;
+    function Next_Line_Position (Stream : in out Backend_Stream'Class;
                                  Start_Position : Positive)
                                  return Positive is
     begin
@@ -106,7 +106,7 @@ package body Apagerlib.Backend is
         when No_More_Char => raise No_Line_Found;
     end Previous_Line;
 
-    function Previous_Line_Position (Stream : in out Backend_Stream;
+    function Previous_Line_Position (Stream : in out Backend_Stream'Class;
                                      Start_Position : Positive)
                                      return Positive is
     begin

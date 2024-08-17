@@ -26,24 +26,69 @@ with Apagerlib.Memories; use Apagerlib.Memories;
 with Apagerlib.File_Backend; use Apagerlib.File_Backend;
 
 procedure Apager_Backend_Test is
+    procedure Print_Test;
+    procedure Print_Line;
+    procedure Print_Line_Function;
+
     Memory : access Backend_Stream'Class;
     File1 : aliased File_Backend;
     Stdin : aliased Page_Memory;
+
+    procedure Print_Line is
+    begin
+        Memory.Open;
+
+        while not Memory.End_Of_File loop
+            Memory.Next_Line;
+            Put (Memory.Current_Position'Image);
+        end loop;
+
+        Memory.Close;
+    end Print_Line;
+
+    procedure Print_Line_Function is
+        Position : Positive;
+    begin
+        Memory.Open;
+
+        while not Memory.End_Of_File loop
+            Position := Memory.Current_Position;
+            Put (Memory.Next_Line_Position (Position)'Image);
+        end loop;
+
+        Memory.Close;
+    end Print_Line_Function;
+
+    procedure Print_Test is
+    begin
+        Memory.Open;
+
+        Put (Memory.Get_Char);
+        while not Memory.End_Of_File loop
+            Put (Memory.Next_Char);
+        end loop;
+
+        Memory.Close;
+    end Print_Test;
+
 begin
     if Argument_Count > 0 then
+        Put_Line ("Using File_Backend");
         File1.Set_Filename (Argument (1));
         Memory := File1'Access;
     else
+        Put_Line ("Using Page_Memory");
         Memory := Stdin'Access;
     end if;
 
-    Memory.Open;
+    Put_Line ("Print whole stream:");
+    Print_Test;
+    New_Line;
 
-    Put (Memory.Get_Char);
-    while not Memory.End_Of_File loop
-        Put (Memory.Next_Char);
-    end loop;
+    Put_Line ("Print line positions:");
+    Print_Line;
+    New_Line;
 
-    Memory.Close;
-
+    Put_Line ("Print line positions (with function):");
+    Print_Line_Function;
 end Apager_Backend_Test;
