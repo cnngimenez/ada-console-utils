@@ -21,6 +21,8 @@
 
 with Ada.Text_IO;
 use Ada.Text_IO;
+with Ada.Strings.Fixed;
+use Ada.Strings.Fixed;
 
 with Console.SGR;
 with Console.CSI_Codes;
@@ -37,16 +39,6 @@ package body Apagerlib.Frontend.Modelines is
             & Modeline.Filename & " "
             & Modeline.More_Text);
 
-    function Fill_Rest (Amount : Positive) return String is
-        S : Unbounded_String;
-    begin
-        for I in 1 .. Amount loop
-            S := S & " ";
-        end loop;
-
-        return To_String (S);
-    end Fill_Rest;
-
     procedure Put_Modeline (Modeline : Modeline_Type) is
         Data : Unbounded_String;
     begin
@@ -54,8 +46,8 @@ package body Apagerlib.Frontend.Modelines is
         Console.SGR.Reverse_Video;
 
         Data := Modeline_String (Modeline);
-        Put_Line (To_String (Data) &
-                  Fill_Rest (Modeline.Width - Length (Data)));
+        Put_Line (To_String (Data)
+            & (Modeline.Width - Length (Data)) * ' ');
 
         Console.SGR.Reset_All;
     end Put_Modeline;

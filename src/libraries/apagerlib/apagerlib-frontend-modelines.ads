@@ -27,8 +27,7 @@ package Apagerlib.Frontend.Modelines is
     type Truncate_Type is (Truncate, Visual_Line);
     --  type Show_Options is (Top_Byte, Truncate, Filename);
 
-    type Modeline_Type is
-    record
+    type Modeline_Type is tagged record
         --  Show : array (Show_Options'Range) of Boolean;
 
         Top_Byte : Positive;
@@ -44,6 +43,11 @@ package Apagerlib.Frontend.Modelines is
         --  Modeline width
     end record;
 
+    function Modeline_String (Modeline : Modeline_Type)
+        return Unbounded_String;
+
+    procedure Put_Modeline (Modeline : Modeline_Type);
+
     Default_Modeline : constant Modeline_Type := (
         --  Show => (Top_Byte => True, Truncate => True, Filename => True),
         Top_Byte => 1,
@@ -52,14 +56,5 @@ package Apagerlib.Frontend.Modelines is
         More_Text => To_Unbounded_String (""),
         Line_Position => 25,
         Width => 25);
-
-    function Modeline_String (Modeline : Modeline_Type)
-        return Unbounded_String;
-
-    procedure Put_Modeline (Modeline : Modeline_Type);
-
-private
-
-    function Fill_Rest (Amount : Positive) return String;
 
 end Apagerlib.Frontend.Modelines;
