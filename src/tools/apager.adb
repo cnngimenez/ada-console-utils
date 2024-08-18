@@ -29,7 +29,6 @@ with Console.CSI_Codes;
 use Console.CSI_Codes;
 with Console.CSI_Private;
 use Console.CSI_Private;
-with Console.SGR;
 with Console.Geometry;
 with Apagerlib.Keyboard;
 with Apagerlib.Backend;
@@ -37,6 +36,8 @@ with Apagerlib.Memories;
 with Apagerlib.File_Backend;
 with Apagerlib.Display;
 with Apagerlib.Commands;
+with Apagerlib.Frontend.Modelines;
+use Apagerlib.Frontend.Modelines;
 
 procedure Apager is
 
@@ -48,6 +49,7 @@ procedure Apager is
     procedure Read_Keyboard_Command;
     procedure Quit_Handler;
     procedure Show_Help;
+    procedure Update_Modeline;
     procedure Run_Epilogue;
     procedure Do_Next_Line;
     procedure Do_Previous_Line;
@@ -64,6 +66,7 @@ procedure Apager is
     Top_Byte : Positive := 1;
     Options : Apagerlib.Display.Display_Options;
     Fixed_Size : Boolean := False;
+    Modeline : Modeline_Type := Default_Modeline;
 
     End_Program_Exception : exception;
 
@@ -109,6 +112,10 @@ procedure Apager is
         for I in 1 .. Bottom loop
             Do_Next_Line;
         end loop;
+
+        exception
+        when Apagerlib.Backend.No_Line_Found =>
+            return;
     end Do_Page_Down;
 
     procedure Do_Page_Up is
@@ -127,6 +134,7 @@ procedure Apager is
     procedure Do_Previous_Line is
     begin
         Top_Byte := Buffer.Previous_Line_Position (Top_Byte - 1);
+
     exception
         when Apagerlib.Memories.No_Line_Found =>
             Top_Byte := 1;
@@ -187,6 +195,14 @@ procedure Apager is
         end loop;
     end Show_Help;
 
+    procedure Update_Modeline is
+    begin
+        Modeline.Line_Position := Options.Lines - 2;
+        Modeline.Width := Options.Columns - 1;
+        Modeline.Top_Byte := Top_Byte;
+        Modeline.Truncate := (if Options.Truncate then Truncate
+                              else Visual_Line);
+    end Update_Modeline;
 begin
     Assign_Input;
 
@@ -205,14 +221,9 @@ begin
 
         Apagerlib.Display.Print_Screen (Buffer.all, Top_Byte, Options);
 
-        New_Line;
-        Console.SGR.Reverse_Video;
-        Put_Line (Top_Byte'Image & " "
-            --  & Buffer.Current_Page'Image & "/"
-            --  & Buffer.Last_Loaded_Page'Image & " "
-            & Options.Columns'Image & "x" & Options.Lines'Image
-            & (if Options.Truncate then " -T-" else " -\-"));
-        Console.SGR.Reset_All;
+        Update_Modeline;
+        Put_Modeline (Modeline);
+
         Put (To_String (Command) & "(" & To_String (Keys) & ")");
         Show_Cursor;
         Read_Keyboard_Command;
