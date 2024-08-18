@@ -39,6 +39,12 @@ package Apagerlib.Frontend.Minibuffers is
 
     procedure Put_Minibuffer (Minibuffer : Minibuffer_Type);
 
+    procedure Set_Message (Minibuffer : in out Minibuffer_Type;
+                           Message : String);
+
+    procedure Reset (Minibuffer : in out Minibuffer_Type);
+    --  Reset message and M-x.
+
     Default_Minibuffer : constant Minibuffer_Type := (
         Position_Column => 1,
         Position_Line => 25,

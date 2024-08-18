@@ -46,7 +46,7 @@ package body Apagerlib.Frontend.Modelines is
         Console.SGR.Reverse_Video;
 
         Data := Modeline_String (Modeline);
-        Put_Line (To_String (Data)
+        Put (To_String (Data)
             & (Modeline.Width - Length (Data)) * ' ');
 
         Console.SGR.Reset_All;

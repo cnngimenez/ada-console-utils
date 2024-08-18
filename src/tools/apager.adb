@@ -38,6 +38,8 @@ with Apagerlib.Frontend.Display;
 with Apagerlib.Commands;
 with Apagerlib.Frontend.Modelines;
 use Apagerlib.Frontend.Modelines;
+with Apagerlib.Frontend.Minibuffers;
+use Apagerlib.Frontend.Minibuffers;
 
 procedure Apager is
 
@@ -50,6 +52,7 @@ procedure Apager is
     procedure Quit_Handler;
     procedure Show_Help;
     procedure Update_Modeline;
+    procedure Update_Minibuffer;
     procedure Run_Epilogue;
     procedure Do_Next_Line;
     procedure Do_Previous_Line;
@@ -68,6 +71,7 @@ procedure Apager is
         Apagerlib.Frontend.Display.Default_Display_Options;
     Fixed_Size : Boolean := False;
     Modeline : Modeline_Type := Default_Modeline;
+    Minibuffer : Minibuffer_Type := Default_Minibuffer;
 
     End_Program_Exception : exception;
 
@@ -196,6 +200,14 @@ procedure Apager is
         end loop;
     end Show_Help;
 
+    procedure Update_Minibuffer is
+    begin
+        Minibuffer.Width := Console.Geometry.Get_Columns - 1;
+        Minibuffer.Height := 1;
+        Minibuffer.Position_Column := 1;
+        Minibuffer.Position_Line := Console.Geometry.Get_Lines - 1;
+    end Update_Minibuffer;
+
     procedure Update_Modeline is
     begin
         Modeline.Line_Position := Console.Geometry.Get_Lines - 2;
@@ -204,6 +216,7 @@ procedure Apager is
         Modeline.Truncate := (if Options.Truncate then Truncate
                               else Visual_Line);
     end Update_Modeline;
+
 begin
     Assign_Input;
 
@@ -226,13 +239,20 @@ begin
         Update_Modeline;
         Put_Modeline (Modeline);
 
-        Put (To_String (Command) & "(" & To_String (Keys) & ")");
+        Update_Minibuffer;
+        Minibuffer.Put_Minibuffer;
+        --  Put (To_String (Command) & "(" & To_String (Keys) & ")");
+
         Show_Cursor;
         Read_Keyboard_Command;
 
         if Command = To_U ("execute-extended-command") then
-            Put ("M-x ");
+            Minibuffer.Meta_X := True;
+            Minibuffer.Put_Minibuffer;
+
             Command := Apagerlib.Keyboard.Get_Line;
+
+            Minibuffer.Meta_X := False;
         end if;
 
         Exit_Program := Exit_Program or else Command = To_U ("quit");
@@ -262,17 +282,25 @@ begin
         end if;
 
         if Command = To_U ("change-columns") then
-            Put ("Column size?");
+            Minibuffer.Set_Message ("Column size?");
+            Minibuffer.Put_Minibuffer;
+
             Command := Apagerlib.Keyboard.Get_Line;
             Options.Columns := Integer'Value (To_String (Command));
             Fixed_Size := True;
+
+            Minibuffer.Reset;
         end if;
 
         if Command = To_U ("change-lines") then
-            Put ("Lines size?");
+            Minibuffer.Set_Message ("Lines size?");
+            Minibuffer.Put_Minibuffer;
+
             Command := Apagerlib.Keyboard.Get_Line;
             Options.Lines := Integer'Value (To_String (Command));
             Fixed_Size := True;
+
+            Minibuffer.Reset;
         end if;
 
         if Command = To_U ("truncate-mode") then

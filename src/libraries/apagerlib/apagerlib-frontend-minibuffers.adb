@@ -40,8 +40,29 @@ package body Apagerlib.Frontend.Minibuffers is
         Cursor_Position (Minibuffer.Position_Line, Minibuffer.Position_Column);
         Str := Minibuffer_String (Minibuffer);
 
-        Put_Line (To_String (Str)
+        Put (To_String (Str)
             & (Minibuffer.Width - Length (Str)) * ' ');
+
+        --  Restore cursor position.
+        if Minibuffer.Meta_X then
+            Cursor_Position (Minibuffer.Position_Line,
+                             Minibuffer.Position_Column + 5);
+        else
+            Cursor_Position (Minibuffer.Position_Line,
+                             Minibuffer.Position_Column);
+        end if;
     end Put_Minibuffer;
+
+    procedure Reset (Minibuffer : in out Minibuffer_Type) is
+    begin
+        Minibuffer.Meta_X := False;
+        Minibuffer.Message := To_Unbounded_String ("");
+    end Reset;
+
+    procedure Set_Message (Minibuffer : in out Minibuffer_Type;
+                           Message : String) is
+    begin
+        Minibuffer.Message := To_Unbounded_String (Message);
+    end Set_Message;
 
 end Apagerlib.Frontend.Minibuffers;
