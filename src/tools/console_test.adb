@@ -35,6 +35,7 @@ procedure Console_Test is
     procedure Test_Emoji;
     procedure Pause;
     procedure Show_Help;
+    procedure Put_Geometry;
 
     No_Pause : Boolean := True;
 
@@ -48,6 +49,17 @@ procedure Console_Test is
         Put_Line ("Press a key to continue.");
         Get_Immediate (C);
     end Pause;
+
+    procedure Put_Geometry is
+    begin
+        Put_Line ("Columns: "
+            & Console.Geometry.Get_Columns'Image);
+        Put_Line ("Lines: "
+            & Console.Geometry.Get_Lines'Image);
+        exception
+        when Console.Geometry.No_Geometry_Information =>
+            Put_Line ("Exception: No geometry information found.");
+    end Put_Geometry;
 
     procedure Show_Help is
     begin
@@ -105,10 +117,7 @@ begin
     Test_Emoji;
 
     Put_Line ("Geometry:");
-    Put_Line ("Columns: "
-        & Console.Geometry.Get_Columns'Image);
-    Put_Line ("Lines: "
-        & Console.Geometry.Get_Lines'Image);
+    Put_Geometry;
 
     Put_Line ("TTY device file:");
     Put_Line ("TTY Name stdin (0):"
