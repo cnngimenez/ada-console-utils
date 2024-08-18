@@ -1,4 +1,4 @@
---  apagerlib-frontend-minibuffer.ads ---
+--  apagerlib-frontend-minibuffers.adb ---
 
 --  Copyright 2024 cnngimenez
 --
@@ -19,32 +19,29 @@
 
 -------------------------------------------------------------------------
 
-with Ada.Strings.Unbounded;
-use Ada.Strings.Unbounded;
+with Ada.Text_IO;
+use Ada.Text_IO;
+with Ada.Strings.Fixed;
+use Ada.Strings.Fixed;
 
-package Apagerlib.Frontend.Minibuffer is
+with Console.CSI_Codes;
+use Console.CSI_Codes;
 
-    type Minibuffer_Type is tagged record
-        Position_Column, Position_Line : Positive;
-        --  Where to start drawing the minibuffer.
-        Width, Height : Positive;
-        --  Width and height in characters (columns) and lines.
-        Meta_X : Boolean;
-        --  Is M-x pressed?
-        Message : Unbounded_String;
-    end record;
+package body Apagerlib.Frontend.Minibuffers is
 
     function Minibuffer_String (Minibuffer : Minibuffer_Type)
-        return Unbounded_String;
+        return Unbounded_String
+    is ((if Minibuffer.Meta_X then "M-x: " else "")
+        & Minibuffer.Message);
 
-    procedure Put_Minibuffer (Minibuffer : Minibuffer_Type);
+    procedure Put_Minibuffer (Minibuffer : Minibuffer_Type) is
+        Str : Unbounded_String;
+    begin
+        Cursor_Position (Minibuffer.Position_Line, Minibuffer.Position_Column);
+        Str := Minibuffer_String (Minibuffer);
 
-    Default_Minibuffer : constant Minibuffer_Type := (
-        Position_Column => 1,
-        Position_Line => 25,
-        Width => 25,
-        Height => 25,
-        Meta_X => False,
-        Message => To_Unbounded_String (""));
+        Put_Line (To_String (Str)
+            & (Minibuffer.Width - Length (Str)) * ' ');
+    end Put_Minibuffer;
 
-end Apagerlib.Frontend.Minibuffer;
+end Apagerlib.Frontend.Minibuffers;
