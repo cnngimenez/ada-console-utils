@@ -34,7 +34,7 @@ with Apagerlib.Keyboard;
 with Apagerlib.Backend;
 with Apagerlib.Memories;
 with Apagerlib.File_Backend;
-with Apagerlib.Display;
+with Apagerlib.Frontend.Display;
 with Apagerlib.Commands;
 with Apagerlib.Frontend.Modelines;
 use Apagerlib.Frontend.Modelines;
@@ -64,7 +64,8 @@ procedure Apager is
     Keys, Command : Unbounded_String;
     Exit_Program : Boolean := False;
     Top_Byte : Positive := 1;
-    Options : Apagerlib.Display.Display_Options;
+    Options : Apagerlib.Frontend.Display.Display_Options :=
+        Apagerlib.Frontend.Display.Default_Display_Options;
     Fixed_Size : Boolean := False;
     Modeline : Modeline_Type := Default_Modeline;
 
@@ -219,7 +220,8 @@ begin
         --  Go to the end of the screen... this creates a new space.
         Cursor_Position (Options.Lines, 1);
 
-        Apagerlib.Display.Print_Screen (Buffer.all, Top_Byte, Options);
+        Apagerlib.Frontend.Display.Print_Screen (Buffer.all,
+                                                 Top_Byte, Options);
 
         Update_Modeline;
         Put_Modeline (Modeline);
