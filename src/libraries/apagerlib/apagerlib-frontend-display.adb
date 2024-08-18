@@ -1,4 +1,4 @@
---  apagerlib-display.adb ---
+--  apagerlib-frontend-display.adb ---
 
 --  Copyright 2024 cnngimenez
 --
@@ -28,7 +28,7 @@ use Ada.Text_IO;
 with Console.CSI_Codes;
 with Apagerlib.Memories;
 
-package body Apagerlib.Display is
+package body Apagerlib.Frontend.Display is
 
     procedure Put_Char (C : Character);
     procedure Show_No_Truncate (Memory : in out Backend_Stream'Class;
@@ -49,8 +49,8 @@ package body Apagerlib.Display is
          Top_Byte : Positive := 1;
          Options : Display_Options := Default_Display_Options) is
     begin
-        Console.CSI_Codes.Cursor_Position (Options.Starting_Column,
-                                           Options.Starting_Line);
+        Console.CSI_Codes.Cursor_Position (Options.Starting_Line,
+                                           Options.Starting_Column);
         if Options.Truncate then
             Show_Truncate (Memory, Top_Byte, Options);
         else
@@ -220,4 +220,4 @@ package body Apagerlib.Display is
         end loop;
     end Show_Truncate;
 
-end Apagerlib.Display;
+end Apagerlib.Frontend.Display;

@@ -1,4 +1,4 @@
---  apagerlib-display.ads ---
+--  apagerlib-frontend-display.ads ---
 
 --  Copyright 2024 cnngimenez
 --
@@ -22,7 +22,7 @@
 with Apagerlib.Backend;
 use Apagerlib.Backend;
 
-package Apagerlib.Display is
+package Apagerlib.Frontend.Display is
 
     type Display_Options is
     record
@@ -57,4 +57,4 @@ package Apagerlib.Display is
     --       Start : Positive := 1;
     --       Options : Display_Options := Default_Display_Options);
 
-end Apagerlib.Display;
+end Apagerlib.Frontend.Display;
