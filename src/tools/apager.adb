@@ -197,8 +197,8 @@ procedure Apager is
 
     procedure Update_Modeline is
     begin
-        Modeline.Line_Position := Options.Lines - 2;
-        Modeline.Width := Options.Columns - 1;
+        Modeline.Line_Position := Console.Geometry.Get_Lines - 2;
+        Modeline.Width := Console.Geometry.Get_Columns - 1;
         Modeline.Top_Byte := Top_Byte;
         Modeline.Truncate := (if Options.Truncate then Truncate
                               else Visual_Line);

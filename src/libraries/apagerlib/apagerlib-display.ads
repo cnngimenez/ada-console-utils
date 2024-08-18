@@ -26,8 +26,10 @@ package Apagerlib.Display is
 
     type Display_Options is
     record
-        Columns : Positive;
-        Lines : Positive;
+        Starting_Column, Starting_Line : Positive;
+        --  Where to start drawing.
+        Columns, Lines : Positive;
+        --  Width and height in characters and lines.
         Truncate : Boolean;
         --  Truncate long Lines?
         --  True: truncate the long lines.
@@ -38,6 +40,8 @@ package Apagerlib.Display is
     end record;
 
     Default_Display_Options : constant Display_Options := (
+      Starting_Column => 1,
+      Starting_Line => 1,
       Columns => 60,
       Lines => 20,
       Truncate => False,

@@ -24,6 +24,8 @@ with Ada.Characters.Latin_1;
 use Ada.Characters.Latin_1;
 with Ada.Text_IO;
 use Ada.Text_IO;
+
+with Console.CSI_Codes;
 with Apagerlib.Memories;
 
 package body Apagerlib.Display is
@@ -47,6 +49,8 @@ package body Apagerlib.Display is
          Top_Byte : Positive := 1;
          Options : Display_Options := Default_Display_Options) is
     begin
+        Console.CSI_Codes.Cursor_Position (Options.Starting_Column,
+                                           Options.Starting_Line);
         if Options.Truncate then
             Show_Truncate (Memory, Top_Byte, Options);
         else
