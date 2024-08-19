@@ -22,6 +22,8 @@
 with Ada.Characters.Handling;
 with Ada.Characters.Latin_1;
 use Ada.Characters.Latin_1;
+with Ada.Strings.Fixed;
+use Ada.Strings.Fixed;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -107,6 +109,9 @@ package body Apagerlib.Frontend.Display is
             end;
 
             if C = LF or else C = CR then
+                if Options.Columns > Column then
+                    Put ((Options.Columns - Column - 1) * ' ');
+                end if;
                 Column := 1;
                 Line := Line + 1;
             end if;
@@ -211,6 +216,9 @@ package body Apagerlib.Frontend.Display is
             end;
 
             if C = LF or else C = CR then
+                if Options.Columns > Column then
+                    Put ((Options.Columns - Column - 1) * ' ');
+                end if;
                 Column := 1;
                 Line := Line + 1;
             end if;
