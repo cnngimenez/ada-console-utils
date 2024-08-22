@@ -37,82 +37,61 @@ procedure Apager_Backend_Test is
     File1 : aliased File_Backend;
     Stdin : aliased Page_Memory;
 
-    procedure Print_Next_Line is
-    begin
-        Memory.Open;
-
-        while not Memory.End_Of_File loop
-            Memory.Next_Line;
-            Put (Memory.Current_Position'Image);
-        end loop;
-
-        Memory.Close;
-    end Print_Next_Line;
-
-    procedure Print_Next_Line_Function is
-        Position : Positive;
-    begin
-        Memory.Open;
-
-        while not Memory.End_Of_File loop
-            Position := Memory.Current_Position;
-            Put (Memory.Next_Line_Position (Position)'Image);
-        end loop;
-
-        Memory.Close;
-    end Print_Next_Line_Function;
-
-    procedure Print_Previous_Line is
-    begin
-        Memory.Open;
-        Memory.End_Position;
-
-        while Memory.Current_Position > 1 loop
-            Memory.Previous_Line;
-            Put (Memory.Current_Position'Image);
-        end loop;
-
-        Memory.Close;
-    end Print_Previous_Line;
-
-    procedure Print_Previous_Line_Function is
-        Position : Positive;
-    begin
-        Memory.Open;
-        Memory.End_Position;
-
-        while Memory.Current_Position >= 1 loop
-            Position := Memory.Current_Position;
-            Put (Memory.Previous_Line_Position (Position)'Image);
-        end loop;
-
-        Memory.Close;
-    end Print_Previous_Line_Function;
-
     procedure Next_Character_Test is
     begin
-        Memory.Open;
-
         Put (Memory.Get_Char);
         while not Memory.End_Of_File loop
             Put (Memory.Next_Char);
         end loop;
-
-        Memory.Close;
     end Next_Character_Test;
 
     procedure Previous_Character_Test is
     begin
-        Memory.Open;
         Memory.End_Position;
 
         Put (Memory.Get_Char);
         while Memory.Current_Position > 1 loop
             Put (Memory.Previous_Char);
         end loop;
-
-        Memory.Close;
     end Previous_Character_Test;
+
+    procedure Print_Next_Line is
+    begin
+        while not Memory.End_Of_File loop
+            Memory.Next_Line;
+            Put (Memory.Current_Position'Image);
+        end loop;
+    end Print_Next_Line;
+
+    procedure Print_Next_Line_Function is
+        Position : Positive;
+    begin
+        while not Memory.End_Of_File loop
+            Position := Memory.Current_Position;
+            Put (Memory.Next_Line_Position (Position)'Image);
+        end loop;
+    end Print_Next_Line_Function;
+
+    procedure Print_Previous_Line is
+    begin
+        Memory.End_Position;
+
+        while Memory.Current_Position > 1 loop
+            Memory.Previous_Line;
+            Put (Memory.Current_Position'Image);
+        end loop;
+    end Print_Previous_Line;
+
+    procedure Print_Previous_Line_Function is
+        Position : Positive;
+    begin
+        Memory.End_Position;
+
+        while Memory.Current_Position >= 1 loop
+            Position := Memory.Current_Position;
+            Put (Memory.Previous_Line_Position (Position)'Image);
+        end loop;
+    end Print_Previous_Line_Function;
 
 begin
     if Argument_Count > 0 then
@@ -123,6 +102,8 @@ begin
         Put_Line ("Using Page_Memory");
         Memory := Stdin'Access;
     end if;
+
+    Memory.Open;
 
     Put_Line ("Print Next_Charecter stream:");
     Next_Character_Test;
@@ -147,4 +128,6 @@ begin
     --  Put_Line ("Print previous line positions (with function):");
     --  Print_Previous_Line_Function;
     --  New_Line;
+
+    Memory.Close;
 end Apager_Backend_Test;
