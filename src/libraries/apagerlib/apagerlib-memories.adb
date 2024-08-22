@@ -49,12 +49,12 @@ package body Apagerlib.Memories is
     function End_Of_File (Memory : Page_Memory) return Boolean
         is (Ada.Text_IO.End_Of_File
         and then Memory.Current_Page >= Memory.Last_Loaded_Page
-        and then Memory.Current_BIP >= Apagerlib.Pages.Page_Limit);
+        and then Memory.Current_BIP >= Memory.Pages.Last_Element.Length);
 
     overriding
     procedure End_Position (Memory : in out Page_Memory) is
     begin
-        while not End_Of_File loop
+        while not Ada.Text_IO.End_Of_File loop
             Memory.Load_Next_Page;
         end loop;
 
@@ -152,6 +152,10 @@ package body Apagerlib.Memories is
     procedure Next_Char (Memory : in out Page_Memory) is
         Last_BIP : Positive;
     begin
+        if Memory.End_Of_File then
+            raise No_More_Char;
+        end if;
+
         Last_BIP := Memory.Current_BIP;
 
         Memory.Current_BIP := Memory.Current_BIP + 1;
@@ -172,7 +176,7 @@ package body Apagerlib.Memories is
                 Memory.Current_BIP := Last_BIP;
                 Memory.Current_Page := Positive (Memory.Pages.Length);
                 Memory.Last_Loaded_Page := Positive (Memory.Pages.Length);
-                raise No_Byte_Found;
+                raise No_More_Char;
 
     end Next_Char;
 
