@@ -105,9 +105,12 @@ begin
 
     Memory.Open;
 
+    Put_Line ("First position:" & Memory.Current_Position'Image);
     Put_Line ("Print Next_Charecter stream:");
     Next_Character_Test;
     New_Line;
+    Put_Line ("Last position:" & Memory.Current_Position'Image);
+    Put_Line ("At End_Of_File:" & Memory.End_Of_File'Image);
 
     Put_Line ("Print Previous_Charecter stream:");
     Previous_Character_Test;
