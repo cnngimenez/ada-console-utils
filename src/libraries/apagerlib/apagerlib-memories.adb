@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Exceptions;
+use Ada.Exceptions;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -36,7 +38,7 @@ package body Apagerlib.Memories is
 
     overriding
     function Current_Position (Memory : Page_Memory) return Positive
-        is (Memory.Current_BIP * Memory.Current_Page);
+        is (Memory.Current_BIP + ((Memory.Current_Page - 1) * Page_Limit));
 
     overriding
     procedure Beginning_Position (Memory : in out Page_Memory) is
@@ -49,7 +51,7 @@ package body Apagerlib.Memories is
     function End_Of_File (Memory : Page_Memory) return Boolean
         is (Ada.Text_IO.End_Of_File
         and then Memory.Current_Page >= Memory.Last_Loaded_Page
-        and then Memory.Current_BIP >= Memory.Pages.Last_Element.Length);
+        and then Memory.Current_BIP > Memory.Pages.Last_Element.Length);
 
     overriding
     procedure End_Position (Memory : in out Page_Memory) is
@@ -76,12 +78,19 @@ package body Apagerlib.Memories is
             .Data (Page_Index (Memory.Current_BIP));
         exception
         when Constraint_Error =>
-            raise No_Page_Found;
+            Raise_Exception (No_More_Char'Identity,
+                "No character on page "
+                & Memory.Current_Page'Image
+                & " and index "
+                & Memory.Current_BIP'Image);
     end Get_Char;
 
     function Get_Char (Memory : in out Page_Memory; Index : Positive)
         return Character is
     begin
+        if Memory.End_Of_File then
+            raise No_More_Char;
+        end if;
         return Memory.Get_Page_With_Byte (Index)
             .Data (Page_Index (Index mod Page_Limit));
     end Get_Char;
@@ -133,12 +142,20 @@ package body Apagerlib.Memories is
     procedure Load_Next_Page (Memory : in out Page_Memory) is
         Page : Page_Type;
     begin
+        if Ada.Text_IO.End_Of_File then
+            Raise_Exception (No_Next_Page'Identity,
+                "Cannot load next page on End_Of_File");
+        end if;
+
         Apagerlib.Pages.Get_Page (Page, 1);
         Memory.Pages.Append (Page);
         Memory.Last_Loaded_Page := Positive (Memory.Pages.Length);
 
         exception
-            when Apagerlib.Pages.No_Page_Loaded => raise No_Next_Page;
+            when Exc : Apagerlib.Pages.No_Page_Loaded =>
+                Raise_Exception (No_Next_Page'Identity,
+                    "Next page cannot be loaded. "
+                    & Exception_Message (Exc));
     end Load_Next_Page;
 
     function Load_Next_Page (Memory : in out Page_Memory)
@@ -153,30 +170,43 @@ package body Apagerlib.Memories is
         Last_BIP : Positive;
     begin
         if Memory.End_Of_File then
-            raise No_More_Char;
+            Raise_Exception (No_More_Char'Identity,
+                "Cannot Next_Char at End_Of_File (page: "
+                & Memory.Current_Page'Image
+                & " index: "
+                & Memory.Current_BIP'Image
+                & ")");
         end if;
 
         Last_BIP := Memory.Current_BIP;
-
         Memory.Current_BIP := Memory.Current_BIP + 1;
 
-        if Memory.Current_BIP > Page_Limit then
+        if not Memory.End_Of_File
+            and then Memory.Current_BIP >
+            Memory.Pages.Element (Memory.Current_Page).Length
+        then
             --  There is no more bytes in the page, use the next page.
             Memory.Current_BIP := 1;
             Memory.Current_Page := Memory.Current_Page + 1;
 
-            if Memory.Current_Page > Memory.Last_Loaded_Page then
+            if Memory.Current_Page > Memory.Last_Loaded_Page
+            then
                 --  No more pages, load a new one.
                 Memory.Load_Next_Page;
             end if;
         end if;
 
         exception
-            when No_Next_Page =>
+            when Exc : No_Next_Page =>
                 Memory.Current_BIP := Last_BIP;
                 Memory.Current_Page := Positive (Memory.Pages.Length);
                 Memory.Last_Loaded_Page := Positive (Memory.Pages.Length);
-                raise No_More_Char;
+                Raise_Exception (No_More_Char'Identity,
+                    "Cannot load next page (page: "
+                    & Memory.Current_Page'Image
+                    & " index: "
+                    & Memory.Current_BIP'Image & "). "
+                    & Exception_Message (Exc));
 
     end Next_Char;
 
