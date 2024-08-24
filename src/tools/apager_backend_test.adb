@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Exceptions;
+use Ada.Exceptions;
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Command_Line; use Ada.Command_Line;
 with Apagerlib.Backend; use Apagerlib.Backend;
@@ -61,6 +63,15 @@ procedure Apager_Backend_Test is
             Memory.Next_Line;
             Put (Memory.Current_Position'Image);
         end loop;
+
+        exception
+        when Exc : Apagerlib.Backend.No_Line_Found =>
+            Put (" ");
+            if Memory.End_Of_File then
+                Put_Line ("No new line character at end of file.");
+            else
+                Put_Line (Exception_Message (Exc));
+            end if;
     end Print_Next_Line;
 
     procedure Print_Next_Line_Function is
@@ -76,10 +87,20 @@ procedure Apager_Backend_Test is
     begin
         Memory.End_Position;
 
+        --  Beware: if the End_Position is a new line it will not be printed.
         while Memory.Current_Position > 1 loop
             Memory.Previous_Line;
             Put (Memory.Current_Position'Image);
         end loop;
+
+        exception
+        when Exc : Apagerlib.Backend.No_Line_Found =>
+            Put (" ");
+            if Memory.Current_Position = 1 then
+                Put_Line ("No new line character at beginning of file.");
+            else
+                Put_Line (Exception_Message (Exc));
+            end if;
     end Print_Previous_Line;
 
     procedure Print_Previous_Line_Function is

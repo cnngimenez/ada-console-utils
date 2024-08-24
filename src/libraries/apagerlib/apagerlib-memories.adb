@@ -262,7 +262,8 @@ package body Apagerlib.Memories is
                 Memory.Current_BIP := Page_Limit;
             else
                 --  No previous page!
-                raise No_Byte_Found;
+                Raise_Exception (No_More_Char'Identity,
+                    "Could not find previous character at first position.");
             end if;
         end if;
     end Previous_Char;

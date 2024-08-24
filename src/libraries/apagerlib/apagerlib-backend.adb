@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Exceptions;
+use Ada.Exceptions;
 with Ada.Characters.Latin_1;
 
 package body Apagerlib.Backend is
@@ -68,7 +70,10 @@ package body Apagerlib.Backend is
         end loop;
 
         exception
-        when No_More_Char => raise No_Line_Found;
+        when Exc : No_More_Char =>
+            Raise_Exception (No_Line_Found'Identity,
+                "Next_Line could not find new line because: " &
+                Exception_Message (Exc));
     end Next_Line;
 
     function Next_Line_Position (Stream : in out Backend_Stream'Class;
@@ -103,13 +108,15 @@ package body Apagerlib.Backend is
             raise No_Line_Found;
         end if;
 
-        while Stream.Current_Position > 1 and then C /= LF and then C /= CR
-        loop
+        while C /= LF and then C /= CR loop
             C := Stream.Previous_Char;
         end loop;
 
         exception
-        when No_More_Char => return;
+        when Exc : No_More_Char =>
+            Raise_Exception (No_Line_Found'Identity,
+                "Could not find previous line beacuse: "
+                & Exception_Message (Exc));
     end Previous_Line;
 
     function Previous_Line_Position (Stream : in out Backend_Stream'Class;
