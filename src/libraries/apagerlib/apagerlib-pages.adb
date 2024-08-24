@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
+with Ada.Exceptions;
+use Ada.Exceptions;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -44,13 +46,13 @@ package body Apagerlib.Pages is
         Page.Line_End := Line_Start;
 
         if End_Of_File then
-            raise No_Page_Loaded;
+            Raise_Exception (No_Page_Loaded'Identity,
+                "Page cound not be loaded because of End_Of_File");
         end if;
 
         Page.Length := 0;
-        while not End_Of_File and then Page.Length < Page_Limit loop
+        while not End_Of_File and then Page.Length < Page_Limit - 1 loop
             Get_Immediate (C);
-
             Page.Length := Page.Length + 1;
             Page.Data (Page_Index (Page.Length)) := C;
 
@@ -58,6 +60,12 @@ package body Apagerlib.Pages is
                 Page.Line_End := Page.Line_End + 1;
             end if;
         end loop;
+
+        --  End_Of_File is true before one character from standard in: read it!
+        Get_Immediate (C);
+        Page.Length := Page.Length + 1;
+        Page.Data (Page_Index (Page.Length)) := C;
+
     end Get_Page;
 
 end Apagerlib.Pages;

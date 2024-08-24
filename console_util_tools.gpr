@@ -55,7 +55,8 @@ project Console_Util_Tools is
               "file_test.adb",
               "idle_time.adb",
               "apager.adb",
-              "apager_backend_test.adb"
+              "apager_backend_test.adb",
+              "pages_test.adb"
              );
 
    --  for languages use ("ada", "c");
