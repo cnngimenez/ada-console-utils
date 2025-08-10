@@ -37,10 +37,10 @@ ifndef optimisation
 	optimisation=debug
 endif
 
-.PHONY: compile libs libs-static lib-relocatable tools install uninstall install-libs install-tools uninstall-libs uninstall-tools clean clean-relocatable clean-static clean-tools parmas all setup
+.PHONY: compile libs libs-static lib-relocatable tools test-tools install uninstall install-libs install-tools install-test-tools uninstall-libs uninstall-tools uninstall-test-tools clean clean-relocatable clean-static clean-tools clean-test-tools params all setup 
 
 ## Rules
-compile: libs tools
+compile: libs tools test-tools
 
 libs: libs-relocatable libs-static
 
@@ -56,6 +56,10 @@ tools:
 	@echo "Compiling tools"
 	gprbuild $(gprbuild_params) -XOPTIMISATION=$(optimisation) console_util_tools.gpr
 
+test-tools:
+	@echo "Compiling test tools"
+	gprbuild $(gprbuild_params) -XOPTIMISATION=$(optimisation) console_util_test_tools.gpr
+
 install: install-libs install-tools
 
 install-libs: uninstall-libs
@@ -65,6 +69,11 @@ install-libs: uninstall-libs
 install-tools: uninstall-tools
 	@echo Installing into $(prefix)
 	gprinstall -p --prefix=$(prefix) console_util_tools.gpr
+
+install-test-tools: uninstall-test-tools
+	@echo Installing into $(prefix)
+	gprinstall -p --prefix=$(prefix) console_util_test_tools.gpr
+
 
 uninstall: uninstall-libs uninstall-tools
 
@@ -76,7 +85,11 @@ uninstall-tools:
 	@echo Uninstalling from $(prefix)
 	-gprinstall --prefix=$(prefix) --uninstall console_util_tools.gpr
 
-clean: clean-relocatable clean-static clean-tools
+uninstall-test-tools:
+	@echo Uninstalling from $(prefix)
+	-gprinstall --prefix=$(prefix) --uninstall console_util_test_tools.gpr
+
+clean: clean-relocatable clean-static clean-tools clean-test-tools
 
 clean-relocatable:
 	gprclean -XLIBRARY_KIND=relocatable console_utils.gpr
@@ -86,6 +99,9 @@ clean-static:
 
 clean-tools:
 	gprclean console_util_tools.gpr
+
+clean-test-tools:
+	gprclean console_util_test_tools.gpr
 
 params:
 	@echo Install into: $(prefix)

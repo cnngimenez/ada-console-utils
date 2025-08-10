@@ -29,7 +29,7 @@ package body Apagerlib.File_Backend is
 
     overriding
     function Current_Position (Stream : File_Backend) return Positive
-        is (Positive (Char_IO.Index (Stream.File)));
+        is (Positive (Char_IO.Index (Stream.File)) - 1);
 
     overriding
     function End_Of_File (Stream : File_Backend) return Boolean is
@@ -54,14 +54,9 @@ package body Apagerlib.File_Backend is
         if Char_IO.End_Of_File (Stream.File) then
             Stream.Current_Character := Character'Val (0);
             raise Apagerlib.Backend.No_More_Char;
-        elsif Stream.Current_Position = Positive (Char_IO.Size (Stream.File)) then
-            --  Cannot read more!
-            Char_IO.Read (Stream.File, Stream.Current_Character);
-        else
-            Stream.Set_Position (Stream.Current_Position + 1);
-            Char_IO.Read (Stream.File, Stream.Current_Character);
-            Stream.Set_Position (Stream.Current_Position - 1);
         end if;
+
+        Char_IO.Read (Stream.File, Stream.Current_Character);
     end Next_Char;
 
     overriding
@@ -72,7 +67,6 @@ package body Apagerlib.File_Backend is
                       To_String (Stream.Filename));
 
         Char_IO.Read (Stream.File, Stream.Current_Character);
-        Stream.Set_Position (Stream.Current_Position - 1);
     end Open;
 
     overriding
@@ -84,7 +78,6 @@ package body Apagerlib.File_Backend is
 
         Stream.Set_Position (Stream.Current_Position - 1);
         Char_IO.Read (Stream.File, Stream.Current_Character);
-        Stream.Set_Position (Stream.Current_Position - 1);
     end Previous_Char;
 
     procedure Set_Filename (Stream : in out File_Backend; Name : String) is
