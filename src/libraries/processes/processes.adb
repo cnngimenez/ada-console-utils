@@ -167,7 +167,10 @@ package body Processes is
               & "/stat"));
 
     function State_String_To_Type (S : String) return State_Type is
-        (case S (S'First) is
+        (State_String_To_Type (S (S'First)));
+
+    function State_String_To_Type (C : Character) return State_Type is
+        (case C is
             when 'C' => Running,
             when 'S' => Sleeping,
             when 'D' => Waiting_Disk,

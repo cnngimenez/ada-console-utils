@@ -73,4 +73,5 @@ package Processes is
     function Parse_Stat_String (S : String) return Process_Type;
 
     function State_String_To_Type (S : String) return State_Type;
+    function State_String_To_Type (C : Character) return State_Type;
 end Processes;
