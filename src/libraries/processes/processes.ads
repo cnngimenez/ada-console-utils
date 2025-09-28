@@ -21,6 +21,15 @@
 
 with Ada.Containers.Vectors;
 
+--
+--  Identify PID with comm and other basic processes subprograms.
+--
+--  Provide some basic functionality to identify and find system processes.
+--  Other sublibraries are defined to parse specific Operative System
+--  (Linux or BSD) process data and files.
+--
+--  Basic datatypes and file parsing are implemented here.  See sublibraries for
+--  parsing specific files inside /proc/PID directory.
 package Processes is
 
     subtype PID_Type is Natural;
@@ -38,8 +47,7 @@ package Processes is
     Invalid_Process : constant Process_Type := (
         PID => 0,
         Parent_PID => 0,
-        Command => "Invalid         ",
-        State => Not_Recognised
+        Command => "Invalid         "
     );
 
     package Process_Vector_Pack is new Ada.Containers.Vectors (
