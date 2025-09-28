@@ -57,7 +57,7 @@ package body Processes.Stats is
         Stat.Session := Integer'Value (Next_Field (F));
         Stat.Tty_Nr := Integer'Value (Next_Field (F));
         Stat.Tpgid := Integer'Value (Next_Field (F));
-        Stat.Flags := Natural'Value (Next_Field (F));
+        Stat.Flags := Unsigned'Value (Next_Field (F));
     end Parse_Stat;
 
     function Read_Stat (Path : String) return Stat_Type is
@@ -100,7 +100,7 @@ package body Processes.Stats is
             when Tracing_Stop =>      't',
             --  when Paging => 'W', --  Only before Linux 2.6.0
             when Dead =>              'X',
-            when Dead =>              'x',
+            --  when Dead => 'x', --  Only on Linux 2.6.33 to 3.13.
             when Wakekill =>          'K',
             when Waking =>            'W',
             when Parked =>            'P',
