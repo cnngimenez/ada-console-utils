@@ -25,11 +25,12 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 with Processes;
 use Processes;
-package Process.Stats;
+with Processes.Stats;
 
 procedure My_Ps is
     procedure Show_Help;
-    procedure Show_Stat (Stat : Process_Type);
+    procedure Show_Stat (Stat : Processes.Stats.Stat_Type);
+    procedure Show_Process (Process : Process_Type);
     procedure Show_One_Process;
     procedure Show_All_Processes;
 
@@ -38,7 +39,7 @@ procedure My_Ps is
     begin
         Process_Data := List_Processes;
         for Process of Process_Data loop
-            Show_Stat (Process);
+            Show_Process (Process);
         end loop;
     end Show_All_Processes;
 
@@ -58,11 +59,19 @@ procedure My_Ps is
         Show_Stat (Stat);
     end Show_One_Process;
 
-    procedure Show_Stat (Stat : Stat_Type) is
+    procedure Show_Process (Process : Process_Type) is
+    begin
+        Put_Line ("PID: "
+            & Process.PID'Image
+            & " Comm: "
+            & String (Process.Command));
+    end Show_Process;
+
+    procedure Show_Stat (Stat : Processes.Stats.Stat_Type) is
         use Processes.Stats;
     begin
-        Put_Line ("PID: " & Stat.PID'Image);
-        Put_Line ("Command: " & Stat.Command);
+        Put_Line ("PID: " & Stat.Pid'Image);
+        Put_Line ("Command: " & String (Stat.Comm));
         Put_Line ("State: " & Stat.State'Image);
         Put_Line ("Parent PID: " & Stat.Parent_PID'Image);
     end Show_Stat;
