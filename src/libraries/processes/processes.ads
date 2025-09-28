@@ -28,8 +28,8 @@ with Ada.Containers.Vectors;
 --  Other sublibraries are defined to parse specific Operative System
 --  (Linux or BSD) process data and files.
 --
---  Basic datatypes and file parsing are implemented here.  See sublibraries for
---  parsing specific files inside /proc/PID directory.
+--  Basic datatypes and file parsing are implemented here.  See sublibraries
+--  for parsing specific files inside /proc/PID directory.
 package Processes is
 
     Proc_Path : constant String := "/proc";
@@ -45,7 +45,7 @@ package Processes is
     --  A command string has a maximum of TASK_COMM_LEN (16) characters
     --  (including null byte).
 
-    Empty_Comm_String : constant Comm_String := "               ";
+    Empty_Comm_String : constant Comm_String := "                ";
 
     type Process_Type is record
         PID : PID_Type;
@@ -83,7 +83,10 @@ package Processes is
     function Comm_Path (PID : PID_Type) return String
         is (Process_Path (PID) & "/comm");
 
-    function Read_Comm (PID : PID_Type) return Comm_String;
+    function Read_Comm (Path : String) return Comm_String;
+
+    function Read_Comm (PID : PID_Type) return Comm_String
+        is (Read_Comm (Comm_Path (PID)));
     --  Read the comm file of the given PID process.
     --
     --  Returns an Empty_Comm_String if PID does not exists.

@@ -57,14 +57,16 @@ package body Processes is
             if Kind (Directory_Entry) = Directory
                 and then Simple_Name (Directory_Entry) /= "."
                 and then Simple_Name (Directory_Entry) /= ".."
-                and then Exists (Full_Name (Directory_Entry) & "/stat")
-                and then Kind (Full_Name (Directory_Entry) & "/stat") =
+                and then Exists (Full_Name (Directory_Entry) & "/comm")
+                and then Kind (Full_Name (Directory_Entry) & "/comm") =
                          Ordinary_File
             then
                 begin
-                    Stat := Process_Stat (
-                        Full_Name (Directory_Entry) & "/stat");
-                    Found := Has_Substring (Name_Substring, Stat.Command);
+                    Stat.PID := PID_Type'Value (Simple_Name (Directory_Entry));
+                    Stat.Command := Read_Comm (Full_Name (Directory_Entry)
+                                                & "/comm");
+                    Found := Has_Substring (Name_Substring,
+                                            String (Stat.Command));
                 exception
                     when others =>
                         null;
@@ -79,6 +81,21 @@ package body Processes is
         end if;
 
         return Stat;
+    end Find_Process;
+
+    function Find_Process (PID : PID_Type) return Process_Type
+    is
+        Process : Process_Type;
+        Path : constant String := Process_Path (PID);
+    begin
+        if not Ada.Directories.Exists (Path) then
+            return Invalid_Process;
+        end if;
+
+        Process.PID := PID;
+        Process.Command := Read_Comm (PID);
+
+        return Process;
     end Find_Process;
 
     function List_Processes return Process_Vector is
@@ -98,14 +115,14 @@ package body Processes is
             if Kind (Directory_Entry) = Directory
                 and then Simple_Name (Directory_Entry) /= "."
                 and then Simple_Name (Directory_Entry) /= ".."
-                and then Exists (Full_Name (Directory_Entry) & "/stat")
-                and then Kind (Full_Name (Directory_Entry) & "/stat") =
+                and then Exists (Full_Name (Directory_Entry) & "/comm")
+                and then Kind (Full_Name (Directory_Entry) & "/comm") =
                          Ordinary_File
             then
                 begin
-                    Stat := Process_Stat (
-                        Full_Name (Directory_Entry) & "/stat"
-                    );
+                    Stat.PID := PID_Type'Value (Simple_Name (Directory_Entry));
+                    Stat.Command := Read_Comm (Full_Name (Directory_Entry)
+                                                & "/comm");
                     Append (Processes, Stat);
                 exception
                     when others =>
@@ -118,21 +135,6 @@ package body Processes is
 
         return Processes;
     end List_Processes;
-
-    function Find_Process (PID : PID_Type) return Process_Type
-    is
-        Process : Process_Type;
-        Path : constant String := Process_Path (PID);
-    begin
-        if not File_Exists (Path) then
-            return Invalid_Process;
-        end if;
-
-        Process.PID := PID;
-        Process.Command := Read_Comm (PID);
-
-        return Process;
-    end Find_Process;
 
     --  Moved to Processes.Stats.
     --
@@ -190,11 +192,11 @@ package body Processes is
     --            & Ada.Strings.Fixed.Trim (PID'Image, Ada.Strings.Both)
     --            & "/stat"));
 
-    function Read_Comm (PID : PID_Type) return Comm_String is
+    function Read_Comm (Path : String) return Comm_String is
         Comm_File : File_Type;
         Str : Comm_String;
     begin
-        Open (Comm_File, In_File, Comm_Path (PID));
+        Open (Comm_File, In_File, Path);
         declare
             Line : constant String := Get_Line (Comm_File);
         begin
