@@ -19,7 +19,6 @@
 
 -------------------------------------------------------------------------
 
-
 --  Per Process Flags
 package Processes.Stats.PF_Flags is
 

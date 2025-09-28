@@ -24,18 +24,20 @@ package body Processes.Stats.PF_Flags is
     function  Stat_Flags (Stat : Stat_Type) return Flags_Type is
         Flag : Flags_Type;
     begin
-        Flag.Virtual_Cpu       := Stat.Flags and 0x01 > 0;
-        Flag.IDLE_Thread       := Stat.Flags and 0x02 > 0 ;
-        Flag.Exiting           := Stat.Flags and 0x04 > 0 ;
-        Flag.Postcoredump      := Stat.Flags and 0x08 > 0 ;
-        Flag.IO_Worker         := Stat.Flags and 0x10 > 0 ;
-        Flag.Workqueue_Worker  := Stat.Flags and 0x20 > 0 ;
-        Flag.Fork_No_Exec      := Stat.Flags and 0x40 > 0 ;
-        Flag.MCE_Process       := Stat.Flags and 0x80 > 0 ;
-        Flag.Superuser_Privs   := Stat.Flags and 0x100 > 0 ;
-        Flag.Dumped_Core       := Stat.Flags and 0x200 > 0 ;
-        Flag.Signaled          := Stat.Flags and 0x400 > 0 ;
-        Flag.Memory_Allocating := Stat.Flags and 0x800 > 0 ;
+        Flag.Virtual_CPU       := (Stat.Flags and 16#01#) > 0;
+        Flag.IDLE_Thread       := (Stat.Flags and 16#02#) > 0;
+        Flag.Exiting           := (Stat.Flags and 16#04#) > 0;
+        Flag.Postcoredump      := (Stat.Flags and 16#08#) > 0;
+        Flag.IO_Worker         := (Stat.Flags and 16#10#) > 0;
+        Flag.Workqueue_Worker  := (Stat.Flags and 16#20#) > 0;
+        Flag.Fork_No_Exec      := (Stat.Flags and 16#40#) > 0;
+        Flag.MCE_Process       := (Stat.Flags and 16#80#) > 0;
+        Flag.Superuser_Privs   := (Stat.Flags and 16#100#) > 0;
+        Flag.Dumped_Core       := (Stat.Flags and 16#200#) > 0;
+        Flag.Signaled          := (Stat.Flags and 16#400#) > 0;
+        Flag.Memory_Allocating := (Stat.Flags and 16#800#) > 0;
+
+        return Flag;
     end Stat_Flags;
 
 end Processes.Stats.PF_Flags;
