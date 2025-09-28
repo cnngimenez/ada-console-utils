@@ -60,18 +60,18 @@ package body Processes.Stat is
         Stat.Flags := Natural'Value (Next_Field (F));
     end Parse_Stat;
 
-    function Read_Stat (PID : PID_Type) return Stat_Type is
+    function Read_Stat (Path : String) return Stat_Type is
         File : File_Type;
         Stat : Stat_Type;
     begin
-        Open (File, In_File, Stat_File (PID));
+        Open (File, In_File, Path);
         Parse_Stat (File, Stat);
         Close (File);
 
         return Stat;
     end Read_Stat;
 
-    function Stat_File (PID : PID_Type) return String
+    function Stat_Path (PID : PID_Type) return String
         is ("/proc/"
             & Ada.Strings.Fixed.Trim (PID'Image, Ada.Strings.Both)
             & "/stat");

@@ -19,6 +19,14 @@
 
 -------------------------------------------------------------------------
 
+--  Parse the process stat file.
+--
+--  Stat files are files with information about the current status of a process.
+--  They are located at /proc/PID/stat file.  Also, the /proc/PID/status file
+--  has a more human readable format, but in this library the stat file is used.
+--
+--  The proc_pid_stat(5) manpage explains the file format and its fields.  This
+--  library defines several types and structures explained there.
 package Processes.Stat is
 
     type Comm_String is new String (1 .. 16);
@@ -84,9 +92,6 @@ package Processes.Stat is
     --  same as the ones appearing in the manpage. Alias functions are used to
     --  provide more readability.
 
-    function Read_Stat (PID : PID_Type) return Stat_Type;
-    --  Read a PID stat file from /proc/PID/stat
-
     --  --------------------------------------------------
     --  Stat_Type field aliases.
     --  --------------------------------------------------
@@ -100,7 +105,19 @@ package Processes.Stat is
     function System_Time (S : Stat_Type) return Natural
         is (S.Stime);
 
-    function Stat_File (PID : PID_Type) return String;
+    --  --------------------------------------------------
+    --  Reading stat files
+    --  --------------------------------------------------
+
+    function Stat_Path (PID : PID_Type) return String;
     --  Path to the stat file of the given process.
+
+    function Read_Stat (Path : String) return Stat_Type;
+    --  Read a stat file by providing its path.
+
+    function Read_Stat (PID : PID_Type) return Stat_Type
+        is Read_Stat (Stat_Path (PID));
+    --  Read a PID stat file from /proc/PID/stat
+
 
 end Processes.Stat;

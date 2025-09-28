@@ -25,6 +25,7 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 with Processes;
 use Processes;
+package Process.Stat;
 
 procedure My_Ps is
     procedure Show_Help;
@@ -49,13 +50,16 @@ procedure My_Ps is
     end Show_Help;
 
     procedure Show_One_Process is
-        Stat : Process_Type;
+        use Processes.Stat;
+
+        Stat : Stat_Type;
     begin
-        Stat := Process_Stat (PID_Type'Value (Argument (1)));
+        Stat := Read_Stat (PID_Type'Value (Argument (1)));
         Show_Stat (Stat);
     end Show_One_Process;
 
-    procedure Show_Stat (Stat : Process_Type) is
+    procedure Show_Stat (Stat : Stat_Type) is
+        use Processes.Stat;
     begin
         Put_Line ("PID: " & Stat.PID'Image);
         Put_Line ("Command: " & Stat.Command);
