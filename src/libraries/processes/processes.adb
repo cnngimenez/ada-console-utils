@@ -19,14 +19,13 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings;
 with Ada.Strings.Fixed;
 with Ada.Directories;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
 package body Processes is
-
-    Proc_Path : constant String := "/proc/";
 
     function Find_Process (Name_Substring : String; Owner : String)
         return Process_Type
@@ -120,50 +119,90 @@ package body Processes is
         return Processes;
     end List_Processes;
 
-    function Parse_Stat_String (S : String) return Process_Type
+    function Find_Process (PID : PID_Type) return Process_Type
     is
-        use Ada.Strings.Fixed;
-        Stat : Process_Type;
-        I, J : Positive;
+        Process : Process_Type;
+        Path : constant String := Process_Path (PID);
     begin
-        I := S'First;
-        J := Index (S, " ", I) - 1;
-        Stat.PID := PID_Type'Value (S (I .. J));
+        if not File_Exists (Path) then
+            return Invalid_Process;
+        end if;
 
-        I := J + 3; --  Ignore the " ("
-        J := Index (S, ") ", I) - 1;
-        Stat.Command (1 .. J - I + 1) := S (I .. J);
+        Process.PID := PID;
+        Process.Command := Read_Comm (PID);
 
-        I := J + 3;
-        J := I;
-        Stat.State := State_String_To_Type (S (I .. J));
+        return Process;
+    end Find_Process;
 
-        I := J + 2;
-        J := Index (S, " ", I) - 1;
-        Stat.Parent_PID := PID_Type'Value (S (I .. J));
+    --  Moved to Processes.Stats.
+    --
+    --  function Parse_Stat_String (S : String) return Process_Type
+    --  is
+    --      use Ada.Strings.Fixed;
+    --      Stat : Process_Type;
+    --      I, J : Positive;
+    --  begin
+    --      I := S'First;
+    --      J := Index (S, " ", I) - 1;
+    --      Stat.PID := PID_Type'Value (S (I .. J));
 
-        return Stat;
-    end Parse_Stat_String;
+    --      I := J + 3; --  Ignore the " ("
+    --      J := Index (S, ") ", I) - 1;
+    --      Stat.Command (1 .. J - I + 1) := S (I .. J);
 
-    function Process_Stat (Stat_File_Path : String) return Process_Type
-    is
-        Process_File : File_Type;
-        Process_Stat : Process_Type;
+    --      I := J + 3;
+    --      J := I;
+    --      Stat.State := State_String_To_Type (S (I .. J));
+
+    --      I := J + 2;
+    --      J := Index (S, " ", I) - 1;
+    --      Stat.Parent_PID := PID_Type'Value (S (I .. J));
+
+    --      return Stat;
+    --  end Parse_Stat_String;
+
+    function Process_Path (PID : PID_Type) return String
+        is (Proc_Path & "/"
+            & Ada.Strings.Fixed.Trim (PID'Image, Ada.Strings.Both));
+
+    --  Moved to Processes.Stats.
+    --
+    --  function Process_Stat (Stat_File_Path : String) return Process_Type
+    --  is
+    --      Process_File : File_Type;
+    --      Process_Stat : Process_Type;
+    --  begin
+    --      Open (Process_File, In_File, Stat_File_Path);
+    --      declare
+    --          Line : constant String := Get_Line (Process_File);
+    --      begin
+    --          Process_Stat := Parse_Stat_String (Line);
+    --      end;
+    --      Close (Process_File);
+
+    --      return Process_Stat;
+    --  end Process_Stat;
+
+    --  Moved to Processes.Stats.
+    --
+    --  function Process_Stat (PID : PID_Type) return Process_Type
+    --      is (Process_Stat (Proc_Path
+    --            & Ada.Strings.Fixed.Trim (PID'Image, Ada.Strings.Both)
+    --            & "/stat"));
+
+    function Read_Comm (PID : PID_Type) return Comm_String is
+        Comm_File : File_Type;
+        Str : Comm_String;
     begin
-        Open (Process_File, In_File, Stat_File_Path);
+        Open (Comm_File, In_File, Comm_Path (PID));
         declare
-            Line : constant String := Get_Line (Process_File);
+            Line : constant String := Get_Line (Comm_File);
         begin
-            Process_Stat := Parse_Stat_String (Line);
+            Str := Comm_String (Line (1 .. 16));
         end;
-        Close (Process_File);
+        Close (Comm_File);
 
-        return Process_Stat;
-    end Process_Stat;
-
-    function Process_Stat (PID : PID_Type) return Process_Type
-        is (Process_Stat (Proc_Path
-              & Ada.Strings.Fixed.Trim (PID'Image, Ada.Strings.Both)
-              & "/stat"));
+        return Str;
+    end Read_Comm;
 
 end Processes;

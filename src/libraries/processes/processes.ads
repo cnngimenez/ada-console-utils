@@ -32,21 +32,28 @@ with Ada.Containers.Vectors;
 --  parsing specific files inside /proc/PID directory.
 package Processes is
 
+    Proc_Path : constant String := "/proc";
+
     subtype PID_Type is Natural;
+
+    function Process_Path (PID : PID_Type) return String;
+    --  Return the path from the PID of a process.
+    --
+    --  PID or path may not exists.
 
     type Comm_String is new String (1 .. 16);
     --  A command string has a maximum of TASK_COMM_LEN (16) characters
     --  (including null byte).
 
+    Empty_Comm_String : constant Comm_String := "               ";
+
     type Process_Type is record
         PID : PID_Type;
-        Parent_PID : PID_Type;
         Command : Comm_String;
     end record;
 
     Invalid_Process : constant Process_Type := (
         PID => 0,
-        Parent_PID => 0,
         Command => "Invalid         "
     );
 
@@ -68,14 +75,17 @@ package Processes is
 
     function Find_Process (Name_Substring : String)
         return Process_Type
-    is (Find_Process (Name_Substring, ""));
+        is (Find_Process (Name_Substring, ""));
     --  Find the process with Name_Substring in its Name.
 
-    function Process_Stat (Stat_File_Path : String) return Process_Type;
-    --  Read the process stat file and return its data.
+    function Find_Process (PID : PID_Type) return Process_Type;
 
-    function Process_Stat (PID : PID_Type) return Process_Type;
-    --  Find the process with the given PID and return its status.
+    function Comm_Path (PID : PID_Type) return String
+        is (Process_Path (PID) & "/comm");
 
-    function Parse_Stat_String (S : String) return Process_Type;
+    function Read_Comm (PID : PID_Type) return Comm_String;
+    --  Read the comm file of the given PID process.
+    --
+    --  Returns an Empty_Comm_String if PID does not exists.
+
 end Processes;
