@@ -90,4 +90,41 @@ package body Processes.Stats is
         return Comm;
     end To_Comm_String;
 
+    function To_Character (State : State_Type) return Character is
+        (case State is
+            when Running =>           'C',
+            when Sleeping =>          'S',
+            when Waiting_Disk =>      'D',
+            when Zombie =>            'Z',
+            when Stopped_On_Signal => 'T',
+            when Tracing_Stop =>      't',
+            --  when Paging => 'W', --  Only before Linux 2.6.0
+            when Dead =>              'X',
+            when Dead =>              'x',
+            when Wakekill =>          'K',
+            when Waking =>            'W',
+            when Parked =>            'P',
+            when Idle =>              'I',
+            when others =>            ' ');
+
+    function State_String_To_Type (S : String) return State_Type is
+        (State_String_To_Type (S (S'First)));
+
+    function State_String_To_Type (C : Character) return State_Type is
+        (case C is
+            when 'C' => Running,
+            when 'S' => Sleeping,
+            when 'D' => Waiting_Disk,
+            when 'Z' => Zombie,
+            when 'T' => Stopped_On_Signal,
+            when 't' => Tracing_Stop,
+            --  when 'W' => Paging, --  Only before Linux 2.6.0
+            when 'X' => Dead,
+            when 'x' => Dead,
+            when 'K' => Wakekill,
+            when 'W' => Waking,
+            when 'P' => Parked,
+            when 'I' => Idle,
+            when others => Not_Recognised);
+
 end Processes.Stats;

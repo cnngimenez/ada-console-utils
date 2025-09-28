@@ -166,24 +166,4 @@ package body Processes is
               & Ada.Strings.Fixed.Trim (PID'Image, Ada.Strings.Both)
               & "/stat"));
 
-    function State_String_To_Type (S : String) return State_Type is
-        (State_String_To_Type (S (S'First)));
-
-    function State_String_To_Type (C : Character) return State_Type is
-        (case C is
-            when 'C' => Running,
-            when 'S' => Sleeping,
-            when 'D' => Waiting_Disk,
-            when 'Z' => Zombie,
-            when 'T' => Stopped_On_Signal,
-            when 't' => Tracing_Stop,
-            --  when 'W' => Paging, --  Only before Linux 2.6.0
-            when 'X' => Dead,
-            when 'x' => Dead,
-            when 'K' => Wakekill,
-            when 'W' => Waking,
-            when 'P' => Parked,
-            when 'I' => Idle,
-            when others => Not_Recognised);
-
 end Processes;

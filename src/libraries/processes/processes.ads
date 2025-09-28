@@ -25,15 +25,14 @@ package Processes is
 
     subtype PID_Type is Natural;
 
-    type State_Type is (Running, Sleeping, Waiting_Disk, Zombie,
-        Stopped_On_Signal, Tracing_Stop, Paging, Dead, Wakekill,
-        Waking, Parked, Idle, Not_Recognised);
+    type Comm_String is new String (1 .. 16);
+    --  A command string has a maximum of TASK_COMM_LEN (16) characters
+    --  (including null byte).
 
     type Process_Type is record
         PID : PID_Type;
         Parent_PID : PID_Type;
-        Command : String (1 .. 16);
-        State : State_Type;
+        Command : Comm_String;
     end record;
 
     Invalid_Process : constant Process_Type := (
@@ -71,7 +70,4 @@ package Processes is
     --  Find the process with the given PID and return its status.
 
     function Parse_Stat_String (S : String) return Process_Type;
-
-    function State_String_To_Type (S : String) return State_Type;
-    function State_String_To_Type (C : Character) return State_Type;
 end Processes;

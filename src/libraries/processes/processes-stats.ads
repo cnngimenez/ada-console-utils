@@ -28,10 +28,24 @@
 --  The proc_pid_stat(5) manpage explains the file format and its fields.  This
 --  library defines several types and structures explained there.
 package Processes.Stats is
+    type State_Type is (Running, Sleeping, Waiting_Disk, Zombie,
+        Stopped_On_Signal, Tracing_Stop, Paging, Dead, Wakekill,
+        Waking, Parked, Idle, Not_Recognised);
 
-    type Comm_String is new String (1 .. 16);
-    --  A command string has a maximum of TASK_COMM_LEN (16) characters
-    --  (including null byte).
+    function To_Character (State : State_Type) return Character;
+
+    function To_String (State : State_Type) return String
+        is To_Character (State)'Image;
+
+    function State_String_To_Type (S : String) return State_Type;
+    --  Convert process state String to State_Type.
+    --
+    --  See proc_pid_stat(5) manpage for state character meanings.
+
+    function State_String_To_Type (C : Character) return State_Type;
+    --  Convert process state Character to State_Type.
+    --
+    --  See proc_pid_stat(5) manpage for state character meanings.
 
     type Stat_Type is tagged record
         Pid : PID_Type;
@@ -104,6 +118,12 @@ package Processes.Stats is
 
     function System_Time (S : Stat_Type) return Natural
         is (S.Stime);
+
+    function State_String (S : Stat_Type) return Character
+        is (To_Character (S.State));
+
+    function State_String (S : Stat_Type) return String
+        is (To_String (S.State));
 
     --  --------------------------------------------------
     --  Reading stat files
