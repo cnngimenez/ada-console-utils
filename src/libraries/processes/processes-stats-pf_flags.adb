@@ -1,4 +1,4 @@
---  processes-stat-pf_flags.adb ---
+--  processes-stats-pf_flags.adb ---
 
 --  Copyright 2025 cnngimenez
 --
@@ -19,7 +19,7 @@
 
 -------------------------------------------------------------------------
 
-package body Processes.Stat.PF_Flags is
+package body Processes.Stats.PF_Flags is
 
     function  Stat_Flags (Stat : Stat_Type) return Flags_Type is
         Flag : Flags_Type;
@@ -38,4 +38,4 @@ package body Processes.Stat.PF_Flags is
         Flag.Memory_Allocating := Stat.Flags and 0x800 > 0 ;
     end Stat_Flags;
 
-end Processes.Stat.PF_Flags;
+end Processes.Stats.PF_Flags;

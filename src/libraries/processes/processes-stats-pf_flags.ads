@@ -1,4 +1,4 @@
---  processes-stat-pf_flags.ads ---
+--  processes-stats-pf_flags.ads ---
 
 --  Copyright 2025 cnngimenez
 --
@@ -21,7 +21,7 @@
 
 
 --  Per Process Flags
-package Processes.Stat.PF_Flags is
+package Processes.Stats.PF_Flags is
 
     type Flags_Type is record
         Virtual_CPU : Boolean;
@@ -40,4 +40,4 @@ package Processes.Stat.PF_Flags is
 
     function  Stat_Flags (Stat : Stat_Type) return Flags_Type;
 
-end Processes.Stat.PF_Flags;
+end Processes.Stats.PF_Flags;

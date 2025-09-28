@@ -1,4 +1,4 @@
---  processes-stat.adb ---
+--  processes-stats.adb ---
 
 --  Copyright 2025 cnngimenez
 --
@@ -24,7 +24,7 @@ use Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.Strings.Fixed;
 
-package body Processes.Stat is
+package body Processes.Stats is
 
     procedure Parse_Stat (F : in out File_Type; Stat : out Stat_Type);
     function Next_Field (F : in out File_Type) return String;
@@ -90,4 +90,4 @@ package body Processes.Stat is
         return Comm;
     end To_Comm_String;
 
-end Processes.Stat;
+end Processes.Stats;

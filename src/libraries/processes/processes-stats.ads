@@ -1,4 +1,4 @@
---  processes-stat.ads ---
+--  processes-stats.ads ---
 
 --  Copyright 2025 cnngimenez
 --
@@ -27,7 +27,7 @@
 --
 --  The proc_pid_stat(5) manpage explains the file format and its fields.  This
 --  library defines several types and structures explained there.
-package Processes.Stat is
+package Processes.Stats is
 
     type Comm_String is new String (1 .. 16);
     --  A command string has a maximum of TASK_COMM_LEN (16) characters
@@ -120,4 +120,4 @@ package Processes.Stat is
     --  Read a PID stat file from /proc/PID/stat
 
 
-end Processes.Stat;
+end Processes.Stats;
