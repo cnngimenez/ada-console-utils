@@ -67,6 +67,16 @@ package Processes is
     function List_Processes return Process_Vector;
     --  Return all process Status.
 
+    function List_Processes (Match : access function (Process : Process_Type)
+                               return Boolean)
+        return Process_Vector;
+    --  Search for all process that match the given criteria.
+
+    function Find_Process (Match : access function (Process : Process_Type)
+                             return Boolean)
+        return Process_Type;
+    --  Search for a single process that match a given criteria.
+
     function Find_Process (Name_Substring : String; Owner : String)
         return Process_Type;
     --  Find the process with Name_Substring in its Name.

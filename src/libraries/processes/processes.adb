@@ -27,26 +27,15 @@ use Ada.Text_IO;
 
 package body Processes is
 
-    function Find_Process (Name_Substring : String; Owner : String)
+    function Find_Process (Match : access function (Process : Process_Type)
+                             return Boolean)
         return Process_Type
     is
         use Ada.Directories;
 
-        function Has_Substring (Substring, Complete_String : String)
-            return Boolean;
-
-        function Has_Substring (Substring, Complete_String : String)
-            return Boolean
-        is
-            use Ada.Strings.Fixed;
-        begin
-            return Index (Complete_String, Substring,
-                          Complete_String'First) > 0;
-        end Has_Substring;
-
         Proc_Search : Search_Type;
         Found : Boolean := False;
-        Stat : Process_Type;
+        Process : Process_Type;
         Directory_Entry : Directory_Entry_Type;
     begin
         Start_Search (Proc_Search, Proc_Path, "");
@@ -62,11 +51,11 @@ package body Processes is
                          Ordinary_File
             then
                 begin
-                    Stat.PID := PID_Type'Value (Simple_Name (Directory_Entry));
-                    Stat.Command := Read_Comm (Full_Name (Directory_Entry)
+                    Process.PID :=
+                        PID_Type'Value (Simple_Name (Directory_Entry));
+                    Process.Command := Read_Comm (Full_Name (Directory_Entry)
                                                 & "/comm");
-                    Found := Has_Substring (Name_Substring,
-                                            String (Stat.Command));
+                    Found := Match (Process);
                 exception
                     when others =>
                         null;
@@ -77,10 +66,38 @@ package body Processes is
         End_Search (Proc_Search);
 
         if not Found then
-            Stat := Invalid_Process;
+            Process := Invalid_Process;
         end if;
 
-        return Stat;
+        return Process;
+    end Find_Process;
+
+    function Find_Process (Name_Substring : String; Owner : String)
+        return Process_Type
+    is
+        function Process_Has_Substring (Process : Process_Type)
+            return Boolean;
+        function Has_Substring (Substring, Complete_String : String)
+            return Boolean;
+
+        function Has_Substring (Substring, Complete_String : String)
+            return Boolean
+        is
+            use Ada.Strings.Fixed;
+        begin
+            return Index (Complete_String, Substring,
+                          Complete_String'First) > 0;
+        end Has_Substring;
+
+        function Process_Has_Substring (Process : Process_Type)
+            return Boolean
+        is
+        begin
+            return Has_Substring (Name_Substring, String (Process.Command));
+        end Process_Has_Substring;
+
+    begin
+        return Find_Process (Process_Has_Substring'Access);
     end Find_Process;
 
     function Find_Process (PID : PID_Type) return Process_Type
@@ -98,13 +115,16 @@ package body Processes is
         return Process;
     end Find_Process;
 
-    function List_Processes return Process_Vector is
+    function List_Processes (Match : access function (Process : Process_Type)
+                             return Boolean)
+        return Process_Vector
+    is
         use Ada.Directories;
         use Process_Vector_Pack;
 
         Processes : Process_Vector;
         Proc_Search : Search_Type;
-        Stat : Process_Type;
+        Process : Process_Type;
         Directory_Entry : Directory_Entry_Type;
     begin
         Start_Search (Proc_Search, Proc_Path, "*");
@@ -120,10 +140,13 @@ package body Processes is
                          Ordinary_File
             then
                 begin
-                    Stat.PID := PID_Type'Value (Simple_Name (Directory_Entry));
-                    Stat.Command := Read_Comm (Full_Name (Directory_Entry)
+                    Process.PID :=
+                        PID_Type'Value (Simple_Name (Directory_Entry));
+                    Process.Command := Read_Comm (Full_Name (Directory_Entry)
                                                 & "/comm");
-                    Append (Processes, Stat);
+                    if Match (Process) then
+                        Append (Processes, Process);
+                    end if;
                 exception
                     when others =>
                         null;
@@ -134,6 +157,19 @@ package body Processes is
         End_Search (Proc_Search);
 
         return Processes;
+    end List_Processes;
+
+    function List_Processes return Process_Vector is
+        function All_True (Process : Process_Type) return Boolean;
+
+        function All_True (Process : Process_Type) return Boolean
+        is
+            pragma Unreferenced (Process);
+        begin
+            return True;
+        end All_True;
+    begin
+        return List_Processes (All_True'Access);
     end List_Processes;
 
     --  Moved to Processes.Stats.
