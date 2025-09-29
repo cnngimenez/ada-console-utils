@@ -27,6 +27,9 @@ use Ada.Text_IO;
 
 package body Processes is
 
+    function Read_Line (Path : String) return String;
+    --  Read the first line of the given file.
+
     function Find_Process (Match : access function (Process : Process_Type)
                              return Boolean)
         return Process_Type
@@ -229,30 +232,33 @@ package body Processes is
     --            & "/stat"));
 
     function Read_Comm (Path : String) return Comm_String is
-        Comm_File : File_Type;
         Str : Comm_String;
     begin
-        Open (Comm_File, In_File, Path);
         declare
-            Line : constant String := Get_Line (Comm_File);
+            Line : constant String := Read_Line (Path);
         begin
             Str := Comm_String (Line (1 .. 16));
         end;
-        Close (Comm_File);
 
         return Str;
     end Read_Comm;
 
-    function Read_Command_Line (Path : String) return String is
-        Comm_File : File_Type;
+    function Read_Command_Line (Path : String) return String
+        is (Read_Line (Path));
+
+    function Read_Line (Path : String) return String is
+        File : File_Type;
     begin
-        Open (Comm_File, In_File, Path);
+        Open (File, In_File, Path);
         declare
-            Line : constant String := Get_Line (Comm_File);
+            Line : constant String := Get_Line (File);
         begin
-            Close (Comm_File);
+            Close (File);
             return Line;
         end;
-    end Read_Command_Line;
+    end Read_Line;
+
+    function Read_Loginuid (Path : String) return Integer
+        is (Integer'Value (Read_Line (Path)));
 
 end Processes;

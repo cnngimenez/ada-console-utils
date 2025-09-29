@@ -84,6 +84,8 @@ procedure My_Pinfo is
     procedure Print_Ownership is
     begin
         Put_Line ("* Ownership");
+        Put_Line ("Login UID: "
+            & Read_Loginuid (Stat.Pid)'Image);
     end Print_Ownership;
 
     procedure Print_Times is

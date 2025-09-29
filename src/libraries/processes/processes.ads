@@ -108,4 +108,13 @@ package Processes is
 
     function Read_Command_Line (PID : PID_Type) return String
         is (Read_Command_Line (Command_Line_Path (PID)));
+
+    function Loginuid_Path (PID : PID_Type) return String
+        is (Process_Path (PID) & "/loginuid");
+
+    function Read_Loginuid (Path : String) return Integer;
+
+    function Read_Loginuid (PID : PID_Type) return Integer
+        is (Read_Loginuid (Loginuid_Path (PID)));
+
 end Processes;
