@@ -243,4 +243,16 @@ package body Processes is
         return Str;
     end Read_Comm;
 
+    function Read_Command_Line (Path : String) return String is
+        Comm_File : File_Type;
+    begin
+        Open (Comm_File, In_File, Path);
+        declare
+            Line : constant String := Get_Line (Comm_File);
+        begin
+            Close (Comm_File);
+            return Line;
+        end;
+    end Read_Command_Line;
+
 end Processes;

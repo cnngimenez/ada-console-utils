@@ -101,4 +101,11 @@ package Processes is
     --
     --  Returns an Empty_Comm_String if PID does not exists.
 
+    function Command_Line_Path (PID : PID_Type) return String
+        is (Process_Path (PID) & "/cmdline");
+
+    function Read_Command_Line (Path : String) return String;
+
+    function Read_Command_Line (PID : PID_Type) return String
+        is (Read_Command_Line (Command_Line_Path (PID)));
 end Processes;
