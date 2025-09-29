@@ -22,7 +22,7 @@
 --  Per Process Flags
 package Processes.Stats.PF_Flags is
 
-    type Flags_Type is record
+    type Flag_Type is record
         Virtual_CPU : Boolean;
         IDLE_Thread : Boolean;
         Exiting : Boolean;
@@ -37,6 +37,6 @@ package Processes.Stats.PF_Flags is
         Memory_Allocating : Boolean;
     end record;
 
-    function  Stat_Flags (Stat : Stat_Type) return Flags_Type;
+    function Stat_Flags (Stat : Stat_Type) return Flag_Type;
 
 end Processes.Stats.PF_Flags;

@@ -21,8 +21,8 @@
 
 package body Processes.Stats.PF_Flags is
 
-    function  Stat_Flags (Stat : Stat_Type) return Flags_Type is
-        Flag : Flags_Type;
+    function Stat_Flags (Stat : Stat_Type) return Flag_Type is
+        Flag : Flag_Type;
     begin
         Flag.Virtual_CPU       := (Stat.Flags and 16#01#) > 0;
         Flag.IDLE_Thread       := (Stat.Flags and 16#02#) > 0;
